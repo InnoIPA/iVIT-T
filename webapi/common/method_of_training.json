@@ -1,0 +1,64 @@
+{ 
+    "classification":{
+        "other":{
+            "Quick Training":{
+                "model": "resnet_18",
+                "batch_size": 8,
+                "step": 30,
+                "input_shape": [320,320,3]},
+
+            "Advanced Training":{
+                "model": "resnet_50",
+                "batch_size": 4,
+                "step": 50,
+                "input_shape": [608,608,3]
+            }
+        },
+
+        "xilinx":{
+            "Quick Training":{
+                "model": "vgg_16",
+                "batch_size": 8,
+                "step": 30,
+                "input_shape": [320,320,3]},
+
+            "Advanced Training":{
+                "model": "resnet_50",
+                "batch_size": 4,
+                "step": 50,
+                "input_shape": [608,608,3]
+            }
+        }
+    },
+    "object_detection":{
+        "other":{
+            "Quick Training":{
+                "model": "yolov4-tiny",
+                "batch_size": 8,
+                "step": 6000,
+                "input_shape": [320,320,3]},
+
+            "Advanced Training":{
+                "model": "yolov4",
+                "batch_size": 2,
+                "step": 10000,
+                "input_shape": [608,608,3]
+            }
+        },
+
+        "xilinx":{
+            "Quick Training":{
+                "model": "yolov3-tiny",
+                "batch_size": 8,
+                "step": 6000,
+                "input_shape": [320,320,3]},
+
+            "Advanced Training":{
+                "model": "yolov4-leaky",
+                "batch_size": 2,
+                "step": 10000,
+                "input_shape": [608,608,3]
+            }
+        }
+    }
+}

@@ -1,0 +1,8 @@
+{
+  "model_json": "./Project/new-cls_2/iteration3/classification.json",
+  "platform": [
+    "nvidia",
+    "intel",
+    "xilinx"
+  ]
+}

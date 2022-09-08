@@ -1,0 +1,9 @@
+{
+    "USER":"willqiuinnodisk",
+    "PROJECT": "ivit-t",
+    "VERSION": "v1.0",
+    "HOST": "",
+    "PORT": 6530,
+    "DEBUG": false,
+    "WORKER": 1
+}

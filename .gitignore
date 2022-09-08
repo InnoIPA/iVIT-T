@@ -1,0 +1,19 @@
+__pycache__/
+*/__pycache__/
+setup.py
+py2so.py
+*.log
+anchors.txt
+counters_per_class.txt
+chart_yolov4-tiny.png
+chart_yolov3-tiny.png
+chart_yolov3.png
+chart_yolov4.png
+chart.png
+Vitis-AI
+vitis-ai-utility
+web copy
+Project/*
+!Project/samples/
+pretrainedmodel/*
+!pretrainedmodel/README.md
