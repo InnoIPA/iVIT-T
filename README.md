@@ -62,4 +62,4 @@ In the "run.sh", this "-p" is the port number, you can setting haven't used the 
 ## Web UI
 If you want to use the UI version, you can follow this Tutorial:
 
-- [Tutorial](https://github.com/InnoIPA/iVIT-T-Web)
+- [Tutorial](https://github.com/InnoIPA/ivit-t-web)
