@@ -34,7 +34,7 @@ Install nvidia-driver(gpu), nvidia-docker and docker before installing the docke
 ### Build convert docker images
 ```shell
 sudo chmod 777 ./docker
-sudo ./docker/build_convert.sh -p 0,1,2 -m
+sudo ./docker/build_convert.sh -p 0,1,2
 ```
 In the "build_convert.sh", this "-p" is the model finally deployed platform:
 ```
