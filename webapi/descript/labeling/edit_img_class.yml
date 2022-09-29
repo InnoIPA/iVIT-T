@@ -1,5 +1,32 @@
+tags:
+  - labeling
+summary: Change class of image 
+description: Change class of image 
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "images_info":
+          type: object
+          example: 
+            {"Unlabeled":["1.jpg","2.jpg"]}
+        "class_name":
+          type: string
+          example: cat
+          
 responses:
-  200:
-    description: A status for success to upload classes.txt.
-  404:
-    description: A status for txt of folder is not exist.
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: "Change images:{image_name} to {} in Project:{}"

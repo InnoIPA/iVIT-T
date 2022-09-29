@@ -1,5 +1,31 @@
+tags:
+  - labeling
+summary: Rename class
+description: Rename class
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "class_name":
+          type: string
+          example: cat
+        "new_name":
+          type: string
+          example: tigger
+
 responses:
-  200:
-    description: A status for success to upload classes.txt.
-  404:
-    description: A status for txt of folder is not exist.
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: "Renamed class:{class_name} to {new_name} in Project:{prj_name}"

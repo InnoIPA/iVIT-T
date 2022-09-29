@@ -1,5 +1,23 @@
+tags:
+  - display_dataset
+summary: Display a image
+description: Display a image
+
+parameters:
+  - in: path
+    name: path
+    required: true
+    schema:
+      type: string
+              
 responses:
-  200:
-    description: A status for success to upload classes.txt.
-  404:
-    description: A status for txt of folder is not exist.
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: "URL of image"
+  '400':
+    schema:
+      type: string
+      description: Successful operation
+      example: "This image is not exist:{path}"

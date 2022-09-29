@@ -4,13 +4,14 @@ import logging
 import os, shutil
 from webapi import app
 from werkzeug.utils import secure_filename
-from .common.utils import success_msg, error_msg, ALLOWED_EXTENSIONS
+from .common.utils import success_msg, error_msg, ALLOWED_EXTENSIONS, YAML_MAIN_PATH
 
 app_ud_dt = Blueprint( 'upload_dataset', __name__)
-
+# Define API Docs path and Blue Print
+YAML_PATH       = YAML_MAIN_PATH + "/upload_dataset"
 
 @app_ud_dt.route('/<uuid>/upload', methods=['POST']) 
-@swag_from('./descript/upload_dataset/upload.yml')
+@swag_from("{}/{}".format(YAML_PATH, "upload.yml"))
 def upload(uuid):
     if request.method == 'POST':
         logging.info('Upload file.')
@@ -52,6 +53,9 @@ def upload(uuid):
                 if file:
                     # Get file name
                     filename = secure_filename(file.filename)
+                    # Check folder file
+                    if "/" in file.name:
+                        filename = file.name.split("/")[1]
                     # Exclude over 2 word(".") rename filename
                     split = filename.split(".")
                     if len(split)>2:
@@ -68,6 +72,7 @@ def upload(uuid):
                     if type == "classification":
                         # Skip other format exclude image format
                         if not (filename.split(".")[-1] in ALLOWED_EXTENSIONS["image"]):
+                            logging.error("This type:{} of filename:{} ".format(filename.split(".")[-1], filename))
                             continue
                         
                         # Save image
@@ -76,6 +81,7 @@ def upload(uuid):
                     elif type == "object_detection":
                         # Skip other format exclude image format
                         if (not (filename.split(".")[-1] in ALLOWED_EXTENSIONS["label"])) and (not (filename.split(".")[-1] in ALLOWED_EXTENSIONS["image"])):
+                            logging.error("This type:{} of filename:{} ".format(filename.split(".")[-1], filename))                            
                             continue
 
                         # Save image and annotation

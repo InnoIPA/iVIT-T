@@ -1,0 +1,49 @@
+tags:
+  - evaluate_model
+summary: Upload images for evaluating model, maximum 10 pics.
+description: Upload images for evaluating model, maximum 10 pics.
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+  - in: formData
+    name: iteration
+    required: true
+    type: string
+    example: iteration1
+
+  - in: formData
+    required: true
+    name: file
+    type: file
+    description: The file to upload.
+
+responses:
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example:
+        {
+            "eval_img": [
+                "./Project/sticker_detection/iteration1/dataset/eval/eval_0.jpg",
+                "./Project/sticker_detection/iteration1/dataset/eval/eval_1.jpg",
+                "./Project/sticker_detection/iteration1/dataset/eval/eval_2.jpg",
+                "./Project/sticker_detection/iteration1/dataset/eval/eval_3.jpg",
+                "./Project/sticker_detection/iteration1/dataset/eval/eval_4.jpg",
+                "./Project/sticker_detection/iteration1/dataset/eval/eval_5.jpg",
+                "./Project/sticker_detection/iteration1/dataset/eval/eval_6.jpg",
+                "./Project/sticker_detection/iteration1/dataset/eval/eval_7.jpg",
+                "./Project/sticker_detection/iteration1/dataset/eval/eval_8.jpg"
+            ]
+        }
+        
+  '400':
+    schema:
+      type: string
+      description: Error message
+      example: "No upload files."

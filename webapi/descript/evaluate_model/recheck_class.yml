@@ -1,7 +1,7 @@
 tags:
-  - export_model
-summary: Get API of export.zip
-description: Get API of export.zip 
+  - evaluate_model
+summary: Correcting the class of evaluating 
+description: Correcting the class of evaluating 
 
 parameters:
   - in: path
@@ -19,16 +19,22 @@ parameters:
         "iteration":
           type: string
           example: iteration1
+        "image_name":
+          type: string
+          example: eval_0.jpg
+        "class_name":
+          type: string
+          example: "dog"
 
 responses:
   '200':
     schema:
       type: string
       description: Successful operation
-      example: "{IP}:{Port}/{uuid}/{iteration}/share"
+      example: "Save image:{image_name} and label:{class_name} in dataset of Project:{prj_name}"
       
   '400':
     schema:
       type: string
       description: Error message
-      example: "This {prj_name}.zip is not exist."
+      example: "This image:{image_name} is not exist in Project:{prj_name}"

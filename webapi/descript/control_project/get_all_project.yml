@@ -1,8 +1,97 @@
-parameters:
-
+tags:
+  - control_project
+summary: Get information on all project
+description: Get information on all project
 
 responses:
-  200:
-    description: A status for success to upload classes.txt.
-  404:
-    description: A status for txt of folder is not exist.
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: 
+        {
+          "eff9fb2e": {
+              "ready": true,
+              "err_msg": "",
+              "front_project": {
+                  "project_name": "yolov3-tiny-vitisai",
+                  "type": "object_detection",
+                  "platform": "xilinx",
+                  "cover_img":"base64",
+                  "iteration": 1,
+                  "effect_img_num": 30,
+                  "total_img_num": 30,
+                  "classes_num": {
+                      "Memory": 30,
+                      "Sticker": 28
+                  }
+              },
+              "training_info": {
+                  "iteration": "",
+                  "status": false
+              }
+          },
+          "d6060bc1": {
+              "ready": true,
+              "err_msg": "",
+              "front_project": {
+                  "project_name": "test_yolo",
+                  "type": "object_detection",
+                  "platform": "intel",
+                  "cover_img":"base64",
+                  "iteration": 1,
+                  "effect_img_num": 30,
+                  "total_img_num": 30,
+                  "classes_num": {
+                      "Memory": 30,
+                      "Sticker": 28
+                  }
+              },
+              "training_info": {
+                  "iteration": "",
+                  "status": false
+              }
+          },
+          "ac494d7a": {
+              "ready": true,
+              "err_msg": "",
+              "front_project": {
+                  "project_name": "dog_cat_classification_vitis",
+                  "type": "classification",
+                  "platform": "xilinx",
+                  "cover_img":"base64",
+                  "iteration": 1,
+                  "effect_img_num": 37,
+                  "total_img_num": 37,
+                  "classes_num": {
+                      "cat": 18,
+                      "dog": 19,
+                  }
+              },
+              "training_info": {
+                  "iteration": "",
+                  "status": false
+              }
+          },
+          "8737cfc0": {
+              "ready": true,
+              "err_msg": "",
+              "front_project": {
+                  "project_name": "dog_cat_classification",
+                  "type": "classification",
+                  "platform": "intel",
+                  "cover_img":"base64",
+                  "iteration": 5,
+                  "effect_img_num": 237,
+                  "total_img_num": 237,
+                  "classes_num": {
+                      "cat": 221,
+                      "dog": 16
+                  }
+              },
+              "training_info": {
+                  "iteration": "",
+                  "status": false
+              }
+          }
+        }

@@ -5,13 +5,15 @@ import os
 from pathlib import Path
 from natsort import natsorted
 from webapi import app
-from .common.utils import success_msg, error_msg, exists
-from .common.display_tool import get_folder_image, get_obj_classes_img, count_dataset
+from .common.utils import success_msg, error_msg, exists, YAML_MAIN_PATH
+from .common.display_tool import get_folder_image, get_obj_classes_img, count_dataset, workspace_path, iteration_path
 
 app_dy_dt = Blueprint( 'display_dataset', __name__)
+# Define API Docs path and Blue Print
+YAML_PATH       = YAML_MAIN_PATH + "/display_dataset"
 
 @app_dy_dt.route('/<uuid>/get_dataset', methods=['GET']) 
-@swag_from('./descript/display_dataset/get_dataset.yml')
+@swag_from("{}/{}".format(YAML_PATH, "get_dataset.yml"))
 def get_dataset(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
@@ -24,7 +26,7 @@ def get_dataset(uuid):
     return jsonify({"folder_name":folder_name}) 
 
 @app_dy_dt.route('/<uuid>/filter_dataset', methods=['POST']) 
-@swag_from('./descript/display_dataset/filter_dataset.yml')
+@swag_from("{}/{}".format(YAML_PATH, "filter_dataset.yml"))
 def filter_dataset(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
@@ -33,26 +35,25 @@ def filter_dataset(uuid):
         # Check key of front
         if not "iteration" in request.get_json().keys():
             return error_msg("KEY:iteration is not exist.")
+        elif not "class_name" in request.get_json().keys():
+            return error_msg("KEY:class_name is not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"] 
         # Get value of front
         iteration = request.get_json()['iteration']
-
+        class_name = request.get_json()['class_name']
+        # Get type
+        type = app.config["PROJECT_INFO"][uuid]["front_project"]['type']
         # Give img path
         iter_path = "./Project/"+prj_name+"/"+iteration
+        # Check iteration
         if "workspace" == iteration:
-            return jsonify({"img_path":get_folder_image(iter_path)})
+            return jsonify(workspace_path(class_name, iter_path, type))
         else:
-            # train/val/test in iteration/dataset except eval
-            iter_path = iter_path+"/dataset"
-            img_list = []
-            folder_list = [iter_path+"/"+name for name in natsorted(os.listdir(iter_path)) if os.path.isdir(iter_path+"/"+name) and name !="eval"]
-            for dir in folder_list:
-                img_list.extend(get_folder_image(dir))
-            return jsonify({"img_path":img_list})
+            return jsonify(iteration_path(class_name, iter_path, type))
 
 @app_dy_dt.route('/display_img/<path:path>', methods=['GET'])
-@swag_from('./descript/display_dataset/display_img.yml')
+@swag_from("{}/{}".format(YAML_PATH, "display_img.yml"))
 def display_img(path):
     path_list= path.split("/")
     path = str(Path(__file__).resolve().parents[1]/"")
@@ -65,67 +66,11 @@ def display_img(path):
         return send_from_directory(path, path_list[-1])
     else:
         return error_msg("This image is not exist:{}".format(path+"/"+path_list[-1]))
-
-@app_dy_dt.route('/<uuid>/filter_classes', methods=['POST']) 
-@swag_from('./descript/display_dataset/filter_classes.yml')
-def filter_classes(uuid):
-    if request.method == 'POST':
-        # Check uuid is/isnot in app.config["PROJECT_INFO"]
-        if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
-        # Check key of front
-        if not "iteration" in request.get_json().keys():
-            return error_msg("KEY:iteration is not exist.")
-        elif not "class_name" in request.get_json().keys():
-            return error_msg("KEY:class_name is not exist.")
-        # Get project name
-        prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"] 
-        # Get type
-        type = app.config["PROJECT_INFO"][uuid]["front_project"]['type']
-        # Get value of front
-        iteration = request.get_json()['iteration']
-        class_name = request.get_json()['class_name']
-
-        # class_name== "Unlabeled"
-        if class_name== "Unlabeled":
-            class_name = ""
-
-        # Give img path
-        iter_path = "./Project/"+prj_name+"/"+iteration
-        if type == "classification":
-            iter_cls_path = iter_path+"/"+class_name
-            if "workspace" == iteration:
-                img_list = get_folder_image(iter_cls_path, filetype=False)
-                return jsonify({"img_path":img_list, "length":len(img_list)})
-            else:
-                # train/val/test in iteration/dataset except eval
-                iter_path = iter_path+"/dataset"
-                img_list = []
-                folder_list = [iter_path+"/"+name for name in natsorted(os.listdir(iter_path)) if os.path.isdir(iter_path+"/"+name) and name !="eval"]
-                for dir in folder_list:
-                    dir = dir + "/" + class_name
-                    img_list.extend(get_folder_image(dir, filetype=False))
-                return jsonify({"img_path":img_list, "length":len(img_list)})
-
-        elif type == "object_detection":
-            if "workspace" == iteration:
-                classes_path = iter_path+ '/'+"classes.txt"
-                img_list = get_obj_classes_img(iter_path, class_name, classes_path)
-                return jsonify({"img_path":img_list, "length":len(img_list)})
-            else:
-                # train/val/test in iteration/dataset except eval
-                iter_path = iter_path+"/dataset"
-                img_list = []
-                folder_list = [iter_path+"/"+name for name in natsorted(os.listdir(iter_path)) if os.path.isdir(iter_path+"/"+name) and name !="eval"]
-                classes_path = iter_path+ '/'+"classes.txt"
-                for dir in folder_list:
-                    img_list.extend(get_obj_classes_img(dir, class_name, classes_path))
-                return jsonify({"img_path":img_list, "length":len(img_list)})            
-
-@app_dy_dt.route('/<uuid>/delete_img', methods=['POST']) 
-@swag_from('./descript/display_dataset/delete_img.yml')
+         
+@app_dy_dt.route('/<uuid>/delete_img', methods=['DELETE']) 
+@swag_from("{}/{}".format(YAML_PATH, "delete_img.yml"))
 def delete_img(uuid):
-    if request.method == 'POST':
+    if request.method == 'DELETE':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
             return error_msg("UUID:{} is not exist.".format(uuid))
@@ -157,7 +102,7 @@ def delete_img(uuid):
         return success_msg("Delete images- project:{}, images:{}".format(prj_name, image_info_list))
 
 @app_dy_dt.route('/<uuid>/iter_cls_num', methods=['POST']) 
-@swag_from('./descript/display_dataset/iter_cls_num.yml')
+@swag_from("{}/{}".format(YAML_PATH, "iter_cls_num.yml")) 
 def iter_cls_num(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]

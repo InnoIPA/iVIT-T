@@ -1,8 +1,31 @@
-parameters:
+tags:
+  - control_project
+summary: Renamed project
+description: Renamed project
 
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "new_name":
+          type: string
+          example: "new_name"
 
 responses:
-  200:
-    description: A status for success to upload classes.txt.
-  404:
-    description: A status for txt of folder is not exist.
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example: 
+        {
+          "new_name": "new_name"
+        }

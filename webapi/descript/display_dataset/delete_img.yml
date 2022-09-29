@@ -1,5 +1,30 @@
+tags:
+  - display_dataset
+summary: Delete images
+description: Delete images
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+      
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "image_info":
+          type: object
+          example: 
+            {"Unlabeled":["01.bmp","02.bmp","03.bmp"],
+              "folder":["0.jpg","1.jpg"]}
+              
 responses:
-  200:
-    description: A status for success to upload classes.txt.
-  404:
-    description: A status for txt of folder is not exist.
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: "Delete images- project:{prj_name}, images:{image_list}"

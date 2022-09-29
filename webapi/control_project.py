@@ -4,7 +4,7 @@ import logging
 import os, shutil
 
 from webapi import app
-from .common.utils import success_msg, error_msg, write_json, read_json, MAINCFGPAHT
+from .common.utils import success_msg, error_msg, write_json, read_json, MAINCFGPAHT, YAML_MAIN_PATH
 from .common.init_tool import get_project_info, init_apps, cover_img, exist_iteration, count_effect_img
 from .common.inspection import Check, create_pj_dir
 chk = Check()
@@ -27,9 +27,11 @@ app.config['MODEL']={
                         "classification":['vgg_16','resnet_50'],
                         "object_detection": ['yolov4-leaky', 'yolov3-tiny']},
                 }
+# Define API Docs path and Blue Print
+YAML_PATH       = YAML_MAIN_PATH + "/control_project"
 
 @app_cl_pj.route('/init_project', methods=['GET']) 
-@swag_from('./descript/control_project/init_project.yml')
+@swag_from("{}/{}".format(YAML_PATH, "init_project.yml"))
 def init_project():
     # Get all project info
     get_project_info()
@@ -37,7 +39,8 @@ def init_project():
 
     # Check PROJECT_INFO is null
     if not app.config["PROJECT_INFO"]:
-        return error_msg("Any project is not exist in project folder.")
+        logging.warn("Any project is not exist in project folder.")
+        return jsonify({})
 
     for uuid in app.config["PROJECT_INFO"]:
         # Cover image sent to front
@@ -50,25 +53,25 @@ def init_project():
     return app.config["PROJECT_INFO"]
 
 @app_cl_pj.route('/get_all_project', methods=['GET']) 
-@swag_from('./descript/control_project/get_all_project.yml')
+@swag_from("{}/{}".format(YAML_PATH, "get_all_project.yml"))
 def get_all_project():
     return app.config["PROJECT_INFO"]
 
 @app_cl_pj.route('/get_type', methods=['GET']) 
-@swag_from('./descript/control_project/get_type.yml')
+@swag_from("{}/{}".format(YAML_PATH, "get_type.yml"))
 def get_type():
     type = {"type": list(app.config['MODEL']["other"].keys())}
     return jsonify(type)
 
 @app_cl_pj.route('/get_platform', methods=['GET']) 
-@swag_from('./descript/control_project/get_platform.yml')
+@swag_from("{}/{}".format(YAML_PATH, "get_platform.yml"))
 def get_platform():
     config = read_json(MAINCFGPAHT)
     platform = {"platform":config["platform"]}
     return jsonify(platform)
 
 @app_cl_pj.route('/create_project', methods=['POST']) 
-@swag_from('./descript/control_project/create_project.yml')
+@swag_from("{}/{}".format(YAML_PATH, "create_project.yml"))
 def create_project():
     if request.method=='POST':
         logging.info('Create Project.')
@@ -94,8 +97,8 @@ def create_project():
 
         return success_msg("Create new project:{}".format(app.config['NEW_PROJECT_CONFIG']["front_project"]["project_name"]))
 
-@app_cl_pj.route('/<uuid>/delete_project', methods=['GET']) 
-@swag_from('./descript/control_project/delete_project.yml')
+@app_cl_pj.route('/<uuid>/delete_project', methods=['DELETE']) 
+@swag_from("{}/{}".format(YAML_PATH, "delete_project.yml"))
 def delete_project(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
@@ -111,12 +114,12 @@ def delete_project(uuid):
 
         return success_msg("Delete project:{}!".format(prj_name))
     else:
-        return success_msg("This {} folder is not exist in Project:{}!".format(prj_name))
+        return error_msg("This {} folder is not exist!".format(prj_name))
 
-@app_cl_pj.route('/<uuid>/rename_project', methods=['POST']) 
-@swag_from('./descript/control_project/rename_project.yml')
+@app_cl_pj.route('/<uuid>/rename_project', methods=['PUT']) 
+@swag_from("{}/{}".format(YAML_PATH, "rename_project.yml"))
 def rename_project(uuid):
-    if request.method == 'POST':
+    if request.method == 'PUT':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
             return error_msg("UUID:{} is not exist.".format(uuid))
@@ -141,4 +144,4 @@ def rename_project(uuid):
         # Change folder name
         os.rename("./Project/"+prj_name, "./Project/"+new_name)
 
-        return success_msg('The name of project {} change to {}.'.format(prj_name, new_name))
+        return jsonify(request.get_json())

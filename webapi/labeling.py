@@ -4,13 +4,15 @@ import logging
 import os, shutil
 from pathlib import Path
 from webapi import app
-from .common.utils import exists, read_json, read_txt, success_msg, error_msg, write_txt
+from .common.utils import exists, read_json, read_txt, success_msg, error_msg, write_txt, YAML_MAIN_PATH
 from .common.labeling_tool import yolo_txt_convert, save_bbox
 
 app_labeling = Blueprint( 'labeling', __name__)
+# Define API Docs path and Blue Print
+YAML_PATH       = YAML_MAIN_PATH + "/labeling"
 
 @app_labeling.route('/<uuid>/add_class', methods=['POST']) 
-@swag_from('./descript/labeling/add_class.yml')
+@swag_from("{}/{}".format(YAML_PATH, "add_class.yml"))
 def add_class(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
@@ -41,10 +43,10 @@ def add_class(uuid):
             
         return success_msg("Added new class:{} in Project:{}".format(class_name, prj_name))
 
-@app_labeling.route('/<uuid>/delete_class', methods=['POST']) 
-@swag_from('./descript/labeling/delete_class.yml')
+@app_labeling.route('/<uuid>/delete_class', methods=['DELETE']) 
+@swag_from("{}/{}".format(YAML_PATH, "delete_class.yml"))
 def delete_class(uuid):
-    if request.method == 'POST':
+    if request.method == 'DELETE':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
             return error_msg("UUID:{} is not exist.".format(uuid))
@@ -82,10 +84,10 @@ def delete_class(uuid):
 
         return success_msg("Delete class:{} in Project:{}".format(class_name, prj_name))
 
-@app_labeling.route('/<uuid>/rename_class', methods=['POST']) 
-@swag_from('./descript/labeling/rename_class.yml')
+@app_labeling.route('/<uuid>/rename_class', methods=['PUT']) 
+@swag_from("{}/{}".format(YAML_PATH, "rename_class.yml")) 
 def rename_class(uuid):
-    if request.method == 'POST':
+    if request.method == 'PUT':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
             return error_msg("UUID:{} is not exist.".format(uuid))
@@ -129,7 +131,7 @@ def rename_class(uuid):
         return success_msg("Renamed class:{} to {} in Project:{}".format(class_name, new_name, prj_name))
 
 @app_labeling.route('/<uuid>/edit_img_class', methods=['POST']) 
-@swag_from('./descript/labeling/edit_img_class.yml')
+@swag_from("{}/{}".format(YAML_PATH, "edit_img_class.yml")) 
 def edit_img_class(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
@@ -173,7 +175,7 @@ def edit_img_class(uuid):
         return success_msg("Change images:{} to {} in Project:{}".format(images_info, class_name, prj_name))
 
 @app_labeling.route('/<uuid>/get_bbox', methods=['POST']) 
-@swag_from('./descript/labeling/get_bbox.yml')
+@swag_from("{}/{}".format(YAML_PATH, "get_bbox.yml")) 
 def get_bbox(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
@@ -197,7 +199,7 @@ def get_bbox(uuid):
             return error_msg("This image:{} is not exist in Project:{}".format(img_path, prj_name))
 
 @app_labeling.route('/<uuid>/update_bbox', methods=['POST']) 
-@swag_from('./descript/labeling/update_bbox.yml')
+@swag_from("{}/{}".format(YAML_PATH, "update_bbox.yml")) 
 def update_bbox(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
@@ -222,7 +224,7 @@ def update_bbox(uuid):
             return error_msg("This image:{} is not exist in Project:{}".format(image_name, prj_name))
 
 @app_labeling.route('/get_img_cls/<type>/<path:path>', methods=['GET'])
-@swag_from('./descript/labeling/get_img_cls.yml')
+@swag_from("{}/{}".format(YAML_PATH, "get_img_cls.yml")) 
 def get_img_cls(type, path):
     # combination path
     img_path = "./"+ path
@@ -252,7 +254,7 @@ def get_img_cls(type, path):
         return error_msg("This image is not exist:{}".format(img_path))
 
 @app_labeling.route('/get_color_bar',methods=['GET'])
-@swag_from('./descript/labeling/get_color_bar.yml')
+@swag_from("{}/{}".format(YAML_PATH, "get_color_bar.yml")) 
 def get_color_bar():
     color_path = "./webapi/common/color_bar.json"
     color_bar = read_json(color_path)

@@ -1,5 +1,34 @@
+tags:
+  - labeling
+summary: Get class of one image 
+description: Get class of one image
+
+parameters:
+  - in: path
+    name: type
+    required: true
+    schema:
+      type: string
+
+  - in: path
+    name: path
+    required: true
+    schema:
+      type: string
+
 responses:
-  200:
-    description: A status for success to upload classes.txt.
-  404:
-    description: A status for txt of folder is not exist.
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example:
+        {
+            "Sticker": 1,
+            "Memory": 1
+        }
+      
+  '400':
+    schema:
+      type: string
+      description: Error message
+      example: "This image is not exist:{img_path}"
