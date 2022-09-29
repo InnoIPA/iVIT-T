@@ -1,8 +1,28 @@
-parameters:
+tags:
+  - control_project
+summary: Create a new project
+description: Create a new project
 
+parameters:
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "project_name":
+          type: string
+          example: test_api
+        "platform":
+          type: string
+          example: nvidia
+        "type":
+          type: string
+          example: classification
 
 responses:
-  200:
-    description: A status for success to upload classes.txt.
-  404:
-    description: A status for txt of folder is not exist.
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: "Create new project:{prj_name}"

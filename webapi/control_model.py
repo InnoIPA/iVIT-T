@@ -4,12 +4,14 @@ import logging
 import os, shutil, json
 from natsort import natsorted
 from webapi import app
-from .common.utils import exists, read_json, success_msg, error_msg
+from .common.utils import exists, read_json, success_msg, error_msg, YAML_MAIN_PATH
 
 app_cl_model = Blueprint( 'control_model', __name__)
+# Define API Docs path and Blue Print
+YAML_PATH       = YAML_MAIN_PATH + "/control_model"
 
 @app_cl_model.route('/<uuid>/get_iteration', methods=['GET']) 
-@swag_from('./descript/control_model/get_iteration.yml')
+@swag_from("{}/{}".format(YAML_PATH, "get_iteration.yml"))
 def get_iteration(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
@@ -21,7 +23,7 @@ def get_iteration(uuid):
     return jsonify({"folder_name":folder_name}) 
 
 @app_cl_model.route('/<uuid>/get_model_info', methods=['POST']) 
-@swag_from('./descript/control_model/get_model_info.yml')
+@swag_from("{}/{}".format(YAML_PATH, "get_model_info.yml"))
 def get_model_info(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
@@ -50,10 +52,10 @@ def get_model_info(uuid):
         else:
             return error_msg("This {} is not exist in Project:{}".format(iteration, prj_name))
 
-@app_cl_model.route('/<uuid>/delete_iteration', methods=['POST']) 
-@swag_from('./descript/control_model/delete_iteration.yml')
+@app_cl_model.route('/<uuid>/delete_iteration', methods=['DELETE']) 
+@swag_from("{}/{}".format(YAML_PATH, "delete_iteration.yml"))
 def delete_iteration(uuid):
-    if request.method == 'POST':
+    if request.method == 'DELETE':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
             return error_msg("UUID:{} is not exist.".format(uuid))
@@ -82,7 +84,7 @@ def delete_iteration(uuid):
             return error_msg("This {} is not exist in Project:{}".format(iteration, prj_name))
 
 @app_cl_model.route('/<uuid>/curve_history', methods=['POST']) 
-@swag_from('./descript/control_model/curve_history.yml')
+@swag_from("{}/{}".format(YAML_PATH, "curve_history.yml"))
 def curve_history(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
@@ -113,7 +115,7 @@ def curve_history(uuid):
             return error_msg("This {} is not exist in Project:{}".format(iteration, prj_name))
         
 @app_cl_model.route('/<uuid>/metrics_history', methods=['POST']) 
-@swag_from('./descript/control_model/metrics_history.yml')
+@swag_from("{}/{}".format(YAML_PATH, "metrics_history.yml"))
 def metrics_history(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
@@ -139,7 +141,7 @@ def metrics_history(uuid):
             return error_msg("This {} is not exist in Project:{}".format(iteration, prj_name))
 
 @app_cl_model.route('/<uuid>/get_model_json', methods=['POST']) 
-@swag_from('./descript/control_model/get_model_json.yml')
+@swag_from("{}/{}".format(YAML_PATH, "get_model_json.yml"))
 def get_model_json(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
@@ -185,7 +187,7 @@ def get_model_json(uuid):
             return error_msg("This {} is not exist in Project:{}".format(iteration, prj_name))
 
 @app_cl_model.route('/<uuid>/check_best_model', methods=['POST']) 
-@swag_from('./descript/control_model/check_best_model.yml')
+@swag_from("{}/{}".format(YAML_PATH, "check_best_model.yml"))
 def check_best_model(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
@@ -217,10 +219,10 @@ def check_best_model(uuid):
                 model_path = train_param["train_config"]["save_model_path"]
                 best_list = [model for model in os.listdir(model_path) if "best" in model]
                 if len(best_list) == 0:
-                    return error_msg("This best model is not exist in {} of Project:{}".format(type, iteration, prj_name))
+                    return error_msg("This best model is not exist in {} of Project:{}".format(iteration, prj_name))
                 else:
                     return success_msg("Exist.")
             else:
-                return error_msg("This model.json is not exist in {} of Project:{}".format(type, iteration, prj_name))
+                return error_msg("This model.json is not exist in {} of Project:{}".format(iteration, prj_name))
         else:
             return error_msg("This {} is not exist in Project:{}".format(iteration, prj_name))

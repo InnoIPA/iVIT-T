@@ -1,5 +1,24 @@
+tags:
+  - export_model
+summary: Get platform of export
+description: Get platform of export
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
 responses:
-  200:
-    description: A status for success to upload classes.txt.
-  404:
-    description: A status for txt of folder is not exist.
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example: 
+        {
+            "export_platform": [
+                "nvidia",
+                "intel"
+            ]
+        }

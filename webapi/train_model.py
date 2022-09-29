@@ -3,9 +3,9 @@ from flasgger import swag_from
 # import logging
 import shutil
 from webapi import app
-from .common.utils import success_msg, error_msg, write_json
+from .common.utils import success_msg, error_msg, write_json, YAML_MAIN_PATH
 from .common.training_tool import METHOD_OF_TRAINING, BATCH_SIZE, Fillin, create_iter_folder, Prepare_data, Training
-from .common.inspection import Check
+from .common.inspection import Check, Pretrained
 chk = Check()
 fill_in = Fillin()
 training = Training()
@@ -29,16 +29,18 @@ app.config['NEW_TRAIN_CONFIG'] = {"front_train":{
                         "model_param":{},
                         "remaining_time":None}
 EXCEPT_LIST = ["export_platform","GPU","effect_img_num", "spend_time"]
+# Define API Docs path and Blue Print
+YAML_PATH       = YAML_MAIN_PATH + "/train_model"
 
 @app_train.route('/get_method_training', methods=['GET']) 
-@swag_from('./descript/train_model/get_method_training.yml')
+@swag_from("{}/{}".format(YAML_PATH, "get_method_training.yml"))
 def get_method_training():
     method = METHOD_OF_TRAINING["classification"]["other"].keys()
 
     return jsonify({"method_training": list(method)})
 
 @app_train.route('/<uuid>/get_model', methods=['GET']) 
-@swag_from('./descript/train_model/get_model.yml')
+@swag_from("{}/{}".format(YAML_PATH, "get_model.yml"))
 def get_model(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
@@ -58,7 +60,7 @@ def get_model(uuid):
     return jsonify({"model": model})
 
 @app_train.route('/<uuid>/get_batch_size', methods=['GET']) 
-@swag_from('./descript/train_model/get_batch_size.yml')
+@swag_from("{}/{}".format(YAML_PATH, "get_batch_size.yml")) 
 def get_batch_size(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
@@ -74,7 +76,7 @@ def get_batch_size(uuid):
     return jsonify({"batch_size": batch_size})
 
 @app_train.route('/<uuid>/get_default_param', methods=['POST']) 
-@swag_from('./descript/train_model/get_default_param.yml')
+@swag_from("{}/{}".format(YAML_PATH, "get_default_param.yml")) 
 def get_default_param(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
@@ -100,7 +102,7 @@ def get_default_param(uuid):
         return jsonify({"training_param":default})
 
 @app_train.route('/<uuid>/create_training_iter', methods=['POST']) 
-@swag_from('./descript/train_model/create_training_iter.yml')
+@swag_from("{}/{}".format(YAML_PATH, "create_training_iter.yml"))
 def create_training_iter(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
@@ -140,7 +142,11 @@ def create_training_iter(uuid):
         # Split dataset
         Prepare_data(prj_name, type)
         # For loop param use app.config['NEW_TRAIN_CONFIG'][”model_param”]
-        fill_in.fill_model_cfg(uuid)
+        pretrained_stats = fill_in.fill_model_cfg(uuid)
+        pre_trained = True
+        # Pre-trained model is not exist.
+        if not pretrained_stats:
+            pre_trained = False
         # Create new model.json and front_train.json
         front_train_path = prj_path + '/' + iter_name + '/front_train.json'
         model_param_path = prj_path + '/' + iter_name + '/' + model_json
@@ -155,11 +161,12 @@ def create_training_iter(uuid):
         app.config["PROJECT_INFO"][uuid]["training_info"]["iteration"] = iter_name
         # Append training param to app.config["PROJECT_INFO"][uuid]["training_info"]
         app.config["PROJECT_INFO"][uuid]["training_info"].update(app.config['NEW_TRAIN_CONFIG'])
-        return jsonify({"iter_name":iter_name,"prj_name":prj_name})
+
+        return jsonify({"iter_name":iter_name,"prj_name":prj_name, "pre_trained":pre_trained})
         # return success_msg("Finished setting up parameter of the training model in {} of Project:{}".format(iter_name, prj_name))
 
 @app_train.route('/<uuid>/start_training', methods=['GET']) 
-@swag_from('./descript/train_model/start_training.yml')
+@swag_from("{}/{}".format(YAML_PATH, "start_training.yml"))
 def start_training(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
@@ -178,7 +185,7 @@ def start_training(uuid):
         return error_msg("Is running in iteration:{} of Project:{}".format(iter_name, prj_name))
 
 @app_train.route('/<uuid>/stop_training', methods=['GET']) 
-@swag_from('./descript/train_model/stop_training.yml')
+@swag_from("{}/{}".format(YAML_PATH, "stop_training.yml"))
 def stop_training(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
@@ -197,7 +204,7 @@ def stop_training(uuid):
         return error_msg("Thread is not exist in iteration:{} of Project:{}".format(iter_name, prj_name))
 
 @app_train.route('/<uuid>/get_training_info', methods=['GET']) 
-@swag_from('./descript/train_model/get_training_info.yml')
+@swag_from("{}/{}".format(YAML_PATH, "get_training_info.yml"))
 def get_training_info(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
@@ -212,3 +219,19 @@ def get_training_info(uuid):
     remaining_time = app.config["PROJECT_INFO"][uuid]["training_info"]["remaining_time"]
 
     return jsonify({"effect_img_num":effect_img_num, "training_method":training_method, "remaining_time":remaining_time})
+
+@app_train.route('/<uuid>/download_pretrained', methods=['GET'])
+@swag_from("{}/{}".format(YAML_PATH, "download_pretrained.yml"))
+def download_pretrained(uuid):
+    # Check uuid is/isnot in app.config["PROJECT_INFO"]
+    if not ( uuid in app.config["PROJECT_INFO"].keys()):
+        return error_msg("UUID:{} is not exist.".format(uuid))
+    # Get iteration name
+    arch = app.config["PROJECT_INFO"][uuid]["training_info"]["model_param"]["model_config"]["arch"]
+    # Get type
+    type = app.config["PROJECT_INFO"][uuid]["front_project"]["type"]
+    # Download pre-trained model
+    pretrained = Pretrained()
+    pretrained.download_pretrained(arch, type, uuid)
+
+    return success_msg("True")

@@ -1,7 +1,7 @@
 tags:
   - train_model
-summary: Get options of model
-description: Get options of model
+summary: Download pre-trained model of some arch
+description: Download pre-trained model of some arch
 
 parameters:
   - in: path
@@ -13,7 +13,7 @@ parameters:
 responses:
   '200':
     schema:
-      type: object
+      type: string
       description: Successful operation
       example: 
-        {"model": ["yolov4, yolov4-tiny"]}
+        "True"

@@ -1,7 +1,7 @@
 tags:
-  - export_model
-summary: Correcting the class of evaluating 
-description: Correcting the class of evaluating 
+  - evaluate_model
+summary: Correcting bounding boxes of evaluating and the class of evaluating 
+description: Correcting bounding boxes of evaluating and the class of evaluating 
 
 parameters:
   - in: path
@@ -22,16 +22,19 @@ parameters:
         "image_name":
           type: string
           example: eval_0.jpg
-        "class_name":
-          type: string
-          example: "dog"
+        "box_info":
+          type: array
+          example: 
+            [
+              {"class_id": "0","class_name": "Memory","bbox": [657,113,1320,448]}
+            ]
 
 responses:
   '200':
     schema:
       type: string
       description: Successful operation
-      example: "Save image:{image_name} and label:{class_name} in dataset of Project:{prj_name}"
+      example: "Save image:{image_name} and box:{box_info} in dataset of Project:{prj_name}"
       
   '400':
     schema:

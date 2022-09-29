@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, send_from_directory
 from flasgger import swag_from
 from pathlib import Path
 from webapi import app
-from .common.utils import MAINCFGPAHT, exists,read_json, success_msg, error_msg, zip_dir
+from .common.utils import MAINCFGPAHT, exists,read_json, success_msg, error_msg, YAML_MAIN_PATH
 from .common.training_tool import Fillin
 from .common.export_tool import set_export_json, convert_model
 from .common.inspection import Check
@@ -11,9 +11,11 @@ ct_model = convert_model()
 fill_in = Fillin()
 
 app_export = Blueprint( 'export_model', __name__)
+# Define API Docs path and Blue Print
+YAML_PATH       = YAML_MAIN_PATH + "/export_model"
 
 @app_export.route('/<uuid>/get_export_platform', methods=['GET']) 
-@swag_from('./descript/export_model/get_export_platform.yml')
+@swag_from("{}/{}".format(YAML_PATH, "get_export_platform.yml"))
 def get_export_platform(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
@@ -30,7 +32,7 @@ def get_export_platform(uuid):
         return jsonify({"export_platform":platform})
 
 @app_export.route('/<uuid>/start_convert', methods=['POST']) 
-@swag_from('./descript/export_model/start_convert.yml')
+@swag_from("{}/{}".format(YAML_PATH, "start_convert.yml"))
 def start_convert(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
@@ -61,7 +63,7 @@ def start_convert(uuid):
         return success_msg("Start to convert model to {}.".format(export_platform))
 
 # @app.route('/<uuid>/download', methods=['POST'])
-# @swag_from('./descript/export_model/download.yml')
+# @swag_from("{}/{}".format(YAML_PATH, "download.yml"))
 # def download(uuid):
 #     if request.method == 'POST':
 #         # Check uuid is/isnot in app.config["PROJECT_INFO"]
@@ -86,7 +88,7 @@ def start_convert(uuid):
 #             return error_msg("This {}.zip is not exist.".format(prj_name))
 
 @app.route('/<uuid>/share_api', methods=['POST'])
-@swag_from('./descript/export_model/share_api.yml')
+@swag_from("{}/{}".format(YAML_PATH, "share_api.yml"))
 def share_api(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
@@ -110,7 +112,7 @@ def share_api(uuid):
             return error_msg("This {}.zip is not exist.".format(prj_name))
 
 @app.route('/<uuid>/<iteration>/share', methods=['GET'])
-@swag_from('./descript/export_model/share.yml')
+@swag_from("{}/{}".format(YAML_PATH, "share.yml"))
 def share(uuid, iteration):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):

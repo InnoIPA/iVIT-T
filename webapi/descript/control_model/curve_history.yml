@@ -1,8 +1,54 @@
+tags:
+  - control_model
+summary: Get history record of every step
+description: Get history record of every step
+
 parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
 
-
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "iteration":
+          type: string
+          example: iteration1
 responses:
-  200:
-    description: A status for success to upload classes.txt.
-  404:
-    description: A status for txt of folder is not exist.
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example:
+            {
+              "1": {
+                  "status": {
+                      "acc": 0.375,
+                      "loss": 2.99771,
+                      "val_acc": 0.5,
+                      "val_loss": 0.75662
+                  },
+                  "step": "1"
+              },
+              "2": {
+                  "status": {
+                      "acc": 0.9375,
+                      "loss": 0.46913,
+                      "val_acc": 0.5,
+                      "val_loss": 2.19652
+                  },
+                  "step": "2"
+              },
+            }
+  '400':
+    schema:
+      type: array
+      description: Error message
+      example:
+        [ "This graph.txt is not exist in {iteration} of Project:{prj_name}",
+          "This {iteration} is not exist in Project:{prj_name}"]

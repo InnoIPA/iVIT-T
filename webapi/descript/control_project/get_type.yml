@@ -1,8 +1,17 @@
-parameters:
-
+tags:
+  - control_project
+summary: Get options of model type
+description: Get options of model type
 
 responses:
-  200:
-    description: A status for success to upload classes.txt.
-  404:
-    description: A status for txt of folder is not exist.
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: 
+        {
+            "type": [
+                "classification",
+                "object_detection"
+            ]
+        }

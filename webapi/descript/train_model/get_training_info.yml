@@ -1,8 +1,25 @@
+tags:
+  - train_model
+summary: Get information in training 
+description: Get information in training 
+
 parameters:
-
-
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+      
 responses:
-  200:
-    description: A status for success to upload classes.txt.
-  404:
-    description: A status for txt of folder is not exist.
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example: 
+        {"effect_img_num":100, "training_method":"Quick training", "remaining_time":6000}
+      
+  '400':
+    schema:
+      type: string
+      description: Error message
+      example: "uuid:{uuid} is not training"

@@ -1,5 +1,45 @@
+tags:
+  - display_dataset
+summary: Get images of some class in some iteration of the project. 
+         
+description: Get images of some class in some iteration of the project.
+            Get {key:value} of Object for all images -> {"class_name":"All"};
+            Get {key:value} of Object for unlabeled images -> {class_name":"Unlabeled"};
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "iteration":
+          type: string
+          example: workspace
+        "class_name":
+          type: string
+          example: Unlabeled
+
 responses:
-  200:
-    description: A status for success to upload classes.txt.
-  404:
-    description: A status for txt of folder is not exist.
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: 
+        {
+            "img_path": [
+                "./project/dog_cat_classification/workspace/2.jpg",
+                "./project/dog_cat_classification/workspace/3.jpg",
+                "./project/dog_cat_classification/workspace/6.jpg",
+                "./project/dog_cat_classification/workspace/7.jpg",
+                "./project/dog_cat_classification/workspace/9.jpg",
+                "./project/dog_cat_classification/workspace/10.jpg",
+            ],
+            "length": 6
+        }

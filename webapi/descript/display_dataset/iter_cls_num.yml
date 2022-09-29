@@ -1,7 +1,7 @@
 tags:
-  - export_model
-summary: Get API of export.zip
-description: Get API of export.zip 
+  - display_dataset
+summary: Get numbers of images in iteration
+description: Get numbers of images in iteration
 
 parameters:
   - in: path
@@ -25,10 +25,11 @@ responses:
     schema:
       type: string
       description: Successful operation
-      example: "{IP}:{Port}/{uuid}/{iteration}/share"
-      
-  '400':
-    schema:
-      type: string
-      description: Error message
-      example: "This {prj_name}.zip is not exist."
+      example: 
+        {
+            "total": 40,
+            "classes_num": {
+                "cat": 20,
+                "dog": 20
+            }
+        }
