@@ -1,5 +1,18 @@
+tags:
+  - labeling
+summary: Get 1000 colors (BGR)
+description: Get 1000 colors (BGR)
+
 responses:
-  200:
-    description: A status for success to upload classes.txt.
-  404:
-    description: A status for txt of folder is not exist.
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: 
+        {
+            "1": [
+                145,
+                235,
+                180
+            ]
+        }

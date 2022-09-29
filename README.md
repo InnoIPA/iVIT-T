@@ -8,6 +8,7 @@ A library to training model of TensorFlow-Keras and Darknet. This library enable
 * [Web API mode](#web-api-mode)
 * [Web UI](#web-ui)
 
+
 # See What's New
 - [Release Notes](docs/release_notes.md)
 - Training Classificaiton/Object detection model
@@ -40,6 +41,13 @@ In the "build_convert.sh", this "-p" is the model finally deployed platform:
 ```
 0: Nvidia, 1: Intel, 2: Xilinx
 ```
+
+### Download pre-trained model
+
+```shell
+python3 pretrainedmodel/pretrained_download.py -all
+```
+- This "-all" downloads all of the pre-trained models.
 
 ### CLI mode
 

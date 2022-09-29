@@ -7,7 +7,14 @@ import eventlet
 # initial Flask application
 app = Flask(__name__)
 
-eventlet.monkey_patch() # Threaded
+# Threaded
+eventlet.monkey_patch() 
+# Define web api docs
+app.config['SWAGGER'] = {
+    'title': 'iVIT-T',
+    'uiversion': 3
+}
+
 swagger = Swagger(app)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins='*')

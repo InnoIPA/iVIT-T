@@ -1,5 +1,35 @@
+tags:
+  - upload_dataset
+summary: Upload files
+description: Upload files
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+  - in: formData
+    name: custom_name
+    required: true
+    type: file
+    description: The file to upload. 
+      If you upload a folder this form-data key is the folder name(custom). 
+      If you upload the file, the form-data key is "Unlabeled". 
+      This swagger API can't test. Please use "Postman" testing.
+
 responses:
-  200:
-    description: A status for success to upload classes.txt.
-  404:
-    description: A status for txt of folder is not exist.
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example:
+        Upload images-{len_files} images in {prj_name}/{dirs}
+        
+  '400':
+    schema:
+      type: array
+      description: Error message
+      example: ["The size of {file_name} is 0",
+          "No upload files."]

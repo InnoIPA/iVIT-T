@@ -1,8 +1,39 @@
+tags:
+  - control_model
+summary: Get history record of every step
+description: Get history record of every step
+
 parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
 
-
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "iteration":
+          type: string
+          example: iteration1
 responses:
-  200:
-    description: A status for success to upload classes.txt.
-  404:
-    description: A status for txt of folder is not exist.
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example:
+              {
+                  "f1_score": 0.73,
+                  "percision": 0.83,
+                  "recall": 0.75
+              }
+  '400':
+    schema:
+      type: array
+      description: Error message
+      example:
+        [ "This metrics.json is not exist in {iteration} of Project:{prj_name}",
+          "This {iteration} is not exist in Project:{prj_name}"]

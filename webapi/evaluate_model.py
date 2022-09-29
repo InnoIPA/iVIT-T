@@ -4,16 +4,18 @@ import logging
 import os, shutil
 from webapi import app
 from werkzeug.utils import secure_filename
-from .common.utils import error_msg, ALLOWED_EXTENSIONS, exists, success_msg
+from .common.utils import error_msg, ALLOWED_EXTENSIONS, exists, success_msg, YAML_MAIN_PATH
 from .common.training_tool import Fillin
 from .common.evaluate_tool import set_eval_json, eval_cmd
 from .common.labeling_tool import save_bbox
 fill_in = Fillin()
 
 app_eval = Blueprint( 'evaluate_model', __name__)
+# Define API Docs path and Blue Print
+YAML_PATH       = YAML_MAIN_PATH + "/evaluate_model"
 
 @app_eval.route('/<uuid>/upload_eval_img', methods=['POST']) 
-@swag_from('./descript/evaluate_model/upload_eval_img.yml')
+@swag_from("{}/{}".format(YAML_PATH, "upload_eval_img.yml"))
 def upload_eval_img(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
@@ -59,7 +61,7 @@ def upload_eval_img(uuid):
         return jsonify({"eval_img":img_list})
 
 @app_eval.route('/<uuid>/evaluate', methods=['POST']) 
-@swag_from('./descript/evaluate_model/evaluate.yml')
+@swag_from("{}/{}".format(YAML_PATH, "evaluate.yml")) 
 def evaluate(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
@@ -88,7 +90,7 @@ def evaluate(uuid):
     return jsonify({"detections":log_dict})
 
 @app_eval.route('/<uuid>/recheck_bbox', methods=['POST']) 
-@swag_from('./descript/evaluate_model/recheck_bbox.yml')
+@swag_from("{}/{}".format(YAML_PATH, "recheck_bbox.yml")) 
 def recheck_bbox(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
@@ -118,7 +120,7 @@ def recheck_bbox(uuid):
             return error_msg("This image:{} is not exist in Project:{}".format(image_name, prj_name))
 
 @app_eval.route('/<uuid>/recheck_class', methods=['POST']) 
-@swag_from('./descript/evaluate_model/recheck_class.yml')
+@swag_from("{}/{}".format(YAML_PATH, "recheck_class.yml")) 
 def recheck_class(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]

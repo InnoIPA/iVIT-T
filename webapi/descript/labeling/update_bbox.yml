@@ -1,5 +1,42 @@
+tags:
+  - labeling
+summary: Update bounding boxes of image
+description: Update bounding boxes of image
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "image_name":
+          type: string
+          example: 100.jpg
+        "box_info":
+          type: array
+          example: 
+            [
+              {"class_id": "1","class_name": "Sticker","bbox": [624,374,797,1045]},
+              {"class_id": "0","class_name": "Memory","bbox": [443,180,855,1117]},
+              {"class_id":"1","class_name":"Sticker","bbox":[624,685,797,1045]}
+            ]
+
 responses:
-  200:
-    description: A status for success to upload classes.txt.
-  404:
-    description: A status for txt of folder is not exist.
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: "Update box:{box_info} in image:{image_name} of Project:{prj_name}"
+      
+  '400':
+    schema:
+      type: string
+      description: Error message
+      example: "This image:{image_name} is not exist in Project:{prj_name}"

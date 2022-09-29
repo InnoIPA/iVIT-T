@@ -1,8 +1,48 @@
+tags:
+  - control_model
+summary: Get information of training model 
+description: Get information of training model
+
 parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
 
-
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "iteration":
+          type: string
+          example: iteration1
 responses:
-  200:
-    description: A status for success to upload classes.txt.
-  404:
-    description: A status for txt of folder is not exist.
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example:
+              {
+                  "model": "yolov4-tiny",
+                  "batch_size": 2,
+                  "step": 4000,
+                  "input_shape": [
+                      608,
+                      608,
+                      3
+                  ],
+                  "spend_time":"10s",
+                  "training_method":"quickly",
+                  "GPU":["NVIDIA GeForce RTX 2060 SUPER:0"],
+                  "effect_dataset_num":30
+              }
+  '400':
+    schema:
+      type: array
+      description: Error message
+      example:
+        [ "This front_train.json is not exist in {iteration} of Project:{prj_name}",
+          "This {iteration} is not exist in Project:{prj_name}"]

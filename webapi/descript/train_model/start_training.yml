@@ -1,8 +1,24 @@
-parameters:
+tags:
+  - train_model
+summary: Start training model
+description: Start training model
 
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
 
 responses:
-  200:
-    description: A status for success to upload classes.txt.
-  404:
-    description: A status for txt of folder is not exist.
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: "Training in iteration:{iter_name} of Project:{prj_name}"
+      
+  '400':
+    schema:
+      type: string
+      description: Error message
+      example: "Is running in iteration:{iter_name} of Project:{prj_name}"
