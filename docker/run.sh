@@ -129,6 +129,7 @@ TITLE="\n\
 PROGRAMMER: Welcome to iVIT-T \n\
 MODE:  ${MODE}\n\
 DOCKER: ${DOCKER_IMAGE} \n\
+VERSION: ${TAG_VER} \n\
 PORT: ${PORT} \n\
 GPU:  ${GPU}\n\
 COMMAND: ${COMMAND}"
@@ -143,8 +144,9 @@ if [ "${BACKRUN}" = true ];then
 	BASHCODE="bash"
 else
 	DARKNET="chmod +x ./ObjectDetection/YOLO/darknet/darknetrun.sh && ./ObjectDetection/YOLO/darknet/darknetrun.sh"
+	DLPRETRAINED="python3 pretrainedmodel/pretrained_download.py -all"
 	RUNCODE="-it"
-	BASHCODE="bash -c \"${DARKNET} && ${COMMAND} \" "
+	BASHCODE="bash -c \"${DARKNET} && ${DLPRETRAINED} && ${COMMAND} \" "
 fi
 
 # ---------------------------------------------------------

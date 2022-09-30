@@ -17,3 +17,4 @@ Project/*
 !Project/samples/
 pretrainedmodel/*
 !pretrainedmodel/README.md
+!pretrainedmodel/pretrained_download.py
