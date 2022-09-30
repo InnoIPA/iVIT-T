@@ -54,8 +54,8 @@ def upload(uuid):
                     # Get file name
                     filename = secure_filename(file.filename)
                     # Check folder file
-                    if "/" in file.name:
-                        filename = file.name.split("/")[1]
+                    if "/" in file.filename:
+                        filename = file.filename.split("/")[1]
                     # Exclude over 2 word(".") rename filename
                     split = filename.split(".")
                     if len(split)>2:
