@@ -53,7 +53,6 @@ def filter_dataset(uuid):
             return jsonify(iteration_path(class_name, iter_path, type))
 
 @app_dy_dt.route('/display_img/<path:path>', methods=['GET'])
-@swag_from("{}/{}".format(YAML_PATH, "display_img.yml"))
 def display_img(path):
     path_list= path.split("/")
     path = str(Path(__file__).resolve().parents[1]/"")
@@ -66,7 +65,39 @@ def display_img(path):
         return send_from_directory(path, path_list[-1])
     else:
         return error_msg("This image is not exist:{}".format(path+"/"+path_list[-1]))
-         
+
+@app_dy_dt.route('/<uuid>/display_url', methods=['POST'])
+@swag_from("{}/{}".format(YAML_PATH, "display_url.yml"))
+def display_url(uuid):
+    if request.method == 'POST':
+        # Check uuid is/isnot in app.config["PROJECT_INFO"]
+        if not ( uuid in app.config["PROJECT_INFO"].keys()):
+            return error_msg("UUID:{} is not exist.".format(uuid))
+        # Check key of front
+        if not "iteration" in request.get_json().keys():
+            return error_msg("KEY:iteration is not exist.")
+        elif not "class_name" in request.get_json().keys():
+            return error_msg("KEY:class_name is not exist.")
+        # Get project name
+        prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"] 
+        # Get value of front
+        iteration = request.get_json()['iteration']
+        class_name = request.get_json()['class_name']
+        # Get type
+        type = app.config["PROJECT_INFO"][uuid]["front_project"]['type']
+        # Give img path
+        iter_path = ROOT + '/' +prj_name+"/"+iteration
+        # Check iteration
+        url = "http://{}:{}".format(request.environ['SERVER_NAME'], request.environ['SERVER_PORT'])
+        if "workspace" == iteration:
+            img_path = workspace_path(class_name, iter_path, type)
+            img_path = [ url + "/display_img/"+ path.split("./")[-1] for path in img_path["img_path"]]
+            return jsonify({"img_path":img_path})
+        else:
+            img_path = iteration_path(class_name, iter_path, type)
+            img_path = [ url + "/display_img/"+ path.split("./")[-1] for path in img_path["img_path"]]
+            return jsonify({"img_path":img_path})
+
 @app_dy_dt.route('/<uuid>/delete_img', methods=['DELETE']) 
 @swag_from("{}/{}".format(YAML_PATH, "delete_img.yml"))
 def delete_img(uuid):

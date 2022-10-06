@@ -28,6 +28,7 @@
         "max_batches": 4000,
         
         "datagenerator":{
+            "preprocess_mode": null,
             "angle":0,
             "saturation":1.5,
             "exposure":1.5,

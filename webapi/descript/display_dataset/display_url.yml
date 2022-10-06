@@ -1,0 +1,41 @@
+tags:
+  - display_dataset
+summary: Get an image path list of some class in some iteration of the project.
+description: Get an image path list of some class in some iteration of the project.
+            Get {key:value} of Object for all images -> {"class_name":"All"};
+            Get {key:value} of Object for unlabeled images -> {class_name":"Unlabeled"};
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "iteration":
+          type: string
+          example: workspace
+        "class_name":
+          type: string
+          example: Unlabeled
+
+responses:
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: 
+        {
+            "img_path": [
+                "http://172.16.92.124:6530/display_img/project/test_pcb/workspace/09_spur_03.jpg",
+                "http://172.16.92.124:6530/display_img/project/test_pcb/workspace/09_spurious_copper_01.jpg",
+                "http://172.16.92.124:6530/display_img/project/test_pcb/workspace/11_short_06.jpg",
+                "http://172.16.92.124:6530/display_img/project/test_pcb/workspace/11_short_07.jpg"
+            ]
+        }

@@ -158,7 +158,7 @@ def main():
         anchor = text.split("anchors")[-1].split("\nclasses")[0].split("=")[-1]
         f.close()
         orignal = read_json("/workspace"+export_dir.split('.')[-1]+'/yolo.json')
-        orignal["anchor"] = anchor
+        orignal["anchors"] = anchor
         write_json("/workspace"+export_dir.split('.')[-1]+'/yolo.json', orignal)
 
 if __name__ == '__main__':
