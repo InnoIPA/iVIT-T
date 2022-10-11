@@ -5,7 +5,7 @@ import os, shutil
 from pathlib import Path
 from webapi import app
 from .common.utils import exists, read_json, read_txt, success_msg, error_msg, write_txt, YAML_MAIN_PATH
-from .common.labeling_tool import yolo_txt_convert, save_bbox
+from .common.labeling_tool import yolo_txt_convert, save_bbox, del_anno_index
 
 app_labeling = Blueprint( 'labeling', __name__)
 # Define API Docs path and Blue Print
@@ -60,19 +60,23 @@ def delete_class(uuid):
         # Get value of front
         class_name = request.get_json()['class_name']
 
+        main_path = "./Project/"+prj_name+"/workspace"
         # classification required remove class folder
         if type == "classification":
-            dir_path = "./Project/"+prj_name+"/workspace/"+class_name
+            dir_path = main_path+"/"+class_name
             if os.path.isdir(dir_path):
                 shutil.rmtree(dir_path, ignore_errors=True)
 
         # Add to classes.txt
-        classes_path = "./Project/"+prj_name+"/workspace/classes.txt"
+        classes_path = main_path+"/classes.txt"
         if exists(classes_path):
             # Read orignal file
             class_text = [cls for cls in read_txt(classes_path).split("\n") if cls !=""]
             # Remove orignal file
             os.remove(classes_path)
+            # Create orignal MAP table
+            org_object = { cls:idx for idx, cls in enumerate(class_text) }
+
             # Remove class string
             if class_name in class_text:
                 class_text.remove(class_name)
@@ -81,6 +85,12 @@ def delete_class(uuid):
             # Writing classes.txt
             for cls in class_text:
                 write_txt(classes_path, cls)
+
+            # Create new MAP table
+            new_object = { cls:idx for idx, cls in enumerate(class_text) }                
+            # Delete label of all images
+            if type == "object_detection":
+                del_anno_index(main_path, org_object, new_object, class_name)
 
         return success_msg("Delete class:{} in Project:{}".format(class_name, prj_name))
 
