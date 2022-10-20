@@ -14,7 +14,6 @@ YAML_PATH       = YAML_MAIN_PATH + "/upload_dataset"
 @swag_from("{}/{}".format(YAML_PATH, "upload.yml"))
 def upload(uuid):
     if request.method == 'POST':
-        logging.info('Upload file.')
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
             return error_msg("UUID:{} is not exist.".format(uuid))
@@ -72,19 +71,19 @@ def upload(uuid):
                     if type == "classification":
                         # Skip other format exclude image format
                         if not (filename.split(".")[-1] in ALLOWED_EXTENSIONS["image"]):
-                            logging.error("This type:{} of filename:{} ".format(filename.split(".")[-1], filename))
-                            continue
+                            return error_msg("This type:{} of filename:{} ".format(filename.split(".")[-1], filename))
                         
                         # Save image
+                        logging.info('Upload file:{}/{}'.format(dir_path, filename))
                         file.save(os.path.join(dir_path, filename))
 
                     elif type == "object_detection":
                         # Skip other format exclude image format
                         if (not (filename.split(".")[-1] in ALLOWED_EXTENSIONS["label"])) and (not (filename.split(".")[-1] in ALLOWED_EXTENSIONS["image"])):
-                            logging.error("This type:{} of filename:{} ".format(filename.split(".")[-1], filename))                            
-                            continue
+                            return error_msg("This type:{} of filename:{} ".format(filename.split(".")[-1], filename)) 
 
                         # Save image and annotation
+                        logging.info('Upload file:{}/{}'.format(dir_path, filename))
                         file.save(os.path.join(dir_path, filename))
 
                     # Remove file size is 0
@@ -92,4 +91,4 @@ def upload(uuid):
                         os.remove(dir_path+"/"+filename)
                         return error_msg("The size of {} is 0".format(filename))
 
-        return success_msg("Upload images-{} images in {}/{}".format(len(files), prj_name, dirs))
+        return success_msg("Upload {} files in {}/{}".format(len(files), prj_name, dirs))

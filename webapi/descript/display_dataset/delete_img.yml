@@ -19,8 +19,7 @@ parameters:
         "image_info":
           type: object
           example: 
-            {"Unlabeled":["01.bmp","02.bmp","03.bmp"],
-              "folder":["0.jpg","1.jpg"]}
+            {"Unlabeled":["01.bmp","02.bmp","03.bmp"]}
               
 responses:
   '200':

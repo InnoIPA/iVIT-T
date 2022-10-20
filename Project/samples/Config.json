@@ -1,8 +1,8 @@
 {
-  "model_json": "./Project/new-cls_2/iteration3/classification.json",
-  "platform": [
-    "nvidia",
-    "intel",
-    "xilinx"
-  ]
+    "model_json": "./Project/safety_helmet/iteration4/yolo.json",
+    "platform": [
+        "nvidia",
+        "intel",
+        "xilinx"
+    ]
 }

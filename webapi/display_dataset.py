@@ -86,7 +86,7 @@ def display_url(uuid):
         # Get type
         type = app.config["PROJECT_INFO"][uuid]["front_project"]['type']
         # Give img path
-        iter_path = ROOT + '/' +prj_name+"/"+iteration
+        iter_path = "./project/" + prj_name+"/"+iteration
         # Check iteration
         url = "http://{}:{}".format(request.environ['SERVER_NAME'], request.environ['SERVER_PORT'])
         if "workspace" == iteration:

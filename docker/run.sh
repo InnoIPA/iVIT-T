@@ -152,7 +152,7 @@ fi
 # ---------------------------------------------------------
 # Run container
 DOCKER_CMD="docker run \
---name ${CONTAINER_NAME} \
+--name ${CONTAINER_NAME}_run \
 ${MOUNT_GPU} \
 --user root \
 --rm ${RUNCODE} \

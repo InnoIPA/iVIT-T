@@ -19,3 +19,4 @@ pretrainedmodel/*
 !pretrainedmodel/README.md
 !pretrainedmodel/pretrained_download.py
 bad_label.list
+bad.list
