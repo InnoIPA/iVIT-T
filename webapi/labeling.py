@@ -242,7 +242,7 @@ def get_img_cls(type, path):
     if exists(img_path):
         if type == "classification":
             class_name = path.split("/")[-2]
-            if "workspace" == class_name:
+            if "workspace" == class_name or "" == class_name:
                 class_name = "Unlabeled"
             return jsonify({class_name:1})
         elif type == "object_detection":
