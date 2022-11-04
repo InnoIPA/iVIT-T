@@ -87,7 +87,13 @@ echo -e "${YELLOW}"
 echo "-----Installing jq-----"
 echo -e "${NC}"
 
-sudo apt-get install -y jq
+if ! type jq >/dev/null 2>&1; then
+    sudo apt-get install -y jq
+else
+    echo -e "${YELLOW}"
+    echo 'The jq has been installed.';
+    echo -e "${NC}"
+fi
 
 # ---------------------------------------------------------
 # Get version number
@@ -152,7 +158,7 @@ fi
 # ---------------------------------------------------------
 # Run container
 DOCKER_CMD="docker run \
---name ${CONTAINER_NAME}_run \
+--name ${CONTAINER_NAME} \
 ${MOUNT_GPU} \
 --user root \
 --rm ${RUNCODE} \

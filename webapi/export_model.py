@@ -1,10 +1,11 @@
+import logging
 from flask import Blueprint, request, jsonify, send_from_directory
 from flasgger import swag_from
 from pathlib import Path
 from webapi import app
 from .common.utils import MAINCFGPAHT, exists,read_json, success_msg, error_msg, YAML_MAIN_PATH
 from .common.training_tool import Fillin
-from .common.export_tool import set_export_json, convert_model
+from .common.export_tool import set_export_json, convert_model, check_convert_exist
 from .common.inspection import Check
 chk = Check()
 ct_model = convert_model()
@@ -53,15 +54,20 @@ def start_convert(uuid):
         export_platform = request.get_json()['export_platform']
         # Setting config.json
         fill_in.set_config_json(prj_name, iter_name, type)
-        # Setting model.json and front_train.json
-        set_export_json(type, prj_name, iter_name, export_platform)
-        # Run command
-        command = 'python3 convert.py'
-        # Covert model
-        ct_model.thread_convert(command, uuid, prj_name, iter_name, export_platform)
-
-        return success_msg("Start to convert model to {}.".format(export_platform))
-
+        # Check convert model does exist
+        status = check_convert_exist(type, prj_name, iter_name, export_platform)
+        if status:
+            # Setting model.json and front_train.json
+            set_export_json(type, prj_name, iter_name, export_platform)
+            # Run command
+            command = 'python3 convert.py'
+            # Covert model
+            ct_model.thread_convert(command, uuid, prj_name, iter_name, export_platform)
+            return success_msg("Start to convert model to {}.".format(export_platform))
+        else:
+            ct_model.check_file(uuid, export_platform, prj_name, iter_name)
+            return success_msg("The model does converted:[Platform:{},Project:{}/{}]".format(export_platform, prj_name, iter_name))
+        
 # @app.route('/<uuid>/download', methods=['POST'])
 # @swag_from("{}/{}".format(YAML_PATH, "download.yml"))
 # def download(uuid):

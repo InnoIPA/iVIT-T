@@ -1,5 +1,5 @@
 {
-    "model_json": "./Project/safety_helmet/iteration4/yolo.json",
+    "model_json": "./Project/dog_cat_classification/iteration3/classification.json",
     "platform": [
         "nvidia",
         "intel",

@@ -18,8 +18,6 @@ platform="0,1,2"
 platform_list=('nvidia' 'intel' 'xilinx')
 
 # ---------------------------------------------------------
-
-# ---------------------------------------------------------
 # color ANIS
 RED='\033[0;31m'
 BLUE='\033[0;34m'
@@ -117,7 +115,7 @@ do
 		echo -e "${BLUE}"
         echo "-----Build image of intel-----"
 		echo -e "${NC}"
-		docker build -t intel-convert -f ./docker/intel.Dockerfile .
+		docker build -t intel-convert -f ./convert/intel/intel.Dockerfile ./convert --no-cache
     fi
     if [[ ${i} == *"2"* ]]; then
 		echo -e "${RED}"
