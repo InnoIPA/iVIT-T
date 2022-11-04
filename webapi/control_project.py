@@ -43,7 +43,7 @@ def init_project():
         return jsonify({})
 
     for uuid in app.config["PROJECT_INFO"]:
-        logging.info("Initail Project:[uuid:{},prj_name:{}]".format(uuid, app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]))
+        logging.info("Get info of project:[uuid:{},prj_name:{}]".format(uuid, app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]))
         # Cover image sent to front
         cover_img(uuid)
         # Count iteration

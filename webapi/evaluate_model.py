@@ -6,9 +6,10 @@ from webapi import app
 from werkzeug.utils import secure_filename
 from .common.utils import error_msg, ALLOWED_EXTENSIONS, exists, success_msg, YAML_MAIN_PATH
 from .common.training_tool import Fillin
-from .common.evaluate_tool import set_eval_json, eval_cmd
+from .common.evaluate_tool import Evaluate
 from .common.labeling_tool import save_bbox
 fill_in = Fillin()
+eval = Evaluate()
 
 app_eval = Blueprint( 'evaluate_model', __name__)
 # Define API Docs path and Blue Print
@@ -79,14 +80,15 @@ def evaluate(uuid):
         # Setting config.json
         fill_in.set_config_json(prj_name, iteration, type)
         # Setting evaluate.json
-        status, msg = set_eval_json(prj_name, iteration)
+        status, msg = eval.set_eval_json(prj_name, iteration)
         if not status:
             return error_msg(msg + ", Project:{}, iteration:{}".format(prj_name, iteration))
         # Evaluate
         command = "python3 evaluate.py"
         # Run command
-        log_dict = eval_cmd(type, command)
-        
+        eval.thread_eval(uuid, type, command)
+        log_dict = eval.cmd_q.get()
+
     return jsonify({"detections":log_dict})
 
 @app_eval.route('/<uuid>/recheck_bbox', methods=['POST']) 
