@@ -14,9 +14,10 @@ YAML_PATH       = YAML_MAIN_PATH + "/upload_dataset"
 @swag_from("{}/{}".format(YAML_PATH, "upload.yml"))
 def upload(uuid):
     if request.method == 'POST':
+        logging.info('Upload file.')
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
         # Get type

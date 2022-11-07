@@ -61,7 +61,7 @@ def main():
                                     parampath + '/Training.data', 
                                     Dict['train_config']['save_model_path']+'/'+model_name[0])
         value = metrics_report(predict_info, truth_info)
-        metrics_dic = { "percision":round(value[0],2),
+        metrics_dic = { "precision":round(value[0],2),
                         "recall":round(value[1],2),  
                         "mAP":round(value[2],2)}
 

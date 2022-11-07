@@ -17,7 +17,7 @@ YAML_PATH       = YAML_MAIN_PATH + "/display_dataset"
 def get_dataset(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
-        return error_msg("UUID:{} is not exist.".format(uuid))
+        return error_msg("UUID:{} does not exist.".format(uuid))
     # Get project name
     prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]   
 
@@ -31,12 +31,12 @@ def filter_dataset(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "iteration" in request.get_json().keys():
-            return error_msg("KEY:iteration is not exist.")
+            return error_msg("KEY:iteration does not exist.")
         elif not "class_name" in request.get_json().keys():
-            return error_msg("KEY:class_name is not exist.")
+            return error_msg("KEY:class_name does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"] 
         # Get value of front
@@ -64,7 +64,7 @@ def display_img(path):
     if exists(path+"/"+path_list[-1]):
         return send_from_directory(path, path_list[-1])
     else:
-        return error_msg("This image is not exist:{}".format(path+"/"+path_list[-1]))
+        return error_msg("This image does not exist:{}".format(path+"/"+path_list[-1]))
 
 @app_dy_dt.route('/<uuid>/display_url', methods=['POST'])
 @swag_from("{}/{}".format(YAML_PATH, "display_url.yml"))
@@ -72,12 +72,12 @@ def display_url(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "iteration" in request.get_json().keys():
-            return error_msg("KEY:iteration is not exist.")
+            return error_msg("KEY:iteration does not exist.")
         elif not "class_name" in request.get_json().keys():
-            return error_msg("KEY:class_name is not exist.")
+            return error_msg("KEY:class_name does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"] 
         # Get value of front
@@ -104,10 +104,10 @@ def delete_img(uuid):
     if request.method == 'DELETE':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "image_info" in request.get_json().keys():
-            return error_msg("KEY:image_info is not exist.")
+            return error_msg("KEY:image_info does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"] 
         # Get type
@@ -138,10 +138,10 @@ def iter_cls_num(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "iteration" in request.get_json().keys():
-            return error_msg("KEY:iteration is not exist.")
+            return error_msg("KEY:iteration does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"] 
         # Get type

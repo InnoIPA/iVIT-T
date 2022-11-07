@@ -31,4 +31,4 @@ responses:
     schema:
       type: string
       description: Error message
-      example: "This {prj_name}.zip is not exist."
+      example: "This {prj_name}.zip does not exist."

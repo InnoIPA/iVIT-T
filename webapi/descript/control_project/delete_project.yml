@@ -21,4 +21,4 @@ responses:
       type: string
       description: Error message
       example:
-        "This {prj_name} folder is not exist!"
+        "This {prj_name} folder does not exist!"

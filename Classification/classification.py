@@ -112,7 +112,7 @@ def main():
         y_true, y_pred = test_summary(Dict, model)
         value = metrics_report(y_true, y_pred)
 
-        metrics_dic = { "percision":round(value[0],2),
+        metrics_dic = { "precision":round(value[0],2),
                         "recall":round(value[1],2),  
                         "f1_score":round(value[2],2)}
         logging.info(metrics_dic)

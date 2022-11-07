@@ -27,7 +27,7 @@ responses:
       example:
               {
                   "f1_score": 0.73,
-                  "percision": 0.83,
+                  "precision": 0.83,
                   "recall": 0.75
               }
   '400':
@@ -35,5 +35,5 @@ responses:
       type: array
       description: Error message
       example:
-        [ "This metrics.json is not exist in {iteration} of Project:{prj_name}",
-          "This {iteration} is not exist in Project:{prj_name}"]
+        [ "This metrics.json does not exist in {iteration} of Project:{prj_name}",
+          "This {iteration} does not exist in Project:{prj_name}"]

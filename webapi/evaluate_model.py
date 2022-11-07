@@ -21,10 +21,10 @@ def upload_eval_img(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "iteration" in request.form.keys():
-            return error_msg("KEY:iteration is not exist.")
+            return error_msg("KEY:iteration does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
         # Get value of front
@@ -67,10 +67,10 @@ def evaluate(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "iteration" in request.get_json().keys():
-            return error_msg("KEY:iteration is not exist.")   
+            return error_msg("KEY:iteration does not exist.")   
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
         # Get type
@@ -97,14 +97,14 @@ def recheck_bbox(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "iteration" in request.get_json().keys(): 
-            return error_msg("KEY:iteration is not exist.")
+            return error_msg("KEY:iteration does not exist.")
         elif not "image_name" in request.get_json().keys():
-            return error_msg("KEY:image_name is not exist.")
+            return error_msg("KEY:image_name does not exist.")
         elif not "box_info" in request.get_json().keys(): 
-            return error_msg("KEY:box_info is not exist.")
+            return error_msg("KEY:box_info does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
         # Get value of front
@@ -119,7 +119,7 @@ def recheck_bbox(uuid):
             save_bbox(save_path+"/"+image_name, box_info)
             return success_msg("Save image:{} and box:{} in dataset of Project:{}".format(image_name, box_info, prj_name))
         else:
-            return error_msg("This image:{} is not exist in Project:{}".format(image_name, prj_name))
+            return error_msg("This image:{} does not exist in Project:{}".format(image_name, prj_name))
 
 @app_eval.route('/<uuid>/recheck_class', methods=['POST']) 
 @swag_from("{}/{}".format(YAML_PATH, "recheck_class.yml")) 
@@ -127,14 +127,14 @@ def recheck_class(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "iteration" in request.get_json().keys(): 
-            return error_msg("KEY:iteration is not exist.")
+            return error_msg("KEY:iteration does not exist.")
         elif not "image_name" in request.get_json().keys():
-            return error_msg("KEY:image_name is not exist.")
+            return error_msg("KEY:image_name does not exist.")
         elif not "class_name" in request.get_json().keys():
-            return error_msg("KEY:class_name is not exist.")
+            return error_msg("KEY:class_name does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
         # Get value of front 
@@ -148,4 +148,4 @@ def recheck_class(uuid):
             shutil.copyfile(img_path, save_path+"/"+image_name)
             return success_msg("Save image:{} and label:{} in dataset of Project:{}".format(image_name, class_name, prj_name))
         else:
-            return error_msg("This image:{} is not exist in Project:{}".format(image_name, prj_name))
+            return error_msg("This image:{} does not exist in Project:{}".format(image_name, prj_name))

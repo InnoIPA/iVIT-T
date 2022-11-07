@@ -31,4 +31,4 @@ responses:
       type: string
       description: Error message
       example:
-        "This {iteration} is not exist in Project:{prj_name}"
+        "This {iteration} does not exist in Project:{prj_name}"

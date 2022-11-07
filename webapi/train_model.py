@@ -44,7 +44,7 @@ def get_method_training():
 def get_model(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
-        return error_msg("UUID:{} is not exist.".format(uuid))
+        return error_msg("UUID:{} does not exist.".format(uuid))
     # Get platform
     platform = app.config["PROJECT_INFO"][uuid]["front_project"]["platform"]
     # Get type
@@ -64,7 +64,7 @@ def get_model(uuid):
 def get_batch_size(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
-        return error_msg("UUID:{} is not exist.".format(uuid))
+        return error_msg("UUID:{} does not exist.".format(uuid))
     # Get classes_num
     classes_num = len(app.config["PROJECT_INFO"][uuid]["front_project"]["classes_num"])
     # Get effect_img_num
@@ -81,10 +81,10 @@ def get_default_param(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "training_method" in request.get_json().keys():
-            return error_msg("KEY:training_method is not exist.")
+            return error_msg("KEY:training_method does not exist.")
         # Get type
         type = app.config["PROJECT_INFO"][uuid]["front_project"]["type"]
         # Get platform
@@ -107,11 +107,11 @@ def create_training_iter(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         status, msg = chk.front_param_key(list(request.get_json().keys()), list(app.config['NEW_TRAIN_CONFIG']["front_train"].keys()), EXCEPT_LIST)
         if not status:
-            return error_msg("KEY:{} is not exist.".format(msg))
+            return error_msg("KEY:{} does not exist.".format(msg))
         # Check value in key of front
         status, msg = chk.front_param_isnull(request.get_json())
         if not status:
@@ -144,7 +144,7 @@ def create_training_iter(uuid):
         # For loop param use app.config['NEW_TRAIN_CONFIG'][”model_param”]
         pretrained_stats = fill_in.fill_model_cfg(uuid)
         pre_trained = True
-        # Pre-trained model is not exist.
+        # Pre-trained model does not exist.
         if not pretrained_stats:
             pre_trained = False
         # Create new model.json and front_train.json
@@ -170,7 +170,7 @@ def create_training_iter(uuid):
 def start_training(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
-        return error_msg("UUID:{} is not exist.".format(uuid))
+        return error_msg("UUID:{} does not exist.".format(uuid))
     # Get project name
     prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
     # Get iteration name
@@ -189,7 +189,7 @@ def start_training(uuid):
 def stop_training(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
-        return error_msg("UUID:{} is not exist.".format(uuid))
+        return error_msg("UUID:{} does not exist.".format(uuid))
     # Get project name
     prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
     # Get iteration name
@@ -201,14 +201,14 @@ def stop_training(uuid):
         app.config["PROJECT_INFO"][uuid]["training_info"] = {"iteration":"","status":False}
         return success_msg("Stop training in iteration:{} of Project:{}".format(iter_name, prj_name))
     else:
-        return error_msg("Thread is not exist in iteration:{} of Project:{}".format(iter_name, prj_name))
+        return error_msg("Thread does not exist in iteration:{} of Project:{}".format(iter_name, prj_name))
 
 @app_train.route('/<uuid>/get_training_info', methods=['GET']) 
 @swag_from("{}/{}".format(YAML_PATH, "get_training_info.yml"))
 def get_training_info(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
-        return error_msg("UUID:{} is not exist.".format(uuid))
+        return error_msg("UUID:{} does not exist.".format(uuid))
     # Get effect_img_num
     effect_img_num = app.config["PROJECT_INFO"][uuid]["front_project"]["effect_img_num"]
     # Get training_method
@@ -225,7 +225,7 @@ def get_training_info(uuid):
 def download_pretrained(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
-        return error_msg("UUID:{} is not exist.".format(uuid))
+        return error_msg("UUID:{} does not exist.".format(uuid))
     # Get iteration name
     arch = app.config["PROJECT_INFO"][uuid]["training_info"]["model_param"]["model_config"]["arch"]
     # Get type

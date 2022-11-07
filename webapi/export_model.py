@@ -20,7 +20,7 @@ YAML_PATH       = YAML_MAIN_PATH + "/export_model"
 def get_export_platform(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
-        return error_msg("UUID:{} is not exist.".format(uuid))
+        return error_msg("UUID:{} does not exist.".format(uuid))
     # Get platform
     platform = app.config["PROJECT_INFO"][uuid]["front_project"]["platform"]
     # Get all platform list
@@ -38,12 +38,12 @@ def start_convert(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "iteration" in request.get_json().keys():
-            return error_msg("KEY:iteration is not exist.")
+            return error_msg("KEY:iteration does not exist.")
         if not "export_platform" in request.get_json().keys():
-            return error_msg("KEY:export_platform is not exist.")
+            return error_msg("KEY:export_platform does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
         # Get type
@@ -74,10 +74,10 @@ def start_convert(uuid):
 #     if request.method == 'POST':
 #         # Check uuid is/isnot in app.config["PROJECT_INFO"]
 #         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-#             return error_msg("UUID:{} is not exist.".format(uuid))
+#             return error_msg("UUID:{} does not exist.".format(uuid))
 #         # Check key of front
 #         if not "iteration" in request.get_json().keys():
-#             return error_msg("KEY:iteration is not exist.")
+#             return error_msg("KEY:iteration does not exist.")
 #         # Get project name
 #         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
 #         # Get iteration folder name (Get value of front)
@@ -91,7 +91,7 @@ def start_convert(uuid):
 #         if exists(zip_folder+filename):
 #             return send_from_directory(directory=export_path.split("export")[0], path=prj_name+".zip", as_attachment=True)
 #         else:
-#             return error_msg("This {}.zip is not exist.".format(prj_name))
+#             return error_msg("This {}.zip does not exist.".format(prj_name))
 
 @app.route('/<uuid>/share_api', methods=['POST'])
 @swag_from("{}/{}".format(YAML_PATH, "share_api.yml"))
@@ -99,10 +99,10 @@ def share_api(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "iteration" in request.get_json().keys():
-            return error_msg("KEY:iteration is not exist.")
+            return error_msg("KEY:iteration does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
         # Get iteration folder name (Get value of front)
@@ -115,14 +115,14 @@ def share_api(uuid):
         if exists(zip_folder+filename):
             return success_msg("{}:{}/{}/{}/share".format(request.environ['SERVER_NAME'], request.environ['SERVER_PORT'], uuid, iter_name))
         else:
-            return error_msg("This {}.zip is not exist.".format(prj_name))
+            return error_msg("This {}.zip does not exist.".format(prj_name))
 
 @app.route('/<uuid>/<iteration>/share', methods=['GET'])
 @swag_from("{}/{}".format(YAML_PATH, "share.yml"))
 def share(uuid, iteration):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
-        return error_msg("UUID:{} is not exist.".format(uuid))
+        return error_msg("UUID:{} does not exist.".format(uuid))
     # Get project name
     prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
     # Export path
@@ -134,4 +134,4 @@ def share(uuid, iteration):
     if exists(zip_folder+filename):
         return send_from_directory(directory=export_path.split("export")[0], path=prj_name+".zip", as_attachment=True)
     else:
-        return error_msg("This {}.zip is not exist.".format(prj_name))
+        return error_msg("This {}.zip does not exist.".format(prj_name))

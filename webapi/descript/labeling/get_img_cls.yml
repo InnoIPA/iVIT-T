@@ -31,4 +31,4 @@ responses:
     schema:
       type: string
       description: Error message
-      example: "This image is not exist:{img_path}"
+      example: "This image does not exist:{img_path}"

@@ -17,10 +17,10 @@ def add_class(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "class_name" in request.get_json().keys():
-            return error_msg("KEY:class_name is not exist.")
+            return error_msg("KEY:class_name does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"] 
         # Get type
@@ -49,10 +49,10 @@ def delete_class(uuid):
     if request.method == 'DELETE':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "class_name" in request.get_json().keys():
-            return error_msg("KEY:class_name is not exist.")
+            return error_msg("KEY:class_name does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"] 
         # Get type
@@ -81,7 +81,7 @@ def delete_class(uuid):
             if class_name in class_text:
                 class_text.remove(class_name)
             else:
-                logging.error("This class:{} is not exist in classes.txt of Project:{}".format(class_name, prj_name))
+                logging.error("This class:{} does not exist in classes.txt of Project:{}".format(class_name, prj_name))
             # Writing classes.txt
             for cls in class_text:
                 write_txt(classes_path, cls)
@@ -100,12 +100,12 @@ def rename_class(uuid):
     if request.method == 'PUT':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "class_name" in request.get_json().keys():
-            return error_msg("KEY:class_name is not exist.")
+            return error_msg("KEY:class_name does not exist.")
         elif not "new_name" in request.get_json().keys():
-            return error_msg("KEY:new_name is not exist.")
+            return error_msg("KEY:new_name does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"] 
         # Get type
@@ -133,7 +133,7 @@ def rename_class(uuid):
                 idx = class_text.index(class_name)
                 class_text[idx] = new_name
             else:
-                logging.error("This class:{} is not exist in classes.txt of Project:{}".format(class_name, prj_name))
+                logging.error("This class:{} does not exist in classes.txt of Project:{}".format(class_name, prj_name))
             # Writing classes.txt
             for cls in class_text:
                 write_txt(classes_path, cls)
@@ -146,12 +146,12 @@ def edit_img_class(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "images_info" in request.get_json().keys():
-            return error_msg("KEY:images_info is not exist.")
+            return error_msg("KEY:images_info does not exist.")
         elif not "class_name" in request.get_json().keys():
-            return error_msg("KEY:class_name is not exist.")
+            return error_msg("KEY:class_name does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
         # Get value of front 
@@ -162,7 +162,7 @@ def edit_img_class(uuid):
         if class_name== "Unlabeled":
             class_name = ""
 
-        # If target dir is not exist then create target Directory
+        # If target dir does not exist then create target Directory
         dir_path = "./Project/"+prj_name+"/workspace/"+class_name
         if not os.path.isdir(dir_path):
             os.makedirs(dir_path, exist_ok=True, mode=0o777)
@@ -190,10 +190,10 @@ def get_bbox(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "image_path" in request.get_json().keys():
-            return error_msg("KEY:image_path is not exist.")
+            return error_msg("KEY:image_path does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
         # Get value of front 
@@ -205,8 +205,8 @@ def get_bbox(uuid):
             logging.info({"img_shape":img_shape, "box_info":box_info})
             return jsonify({"img_shape":img_shape, "box_info":box_info})
         else:
-            logging.error("This image:{} is not exist in Project:{}".format(img_path, prj_name))
-            return error_msg("This image:{} is not exist in Project:{}".format(img_path, prj_name))
+            logging.error("This image:{} does not exist in Project:{}".format(img_path, prj_name))
+            return error_msg("This image:{} does not exist in Project:{}".format(img_path, prj_name))
 
 @app_labeling.route('/<uuid>/update_bbox', methods=['POST']) 
 @swag_from("{}/{}".format(YAML_PATH, "update_bbox.yml")) 
@@ -214,12 +214,12 @@ def update_bbox(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "image_name" in request.get_json().keys():
-            return error_msg("KEY:image_name is not exist.")
+            return error_msg("KEY:image_name does not exist.")
         elif not "box_info" in request.get_json().keys(): 
-            return error_msg("KEY:box_info is not exist.")
+            return error_msg("KEY:box_info does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
         # Get value of front
@@ -231,7 +231,7 @@ def update_bbox(uuid):
             save_bbox(img_path, box_info)
             return success_msg("Update box:{} in image:{} of Project:{}".format(box_info, image_name, prj_name))
         else:
-            return error_msg("This image:{} is not exist in Project:{}".format(image_name, prj_name))
+            return error_msg("This image:{} does not exist in Project:{}".format(image_name, prj_name))
 
 @app_labeling.route('/get_img_cls/<type>/<path:path>', methods=['GET'])
 @swag_from("{}/{}".format(YAML_PATH, "get_img_cls.yml")) 
@@ -261,7 +261,7 @@ def get_img_cls(type, path):
             return jsonify(class_info)
             
     else:
-        return error_msg("This image is not exist:{}".format(img_path))
+        return error_msg("This image does not exist:{}".format(img_path))
 
 @app_labeling.route('/get_color_bar',methods=['GET'])
 @swag_from("{}/{}".format(YAML_PATH, "get_color_bar.yml")) 

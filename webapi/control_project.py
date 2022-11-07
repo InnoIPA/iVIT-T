@@ -39,7 +39,7 @@ def init_project():
 
     # Check PROJECT_INFO is null
     if not app.config["PROJECT_INFO"]:
-        logging.warn("Any project is not exist in project folder.")
+        logging.warn("Any project does not exist in project folder.")
         return jsonify({})
 
     for uuid in app.config["PROJECT_INFO"]:
@@ -103,7 +103,7 @@ def create_project():
 def delete_project(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
-        return error_msg("UUID:{} is not exist.".format(uuid))
+        return error_msg("UUID:{} does not exist.".format(uuid))
     # Get project name
     prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
 
@@ -115,7 +115,7 @@ def delete_project(uuid):
 
         return success_msg("Delete project:{}!".format(prj_name))
     else:
-        return error_msg("This {} folder is not exist!".format(prj_name))
+        return error_msg("This {} folder does not exist!".format(prj_name))
 
 @app_cl_pj.route('/<uuid>/rename_project', methods=['PUT']) 
 @swag_from("{}/{}".format(YAML_PATH, "rename_project.yml"))
@@ -123,10 +123,10 @@ def rename_project(uuid):
     if request.method == 'PUT':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "new_name" in request.get_json().keys():
-            return error_msg("KEY:new_name is not exist.")
+            return error_msg("KEY:new_name does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
         # Get value of front

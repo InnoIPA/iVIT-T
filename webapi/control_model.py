@@ -15,7 +15,7 @@ YAML_PATH       = YAML_MAIN_PATH + "/control_model"
 def get_iteration(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
-        return error_msg("UUID:{} is not exist.".format(uuid))
+        return error_msg("UUID:{} does not exist.".format(uuid))
     # Get project name
     prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
     prj_path = "./Project/"+prj_name
@@ -28,10 +28,10 @@ def get_model_info(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "iteration" in request.get_json().keys():
-            return error_msg("KEY:iteration is not exist.")
+            return error_msg("KEY:iteration does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
         # Get value of front
@@ -48,9 +48,9 @@ def get_model_info(uuid):
 
                 return jsonify(train_info)
             else:
-                return error_msg("This front_train.json is not exist in {} of Project:{}".format(iteration, prj_name))
+                return error_msg("This front_train.json does not exist in {} of Project:{}".format(iteration, prj_name))
         else:
-            return error_msg("This {} is not exist in Project:{}".format(iteration, prj_name))
+            return error_msg("This {} does not exist in Project:{}".format(iteration, prj_name))
 
 @app_cl_model.route('/<uuid>/delete_iteration', methods=['DELETE']) 
 @swag_from("{}/{}".format(YAML_PATH, "delete_iteration.yml"))
@@ -58,10 +58,10 @@ def delete_iteration(uuid):
     if request.method == 'DELETE':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "iteration" in request.get_json().keys():
-            return error_msg("KEY:iter_name is not exist.")
+            return error_msg("KEY:iter_name does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
         # Get value of front
@@ -81,7 +81,7 @@ def delete_iteration(uuid):
             logging.info("Renamed iteration1~iterationN in Project:{}".format(prj_name))
             return success_msg("Delete {} in Project:{}".format(iteration, prj_name))
         else:
-            return error_msg("This {} is not exist in Project:{}".format(iteration, prj_name))
+            return error_msg("This {} does not exist in Project:{}".format(iteration, prj_name))
 
 @app_cl_model.route('/<uuid>/curve_history', methods=['POST']) 
 @swag_from("{}/{}".format(YAML_PATH, "curve_history.yml"))
@@ -89,10 +89,10 @@ def curve_history(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "iteration" in request.get_json().keys():
-            return error_msg("KEY:iteration is not exist.")
+            return error_msg("KEY:iteration does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
         # Get value of front
@@ -110,9 +110,9 @@ def curve_history(uuid):
                         graph.update({str(key+1):dict(line)})
                 return jsonify(graph)
             else:
-                return error_msg("This graph.txt is not exist in {} of Project:{}".format(iteration, prj_name))
+                return error_msg("This graph.txt does not exist in {} of Project:{}".format(iteration, prj_name))
         else:
-            return error_msg("This {} is not exist in Project:{}".format(iteration, prj_name))
+            return error_msg("This {} does not exist in Project:{}".format(iteration, prj_name))
         
 @app_cl_model.route('/<uuid>/metrics_history', methods=['POST']) 
 @swag_from("{}/{}".format(YAML_PATH, "metrics_history.yml"))
@@ -120,10 +120,10 @@ def metrics_history(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "iteration" in request.get_json().keys():
-            return error_msg("KEY:iteration is not exist.")
+            return error_msg("KEY:iteration does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
         # Get value of front
@@ -136,9 +136,9 @@ def metrics_history(uuid):
                 metrics = read_json(metrics_path)
                 return jsonify(metrics)
             else:
-                return error_msg("This metrics.json is not exist in {} of Project:{}".format(iteration, prj_name))
+                return error_msg("This metrics.json does not exist in {} of Project:{}".format(iteration, prj_name))
         else:
-            return error_msg("This {} is not exist in Project:{}".format(iteration, prj_name))
+            return error_msg("This {} does not exist in Project:{}".format(iteration, prj_name))
 
 @app_cl_model.route('/<uuid>/get_model_json', methods=['POST']) 
 @swag_from("{}/{}".format(YAML_PATH, "get_model_json.yml"))
@@ -146,10 +146,10 @@ def get_model_json(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "iteration" in request.get_json().keys():
-            return error_msg("KEY:iteration is not exist.")
+            return error_msg("KEY:iteration does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
         # Get type
@@ -173,18 +173,18 @@ def get_model_json(uuid):
                 front_train = read_json(front_train_path)
                 model_param.update({"front_train":front_train})
             else:
-                return error_msg("This front_train.json is not exist in {} of Project:{}".format(iteration, prj_name))
+                return error_msg("This front_train.json does not exist in {} of Project:{}".format(iteration, prj_name))
             
             # model.json
             if exists(train_param_path):
                 train_param = read_json(train_param_path)
                 model_param.update({"train_param":train_param})
             else:
-                return error_msg("This model.json is not exist in {} of Project:{}".format(type, iteration, prj_name))
+                return error_msg("This model.json does not exist in {} of Project:{}".format(type, iteration, prj_name))
                 
             return jsonify(model_param)
         else:
-            return error_msg("This {} is not exist in Project:{}".format(iteration, prj_name))
+            return error_msg("This {} does not exist in Project:{}".format(iteration, prj_name))
 
 @app_cl_model.route('/<uuid>/check_best_model', methods=['POST']) 
 @swag_from("{}/{}".format(YAML_PATH, "check_best_model.yml"))
@@ -192,10 +192,10 @@ def check_best_model(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} is not exist.".format(uuid))
+            return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
         if not "iteration" in request.get_json().keys():
-            return error_msg("KEY:iteration is not exist.")
+            return error_msg("KEY:iteration does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
         # Get type
@@ -219,10 +219,10 @@ def check_best_model(uuid):
                 model_path = train_param["train_config"]["save_model_path"]
                 best_list = [model for model in os.listdir(model_path) if "best" in model]
                 if len(best_list) == 0:
-                    return error_msg("This best model is not exist in {} of Project:{}".format(iteration, prj_name))
+                    return error_msg("This best model does not exist in {} of Project:{}".format(iteration, prj_name))
                 else:
                     return success_msg("Exist.")
             else:
-                return error_msg("This model.json is not exist in {} of Project:{}".format(iteration, prj_name))
+                return error_msg("This model.json does not exist in {} of Project:{}".format(iteration, prj_name))
         else:
-            return error_msg("This {} is not exist in Project:{}".format(iteration, prj_name))
+            return error_msg("This {} does not exist in Project:{}".format(iteration, prj_name))
