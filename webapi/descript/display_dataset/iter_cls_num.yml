@@ -27,7 +27,8 @@ responses:
       description: Successful operation
       example: 
         {
-            "total": 40,
+            "All": 40,
+            "Unlabeled":0,
             "classes_num": {
                 "cat": 20,
                 "dog": 20
