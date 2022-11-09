@@ -6,7 +6,7 @@ from pathlib import Path
 from natsort import natsorted
 from webapi import app
 from .common.utils import success_msg, error_msg, exists, YAML_MAIN_PATH
-from .common.display_tool import get_folder_image, get_obj_classes_img, count_dataset, workspace_path, iteration_path
+from .common.display_tool import count_dataset, workspace_path, iteration_path
 
 app_dy_dt = Blueprint( 'display_dataset', __name__)
 # Define API Docs path and Blue Print
@@ -86,7 +86,7 @@ def display_url(uuid):
         # Get type
         type = app.config["PROJECT_INFO"][uuid]["front_project"]['type']
         # Give img path
-        iter_path = "./project/" + prj_name+"/"+iteration
+        iter_path = "./Project/" + prj_name+"/"+iteration
         # Check iteration
         url = "http://{}:{}".format(request.environ['SERVER_NAME'], request.environ['SERVER_PORT'])
         if "workspace" == iteration:
