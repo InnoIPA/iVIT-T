@@ -87,7 +87,7 @@ def main():
         shutil.copyfile("/workspace"+output_dir.split('.')[-1]+"/"+project_name+".xmodel", 
                             "/workspace"+export_dir.split('.')[-1]+"/"+project_name+".xmodel")
         #export classes.txt
-        shutil.copyfile("/workspace"+model_dict["train_config"]["label_path"].split('.')[1]+".txt", 
+        shutil.copyfile("/workspace"+model_dict["train_config"]["label_path"].split('.')[1]+ ".txt", 
                                 "/workspace"+export_dir.split('.')[-1]+'/classes.txt')
         #export classification.json
         shutil.copyfile("/workspace"+dict["model_json"].split('.')[1]+".json", 
@@ -144,7 +144,7 @@ def main():
         shutil.copyfile("/workspace"+output_dir.split('.')[-1]+"/"+project_name+".xmodel", 
                                     "/workspace"+export_dir.split('.')[-1]+"/"+project_name+".xmodel")
         #export classes.txt
-        shutil.copyfile("/workspace"+model_dict["train_config"]["label_path"].split('.')[1]+".txt", 
+        shutil.copyfile("/workspace"+model_dict["train_config"]["label_path"].split('.')[1]+ ".txt", 
                                 "/workspace"+export_dir.split('.')[-1]+'/classes.txt')
         #export yolo.json
         shutil.copyfile("/workspace"+dict["model_json"].split('.')[1]+".json", 

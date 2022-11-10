@@ -126,9 +126,9 @@ def delete_img(uuid):
                     logging.info("Removed:{}".format("./Project/"+prj_name+"/workspace"+'/'+label+'/'+name))
                     os.remove("./Project/"+prj_name+"/workspace"+'/'+label+'/'+name)
                     # if object_detection need to remove txt
-                    if type == 'object_detection' and os.path.isfile("./Project/"+prj_name+"/workspace"+'/'+label+'/'+name.split('.')[0]+'.txt'):
-                        logging.info("Removed:{}".format("./Project/"+prj_name+"/workspace"+'/'+label+'/'+name.split('.')[0]+'.txt'))
-                        os.remove("./Project/"+prj_name+"/workspace"+'/'+label+'/'+name.split('.')[0]+'.txt')
+                    if type == 'object_detection' and os.path.isfile("./Project/"+prj_name+"/workspace"+'/'+label+'/'+ os.path.splitext(name)[0] + '.txt'):
+                        logging.info("Removed:{}".format("./Project/"+prj_name+"/workspace"+'/'+label+'/'+ os.path.splitext(name)[0] + '.txt'))
+                        os.remove("./Project/"+prj_name+"/workspace"+'/'+label+'/'+ os.path.splitext(name)[0] + '.txt')
 
         return success_msg("Delete images- project:{}, images:{}".format(prj_name, image_info_list))
 
