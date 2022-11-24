@@ -4,7 +4,7 @@ from flasgger import swag_from
 import shutil
 from webapi import app
 from .common.utils import success_msg, error_msg, write_json, YAML_MAIN_PATH
-from .common.training_tool import METHOD_OF_TRAINING, BATCH_SIZE, Fillin, create_iter_folder, Prepare_data, Training
+from .common.training_tool import METHOD_OF_TRAINING, BATCH_SIZE, Fillin, create_iter_folder, Prepare_data, Training, cal_batch_size
 from .common.inspection import Check, Pretrained
 chk = Check()
 fill_in = Fillin()
@@ -65,14 +65,7 @@ def get_batch_size(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
         return error_msg("UUID:{} does not exist.".format(uuid))
-    # Get classes_num
-    classes_num = len(app.config["PROJECT_INFO"][uuid]["front_project"]["classes_num"])
-    # Get effect_img_num
-    effect_img_num = app.config["PROJECT_INFO"][uuid]["front_project"]["effect_img_num"]
-    # Calculate max batch
-    max_batch = int((effect_img_num // classes_num)*0.1)
-    batch_size = [ batch for batch in BATCH_SIZE if batch <= max_batch]
-
+    batch_size = cal_batch_size(uuid)
     return jsonify({"batch_size": batch_size})
 
 @app_train.route('/<uuid>/get_default_param', methods=['POST']) 
@@ -91,14 +84,15 @@ def get_default_param(uuid):
         platform = app.config["PROJECT_INFO"][uuid]["front_project"]["platform"]
         # Get value of front
         training_method = request.get_json()['training_method']
-
         # platform == intel or nvidia
         if platform ==  "intel" or platform == "nvidia":
             platform = "other"
-
         # Get default param
         default = METHOD_OF_TRAINING[type][platform][training_method]
-
+        # Check batch_size of the optimization 
+        batch_size = cal_batch_size(uuid)
+        if not default["batch_size"] in batch_size:
+            default["batch_size"] = min(batch_size)
         return jsonify({"training_param":default})
 
 @app_train.route('/<uuid>/create_training_iter', methods=['POST']) 

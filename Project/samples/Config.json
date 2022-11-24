@@ -1,5 +1,5 @@
 {
-    "model_json": "./Project/fruit/iteration5/yolo.json",
+    "model_json": "./Project/garbage_object_detection/iteration10/yolo.json",
     "platform": [
         "nvidia",
         "intel",
