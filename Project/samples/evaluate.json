@@ -1,4 +1,4 @@
 {
-    "model_path": "./Project/garbage_object_detection/iteration10/weights/yolov4_best.weights",
-    "eval_dir_path": "./Project/garbage_object_detection/iteration10/dataset/eval"
+    "model_path": "./Project/fruit/iteration5/weights/yolov4_best.weights",
+    "eval_dir_path": "./Project/fruit/iteration5/dataset/eval"
 }
