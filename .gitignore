@@ -13,8 +13,8 @@ chart.png
 Vitis-AI
 vitis-ai-utility
 web copy
-Project/*
-!Project/samples/
+project/*
+!project/samples/
 pretrainedmodel/*
 !pretrainedmodel/README.md
 !pretrainedmodel/pretrained_download.py

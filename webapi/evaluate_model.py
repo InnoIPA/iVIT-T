@@ -107,7 +107,7 @@ def evaluate(uuid):
         result = eval.cmd_q.get()
         EVAL_VAL[uuid] = result
         # Threshold
-        log_dict = threshold_process(uuid, threshold, score, type)
+        log_dict = threshold_process(uuid, threshold, score)
 
     return jsonify({"detections":log_dict})
 
@@ -137,11 +137,10 @@ def eval_thresh(uuid):
         # Get score/threshold
         if type == "object_detection":
             score = "confidence"
-            threshold = threshold * 100
         elif type == "classification":
             score = "score"
         # Threshold
-        log_dict = threshold_process(uuid, threshold, score, type)
+        log_dict = threshold_process(uuid, threshold, score)
 
     return jsonify({"detections":log_dict})
     
