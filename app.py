@@ -1,5 +1,5 @@
 from common.logger import config_logger
-import argparse
+import argparse, logging
 
 from webapi import app, socketio
 from webapi.control_project import app_cl_pj
@@ -8,15 +8,26 @@ from webapi.display_dataset import app_dy_dt
 from webapi.labeling import app_labeling
 from webapi.augmentation import app_aug
 from webapi.control_model import app_cl_model
-from webapi.train_model import app_train
+from webapi.training_model import app_train
 from webapi.export_model import app_export
 from webapi.evaluate_model import app_eval
+from webapi.common.database import init_db
+from webapi.common.init_tool import init_sample_to_db
+import webapi.common.config
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-port", "--port", help="Input port number")
     args = parser.parse_args()
-    
+    # Create log
+    config_logger('./app.log', 'w', "info")
+    # Create initial table in db
+    logging.info("Initial database...")
+    init_db()
+    # Fill in db from sample
+    logging.info("Initial sample project...")
+    init_sample_to_db()
+
     app.register_blueprint(app_cl_pj)
     app.register_blueprint(app_ud_dt)
     app.register_blueprint(app_dy_dt)
@@ -27,5 +38,5 @@ if __name__ == '__main__':
     app.register_blueprint(app_export)
     app.register_blueprint(app_eval)
 
-    config_logger('./app.log', 'w', "info")
+    logging.info("Running webapi server...")
     socketio.run(app, host = "0.0.0.0", port=args.port, debug=False)

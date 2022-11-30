@@ -3,21 +3,14 @@
 A library to training model of TensorFlow-Keras and Darknet. This library enables the training of the model of classification, object detection.
 * [See What's New](#see-whats-new)
 * [Pre-requirements](#pre-requirements)
-* [Build convert docker images](#build-convert-docker-images)
+* [Build convert docker images and database container](#build-convert-docker-images-and-database-container)
 * [CLI mode](#cli-mode)
 * [Web API mode](#web-api-mode)
 * [Web UI](#web-ui)
 
-
 # See What's New
 - [Release Notes](docs/release_notes.md)
-- Training Classificaiton/Object detection model
-- Simply evaluate model
-- Convert model to edge platform
-    - Intel(.xml/.bin/.mapping)
-    - Nvidia(.onnx)
-    - Xilinx(.xmodel)
-- Offer Web API Can used to build project, uploading dataset, labeling, training, evaluating, converting
+- Added database
 
 # Getting Started
 
@@ -32,12 +25,12 @@ Install nvidia-driver(gpu), nvidia-docker and docker before installing the docke
 
 ##  Run container
 
-### Build convert docker images
+### Build convert docker images and database container
 ```shell
 sudo chmod 777 ./docker
-sudo ./docker/build_convert.sh -p 0,1,2
+sudo ./docker/init_env.sh -p 0,1,2
 ```
-In the "build_convert.sh", this "-p" is the model finally deployed platform:
+In the "init_env.sh", this "-p" is the model finally deployed platform:
 ```
 0: Nvidia, 1: Intel, 2: Xilinx
 ```
@@ -48,7 +41,7 @@ In the "build_convert.sh", this "-p" is the model finally deployed platform:
 sudo ./docker/run.sh
 ```
 
-- [Tutorial](./CLI.md)
+- [Tutorial](docs/CLI.md)
 
 ### Web API mode
 
@@ -64,3 +57,19 @@ In the "run.sh", this "-p" is the port number, you can setting haven't used the 
 If you want to use the UI version, you can follow this Tutorial:
 
 - [Tutorial](https://github.com/InnoIPA/ivit-t-web)
+
+## The format of dataset 
+- Image format: .jpg/.jpge/.png/.bmp/.JPG/.JPGE/.PNG/.BMP
+- Annotation format: .txt (YOLO)
+```
+    Format:
+        index x y w h
+    Example:
+        0 0.4014 0.3797 0.0801 0.0859
+```
+- Mapping class filename: classes.txt
+```
+    label1
+    label2
+    ...
+```

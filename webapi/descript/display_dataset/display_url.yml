@@ -39,3 +39,13 @@ responses:
                 "http://172.16.92.124:6530/display_img/project/test_pcb/workspace/11_short_07.jpg"
             ]
         }
+  '400':
+    schema:
+      type: array
+      description: Error message
+      example:
+        [ "UUID:{uuid} does not exist.",
+          "The dataset does not exist:[{prj_name}/{iteration}]",
+          "The class:[{class_name}] does not exist in the project:[{prj_name}]",
+          "Can't connect to the database",
+          "..."]

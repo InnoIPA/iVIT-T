@@ -1,0 +1,28 @@
+tags:
+  - training_model
+summary: Start training model
+description: Start training model
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+responses:
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: "Training in iteration:{iter_name} of Project:{prj_name}"
+      
+  '400':
+    schema:
+      type: array
+      description: Error message
+      example: 
+            [
+              "UUID:{uuid} does not exist."
+              "Is running in iteration:{iter_name} of Project:{prj_name}",
+            ]

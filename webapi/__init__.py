@@ -4,7 +4,7 @@ from flask_cors import CORS
 from flasgger import Swagger
 import eventlet
 
-# initial Flask application
+# Initial Flask application
 app = Flask(__name__)
 
 # Threaded

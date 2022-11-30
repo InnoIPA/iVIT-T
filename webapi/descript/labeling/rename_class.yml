@@ -29,3 +29,12 @@ responses:
       type: string
       description: Successful operation
       example: "Renamed class:{class_name} to {new_name} in Project:{prj_name}"
+  '400':
+    schema:
+      type: array
+      description: Error message
+      example:
+        [ "UUID:{uuid} does not exist.",
+          "This class:[{class_name}] does not exist in project:[{prj_name}]",
+          "This class:[{class_name}] does not exist in classes.txt of Project:[{prj_name}]"
+        ]

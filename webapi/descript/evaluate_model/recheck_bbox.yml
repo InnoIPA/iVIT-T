@@ -38,6 +38,13 @@ responses:
       
   '400':
     schema:
-      type: string
+      type: array
       description: Error message
-      example: "This image:{image_name} does not exist in Project:{prj_name}"
+      example: 
+        [
+          "UUID:{uuid} does not exist.",
+          "The itertaion does not exist:[{prj_name}:{iteration}]",
+          "This image:[{image_name}] does not exist in Project:[{prj_name}:{iteration}]",         
+          "Can't connect to the database",
+          "..."
+        ]

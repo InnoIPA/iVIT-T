@@ -1,7 +1,7 @@
 {
     "USER":"willqiuinnodisk",
     "PROJECT": "ivit-t",
-    "VERSION": "v1.0",
+    "VERSION": "v1.0.1",
     "HOST": "",
     "PORT": 6530,
     "DEBUG": false,

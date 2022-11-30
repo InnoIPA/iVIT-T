@@ -30,6 +30,10 @@ responses:
       type: array
       description: Error message
       example:
-        [ "This best model does not exist in {iteration} of Project:{prj_name}.",
+        [ 
+          "UUID:{uuid} does not exist.",
+          "The itertaion does not exist:[{prj_name}:{iteration}].",
+          "This best model does not exist in {iteration} of Project:{prj_name}.",
           "This model.json does not exist in {iteration} of Project:{prj_name}.",
-          "This {iteration} does not exist in Project:{prj_name}."]
+          "This {iteration} does not exist in Project:{prj_name}."
+        ]

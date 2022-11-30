@@ -1,0 +1,62 @@
+{
+    "platform":"",
+    "export_platform":"",
+
+    "model_config": {
+        "arch": "resnet",
+        "classes":2,
+        "input_shape": [675,177,3]
+      },
+
+    "train_config" :{
+        "train_dataset_path": "/workspace/dataset/resnet/Memory_small/train",
+        "val_dataset_path":"/workspace/dataset/resnet/Memory_small/valid",
+        "test_dataset_path":"/workspace/dataset/resnet/Memory_small/test",
+        "label_path":"/workspace/dataset/resnet/imagenet.names",
+        "pretrained_model_path":"/workspace/pretrainedmodel/resnet_50.hdf5",
+        "save_model_path":"/workspace/Classification/callback/model",
+        "optimizer":{
+            "sgd": {
+            "lr": 0.01,
+            "decay": 0.0,
+            "momentum": 0.9,
+            "nesterov": false
+            }
+        },
+
+        "gpu":"0",
+        "batch": 8,
+        "epochs": 100,
+        "workers": 16,
+        
+        "datagenerator":{
+            "preprocess_mode": "caffe",
+            "enable_random_crop": false,
+            "enable_center_crop": false,
+            "mixup_alpha": 0,
+            "rotation_range":0,
+            "width_shift_range":0,
+            "height_shift_range":0,
+            "zoom_range":0
+        },
+
+        "reg_config":{
+            "type": "L2",
+            "scope": "Conv2D,Dense",
+            "weight_decay-l1": 0,
+            "weight_decay-l2": 0.00005
+        },
+
+        "lr_config":{
+            "step":{
+                "learning_rate": 0.006,
+                "step_size": 10,
+                "gamma": 0.1
+                }
+            }
+    },
+
+    "eval_config":{
+        "eval_dir_path":""
+    }
+}

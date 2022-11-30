@@ -25,11 +25,18 @@ responses:
       type: string
       description: Successful operation
       example:
-        Upload images-{len_files} images in {prj_name}/{dirs}
+        Upload {length} files:{[filename]} in [{prj_name}/{label}]
         
   '400':
     schema:
       type: array
       description: Error message
-      example: ["The size of {file_name} is 0",
-          "No upload files."]
+      example: 
+        [ "UUID:{uuid} does not exist.",
+          "No upload files in project:[{prj_name}]",
+          "This type:[{mp4}] of filename:[{filename}]",
+          "The size of file is 0:[{filename}]",
+          "The file is null:[{filename}]",
+          "Can't connect to the database",
+          "..."
+        ]

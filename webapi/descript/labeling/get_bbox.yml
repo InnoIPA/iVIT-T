@@ -49,4 +49,4 @@ responses:
     schema:
       type: string
       description: Error message
-      example: "This image:{image_name} does not exist in Project:{prj_name}"
+      example: "This image:[{image_name}] does not exist in Project:[{prj_name}]"

@@ -6,92 +6,35 @@ description: Initial information of all project
 responses:
   '200':
     schema:
-      type: object
+      type: string
       description: Successful operation
       example: 
         {
-          "eff9fb2e": {
-              "ready": true,
-              "err_msg": "",
-              "front_project": {
-                  "project_name": "yolov3-tiny-vitisai",
-                  "type": "object_detection",
-                  "platform": "xilinx",
-                  "cover_img":"base64",
-                  "iteration": 1,
-                  "effect_img_num": 30,
-                  "total_img_num": 30,
-                  "classes_num": {
-                      "Memory": 30,
-                      "Sticker": 28
-                  }
-              },
-              "training_info": {
-                  "iteration": "",
-                  "status": false
-              }
-          },
-          "d6060bc1": {
-              "ready": true,
-              "err_msg": "",
-              "front_project": {
-                  "project_name": "test_yolo",
-                  "type": "object_detection",
-                  "platform": "intel",
-                  "cover_img":"base64",
-                  "iteration": 1,
-                  "effect_img_num": 30,
-                  "total_img_num": 30,
-                  "classes_num": {
-                      "Memory": 30,
-                      "Sticker": 28
-                  }
-              },
-              "training_info": {
-                  "iteration": "",
-                  "status": false
-              }
-          },
-          "ac494d7a": {
-              "ready": true,
-              "err_msg": "",
-              "front_project": {
-                  "project_name": "dog_cat_classification_vitis",
-                  "type": "classification",
-                  "platform": "xilinx",
-                  "cover_img":"base64",
-                  "iteration": 1,
-                  "effect_img_num": 37,
-                  "total_img_num": 37,
-                  "classes_num": {
-                      "cat": 18,
-                      "dog": 19,
-                  }
-              },
-              "training_info": {
-                  "iteration": "",
-                  "status": false
-              }
-          },
-          "8737cfc0": {
-              "ready": true,
-              "err_msg": "",
-              "front_project": {
-                  "project_name": "dog_cat_classification",
-                  "type": "classification",
-                  "platform": "intel",
-                  "cover_img":"base64",
-                  "iteration": 5,
-                  "effect_img_num": 237,
-                  "total_img_num": 237,
-                  "classes_num": {
-                      "cat": 221,
-                      "dog": 16
-                  }
-              },
-              "training_info": {
-                  "iteration": "",
-                  "status": false
-              }
-          }
+            "bd924761-3e91-4d47-b66d-ccd84f6a86fb": {
+                "project_name": "fruit_object_detection",
+                "platform": "nvidia",
+                "type": "object_detection",
+                "effect_img_nums": 50,
+                "total_img_nums": 50,
+                "iteration": 0,
+                "cover_img": "/display_img/project/fruit_object_detection/workspace//apple_1.jpg",
+                "create_time": 1666671952.8273804
+            },
+            "d6770459-cae2-4c93-a1b1-28b4a4dc581c": {
+                "project_name": "dog_cat_classification",
+                "platform": "nvidia",
+                "type": "classification",
+                "effect_img_nums": 30,
+                "total_img_nums": 30,
+                "iteration": 0,
+                "cover_img": "/display_img/project/dog_cat_classification/workspace/cat/1.jpeg",
+                "create_time": 1666668517.8947194
+            }
         }
+  '400':
+    schema:
+      type: array
+      description: Error message
+      example:
+        [ "Can't connect to the database",
+          "..."]

@@ -1,27 +1,29 @@
-import sys
-import logging
+import argparse, sys, logging
 from common.logger import config_logger 
 from common.utils import read_json 
-from evaluate.eval_classification import Eval_classfication
-from evaluate.eval_yolo import Eval_yolo
 
-def main():
-    dict = read_json("./Project/samples/Config.json")
-    
-    if "classification" in dict['model_json']:
-        logging.info('Start classification evaluate...')
+def main(args):
+    dictionary = read_json(args.config)
+
+    if 'classification' in args.config:
+        logging.info('Start evaluating classification ...')
+        from classification import Eval_classfication
         # initial model
-        eval_cls = Eval_classfication()
+        eval_cls = Eval_classfication(dictionary)
         # eval model
         eval_cls.evalate()
         
-    elif "yolo" in dict['model_json']:
-        logging.info('Start yolo evaluate...')
+    elif 'yolo' in args.config:
+        logging.info('Start evaluating yolo...')
+        from objectdetection.yolo import Eval_yolo
         # initial model
-        eval_yolo = Eval_yolo()
+        eval_yolo = Eval_yolo(dictionary)
         # eval model
         eval_yolo.evalate()
 
 if __name__ == '__main__':
     config_logger('./evaluate.log', 'w', "info")
-    sys.exit(main() or 0)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--config', help = "The path of model config")
+    args = parser.parse_args()
+    sys.exit(main(args) or 0)

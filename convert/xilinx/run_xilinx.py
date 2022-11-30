@@ -1,6 +1,4 @@
-import sys, os
-import subprocess, shutil
-import logging
+import sys, argparse, subprocess
 # Append to API
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[2]/"common"))
@@ -17,16 +15,20 @@ def cmd(command):
         else:
             print(line)
 
-def main():
+def main(args):
     command = "./convert/xilinx/Vitis-AI/vitis-ai-start.sh c"
     cmd(command)
-    command = "docker exec -it vitis-ai-ivit-t bash -c  'source /opt/vitis_ai/conda/bin/activate vitis-ai-tensorflow && pip install colorlog && python3 ./convert/xilinx/convert_xilinx.py' "
-    cmd(command)
-    command = "clear"
+    command = "docker exec -it vitis-ai-ivit-t \
+                bash -c 'source /opt/vitis_ai/conda/bin/activate vitis-ai-tensorflow && \
+                pip install colorlog && \
+                python3 ./convert/xilinx/convert_xilinx.py -c {}' ".format(args.config)
     cmd(command)
     command = "docker stop vitis-ai-ivit-t && docker rm vitis-ai-ivit-t"
     cmd(command)
 
 if __name__ == '__main__':
     config_logger('./convert.log', 'a', "info")
-    sys.exit(main() or 0)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--config', help = "The path of model config")
+    args = parser.parse_args()
+    sys.exit(main(args) or 0)

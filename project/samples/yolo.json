@@ -1,0 +1,50 @@
+{
+    "platform":"",
+    "export_platform":"",
+
+    "model_config": {
+        "arch": "yolov4",
+        "classes":2,
+        "input_shape": [608,608,3]
+    },
+
+    "train_config" :{
+        "train_dataset_path": "/workspace/dataset/yolo/Objsmall/train",
+        "val_dataset_path":"/workspace/dataset/yolo/Objsmall/val",
+        "test_dataset_path":"/workspace/dataset/yolo/Objsmall/test",
+        "label_path":"/workspace/dataset/yolo/Objsmall/stickerlo.txt",
+        "pretrained_model_path":"/workspace/pretrainedmodel/yolov4.conv.137",
+        "save_model_path":"/workspace/dataset/yolo/Objsmall/weights",
+        
+        "optimizer":{
+            "learning_rate": 0.0013,
+            "decay": 0.0005,
+            "momentum": 0.9
+        },
+
+        "gpu":"0",
+        "batch": 64,
+        "subdivisions":64,
+        "max_batches": 4000,
+        
+        "datagenerator":{
+            "preprocess_mode": null,
+            "angle":0,
+            "saturation":1.5,
+            "exposure":1.5,
+            "hue":0.1,
+            "random":1,
+            "mosaic":0
+        },
+
+        "lr_config":{
+            "policy":"steps",
+            "burn_in":1000,
+            "scales":[0.1,0.1]
+            }
+    },
+    
+    "eval_config":{
+        "eval_dir_path":""
+    }
+}

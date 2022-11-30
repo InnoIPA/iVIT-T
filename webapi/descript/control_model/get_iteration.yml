@@ -1,7 +1,7 @@
 tags:
   - control_model
-summary: Delete folder of iteration
-description: Delete folder of iteration
+summary: Get folder of iteration
+description: Get folder of iteration
 
 parameters:
   - in: path

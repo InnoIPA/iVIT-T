@@ -1,0 +1,55 @@
+tags:
+  - training_model
+summary: Create training tasks of iteration in the project
+description: Create training tasks of iteration in the project 
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "training_method":
+          type: string
+          example: Quick Training
+        "model":
+          type: string
+          example: resnet_18
+        "batch_size":
+          type: int
+          example: 8
+        "step":
+          type: int
+          example: 30
+        "input_shape":
+          type: array
+          example: [320,320,3]
+
+responses:
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example: 
+        {"iter_name":"iter_name","prj_name":"prj_name", "pre_trained":True}
+      
+  '400':
+    schema:
+      type: arrray
+      description: Error message
+      example:
+        [
+          "UUID:{uuid} does not exist.",
+          "KEY:{msg} is not filled in or the type is wrong.",
+          "This iteration is over 20 in Project:{prj_name}",
+          "Class:{class_name} is not over 15 images.",
+          "Can't connect to the database",
+          "..."
+        ]

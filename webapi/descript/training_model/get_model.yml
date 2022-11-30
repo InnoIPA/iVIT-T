@@ -1,0 +1,27 @@
+tags:
+  - training_model
+summary: Get options of model
+description: Get options of model
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+responses:
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example: 
+        {"model": ["yolov4, yolov4-tiny"]}
+  '400':
+    schema:
+      type: arrray
+      description: Error message
+      example:
+        [
+          "UUID:{uuid} does not exist."
+        ]

@@ -1,0 +1,20 @@
+tags:
+  - training_model
+summary: Get listener key of socketio
+description: Get listener key of socketio
+
+responses:
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: 
+            {
+                "log":"log",
+                "curve":"curve",
+                "metrics":"metrics",
+                "pretrained":"pretrained",
+                "spend_time":"spend_time",
+                "remaining_time":"remaining_time",
+                "convert_log":"convert_log"
+            }

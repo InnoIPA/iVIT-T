@@ -26,3 +26,11 @@ responses:
               "workspace"
           ]
         }
+  '400':
+    schema:
+      type: array
+      description: Error message
+      example:
+        [ "UUID:{uuid} does not exist.",
+          "The project does not exist!:[{prj_name}]"
+        ]

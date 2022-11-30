@@ -1,13 +1,13 @@
 from flask import Blueprint, request, jsonify, send_from_directory
 from flasgger import swag_from
-import logging
-import os
+import logging, os
 from pathlib import Path
 from natsort import natsorted
 from webapi import app
-from .common.utils import success_msg, error_msg, exists, YAML_MAIN_PATH
-from .common.display_tool import count_dataset, workspace_path, iteration_path
-
+from .common.utils import success_msg, error_msg, exists, regular_expression
+from .common.config import ROOT, YAML_MAIN_PATH
+from .common.display_tool import count_dataset, get_img_path_db
+from .common.database import delete_data_table_cmd, execute_db
 app_dy_dt = Blueprint( 'display_dataset', __name__)
 # Define API Docs path and Blue Print
 YAML_PATH       = YAML_MAIN_PATH + "/display_dataset"
@@ -19,10 +19,16 @@ def get_dataset(uuid):
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
         return error_msg("UUID:{} does not exist.".format(uuid))
     # Get project name
-    prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]   
-
-    prj_path = "./Project/"+prj_name
+    prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]   
+    # Get all dataset/iteration from project
+    prj_path = ROOT + '/' +prj_name
+    if not exists(prj_path):
+        return error_msg("The project does not exist:[{}]".format(prj_name))
     folder_name = [ dir for dir in natsorted(os.listdir(prj_path)) if os.path.isdir(prj_path+"/"+dir)]
+    # Arrange folder name from the index
+    folder_name = [ "iteration"+str(idx+1) for idx, dir in enumerate(natsorted(folder_name)) if "iteration" in dir]
+    folder_name.append("workspace")
+    logging.info("Get path of dataset from project:[{}]".format(prj_name))
     return jsonify({"folder_name":folder_name}) 
 
 @app_dy_dt.route('/<uuid>/filter_dataset', methods=['POST']) 
@@ -38,19 +44,49 @@ def filter_dataset(uuid):
         elif not "class_name" in request.get_json().keys():
             return error_msg("KEY:class_name does not exist.")
         # Get project name
-        prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"] 
+        prj_name = app.config["PROJECT_INFO"][uuid]["project_name"] 
         # Get value of front
         iteration = request.get_json()['iteration']
         class_name = request.get_json()['class_name']
-        # Get type
-        type = app.config["PROJECT_INFO"][uuid]["front_project"]['type']
-        # Give img path
-        iter_path = "./Project/"+prj_name+"/"+iteration
-        # Check iteration
-        if "workspace" == iteration:
-            return jsonify(workspace_path(class_name, iter_path, type))
-        else:
-            return jsonify(iteration_path(class_name, iter_path, type))
+        # Regular expression
+        class_name = regular_expression(class_name)
+        # Get img path
+        dict_img_path = get_img_path_db(uuid, prj_name, iteration, class_name)
+        # Prevent error 
+        if "error" in dict_img_path:
+            return error_msg(str(dict_img_path[1]))
+        logging.info("Get the image path of this class:[{}] in the project:[{}]".format(class_name, prj_name))
+        return jsonify(dict_img_path)
+
+@app_dy_dt.route('/<uuid>/display_url', methods=['POST'])
+@swag_from("{}/{}".format(YAML_PATH, "display_url.yml"))
+def display_url(uuid):
+    if request.method == 'POST':
+        # Check uuid is/isnot in app.config["PROJECT_INFO"]
+        if not ( uuid in app.config["PROJECT_INFO"].keys()):
+            return error_msg("UUID:{} does not exist.".format(uuid))
+        # Check key of front
+        if not "iteration" in request.get_json().keys():
+            return error_msg("KEY:iteration does not exist.")
+        elif not "class_name" in request.get_json().keys():
+            return error_msg("KEY:class_name does not exist.")
+        # Get project name
+        prj_name = app.config["PROJECT_INFO"][uuid]["project_name"] 
+        # Get value of front
+        iteration = request.get_json()['iteration']
+        class_name = request.get_json()['class_name']
+        # Regular expression
+        class_name = regular_expression(class_name)
+        # Get img path
+        dict_img_path = get_img_path_db(uuid, prj_name, iteration, class_name)
+        # Prevent error 
+        if "error" in dict_img_path:
+            return error_msg(str(dict_img_path[1]))
+        # Setting url
+        url = "http://{}:{}".format(request.environ['SERVER_NAME'], request.environ['SERVER_PORT'])
+        img_path = [ url + "/display_img/"+ path.split("./")[-1] for path in dict_img_path["img_path"]]
+        logging.info("Get the image url of this class:[{}] in the project:[{}]".format(class_name, prj_name))
+        return jsonify({"img_path":img_path})
 
 @app_dy_dt.route('/display_img/<path:path>', methods=['GET'])
 def display_img(path):
@@ -66,38 +102,6 @@ def display_img(path):
     else:
         return error_msg("This image does not exist:{}".format(path+"/"+path_list[-1]))
 
-@app_dy_dt.route('/<uuid>/display_url', methods=['POST'])
-@swag_from("{}/{}".format(YAML_PATH, "display_url.yml"))
-def display_url(uuid):
-    if request.method == 'POST':
-        # Check uuid is/isnot in app.config["PROJECT_INFO"]
-        if not ( uuid in app.config["PROJECT_INFO"].keys()):
-            return error_msg("UUID:{} does not exist.".format(uuid))
-        # Check key of front
-        if not "iteration" in request.get_json().keys():
-            return error_msg("KEY:iteration does not exist.")
-        elif not "class_name" in request.get_json().keys():
-            return error_msg("KEY:class_name does not exist.")
-        # Get project name
-        prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"] 
-        # Get value of front
-        iteration = request.get_json()['iteration']
-        class_name = request.get_json()['class_name']
-        # Get type
-        type = app.config["PROJECT_INFO"][uuid]["front_project"]['type']
-        # Give img path
-        iter_path = "./Project/" + prj_name+"/"+iteration
-        # Check iteration
-        url = "http://{}:{}".format(request.environ['SERVER_NAME'], request.environ['SERVER_PORT'])
-        if "workspace" == iteration:
-            img_path = workspace_path(class_name, iter_path, type)
-            img_path = [ url + "/display_img/"+ path.split("./")[-1] for path in img_path["img_path"]]
-            return jsonify({"img_path":img_path})
-        else:
-            img_path = iteration_path(class_name, iter_path, type)
-            img_path = [ url + "/display_img/"+ path.split("./")[-1] for path in img_path["img_path"]]
-            return jsonify({"img_path":img_path})
-
 @app_dy_dt.route('/<uuid>/delete_img', methods=['DELETE']) 
 @swag_from("{}/{}".format(YAML_PATH, "delete_img.yml"))
 def delete_img(uuid):
@@ -109,32 +113,44 @@ def delete_img(uuid):
         if not "image_info" in request.get_json().keys():
             return error_msg("KEY:image_info does not exist.")
         # Get project name
-        prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"] 
+        prj_name = app.config["PROJECT_INFO"][uuid]["project_name"] 
         # Get type
-        type = app.config["PROJECT_INFO"][uuid]["front_project"]['type']
+        type = app.config["PROJECT_INFO"][uuid]['type']
         # Get value of front
         image_info_list = request.get_json()['image_info']
-        
+        # Loop dictionary key
         for key in image_info_list.keys(): 
             if key == "Unlabeled":
                 label = ""
             else:
                 label = key
-
-            if os.path.isdir("./Project/"+prj_name+"/workspace"+'/'+label):
+            # Check folder does exist
+            if os.path.isdir(ROOT + '/' +prj_name+"/workspace"+'/'+label):
                 for name in image_info_list[key]:
-                    logging.info("Removed:{}".format("./Project/"+prj_name+"/workspace"+'/'+label+'/'+name))
-                    os.remove("./Project/"+prj_name+"/workspace"+'/'+label+'/'+name)
-                    # if object_detection need to remove txt
-                    if type == 'object_detection' and os.path.isfile("./Project/"+prj_name+"/workspace"+'/'+label+'/'+ os.path.splitext(name)[0] + '.txt'):
-                        logging.info("Removed:{}".format("./Project/"+prj_name+"/workspace"+'/'+label+'/'+ os.path.splitext(name)[0] + '.txt'))
-                        os.remove("./Project/"+prj_name+"/workspace"+'/'+label+'/'+ os.path.splitext(name)[0] + '.txt')
+                    # Remove files
+                    if os.path.isfile(ROOT + '/' +prj_name+"/workspace"+'/'+label+'/'+name):
+                        logging.info("Removed:[{}]".format(prj_name+"/workspace"+'/'+label+'/'+name))
+                        os.remove(ROOT + '/' +prj_name+"/workspace"+'/'+label+'/'+name)
+                        # Delete data from Database
+                        command = delete_data_table_cmd("workspace", "project_uuid=\'{}\' AND img_path=\'{}\'".format(uuid, label+'/'+name))
+                        info_db = execute_db(command, True)
+                        if info_db is not None:
+                            return error_msg(str(info_db[1]))
+                    else:
+                        logging.error("This image:[{}] does not exist in workspace.".format(label+'/'+name))
 
-        return success_msg("Delete images- project:{}, images:{}".format(prj_name, image_info_list))
+                    # Object_detection remove txt
+                    if type == 'object_detection' and os.path.isfile(ROOT + '/' +prj_name+"/workspace"+'/'+label+'/'+ os.path.splitext(name)[0] + '.txt'):
+                        logging.info("Removed:{}".format(ROOT + '/' +prj_name+"/workspace"+'/'+label+'/'+ os.path.splitext(name)[0] + '.txt'))
+                        os.remove(ROOT + '/' +prj_name+"/workspace"+'/'+label+'/'+ os.path.splitext(name)[0] + '.txt')
+            else:
+                return error_msg("The class:[{}] does not exist in the project:[{}]".format(key, prj_name))
 
-@app_dy_dt.route('/<uuid>/iter_cls_num', methods=['POST']) 
-@swag_from("{}/{}".format(YAML_PATH, "iter_cls_num.yml")) 
-def iter_cls_num(uuid):
+        return success_msg("Delete images:[{}] in project:[{}]".format(image_info_list, prj_name))
+
+@app_dy_dt.route('/<uuid>/iter_class_num', methods=['POST'])
+@swag_from("{}/{}".format(YAML_PATH, "iter_class_num.yml")) 
+def iter_class_num(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
@@ -143,12 +159,12 @@ def iter_cls_num(uuid):
         if not "iteration" in request.get_json().keys():
             return error_msg("KEY:iteration does not exist.")
         # Get project name
-        prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"] 
-        # Get type
-        type = app.config["PROJECT_INFO"][uuid]["front_project"]['type']
+        prj_name = app.config["PROJECT_INFO"][uuid]["project_name"] 
         # Get value of front
         iteration = request.get_json()['iteration']
         # Get class number
-        num_info = count_dataset(prj_name, type, iteration)
-        
+        num_info = count_dataset(uuid, prj_name, iteration)
+        if "error" in num_info:
+            return error_msg(str(num_info[1]))
+        logging.info("Get numbers of dataset:[{}] in project:[{}]".format(iteration, prj_name))
         return jsonify(num_info)

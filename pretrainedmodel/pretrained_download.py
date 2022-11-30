@@ -39,7 +39,7 @@ def yolo_pretrained(arch):
                 gdown.download(url, PATH + '/' +YOLOFILE[1]) 
 
         elif 'yolov4' in arch:
-            url = '{}18OmCm91sVzS3ijf3apkGPa1lncRxsndn'.format(GDRIVE_URL)
+            url = '{}18OmCm91sVzS3ijf3apkGPa1lncRxsndn{}'.format(GDRIVE_URL, "&confirm=t")
             if not (os.path.exists(PATH + '/' +YOLOFILE[2])):
                 gdown.download(url, PATH + '/' +YOLOFILE[2]) 
 

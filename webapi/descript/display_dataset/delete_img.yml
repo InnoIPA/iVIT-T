@@ -26,4 +26,13 @@ responses:
     schema:
       type: string
       description: Successful operation
-      example: "Delete images- project:{prj_name}, images:{image_list}"
+      example: Delete images:[{image_list}] in project:[{prj_name}]
+  '400':
+    schema:
+      type: array
+      description: Error message
+      example:
+        [ "UUID:{uuid} does not exist.",
+          "The class:[{class_name}] does not exist in the project:[{prj_name}]",
+          "Can't connect to the database",
+          "..."]

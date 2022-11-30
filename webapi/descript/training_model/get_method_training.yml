@@ -1,0 +1,17 @@
+tags:
+  - training_model
+summary: Get options of training method
+description: Get options of training method
+
+responses:
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example: 
+        {
+            "method_training": [
+                "Quick Training",
+                "Advanced Training"
+            ]
+        }

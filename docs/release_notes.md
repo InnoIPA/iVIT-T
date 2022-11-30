@@ -1,5 +1,12 @@
 # Release Notes
 
+## Release 1.01
+### New Features/Highlights
+- Added database
+### Release Notes
+### Web API
+- Added database
+---
 ## Release 1.0
 ### New Features/Highlights
 - Training Classificaiton/Object detection model

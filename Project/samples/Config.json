@@ -1,8 +1,0 @@
-{
-    "model_json": "./Project/fruit/iteration5/yolo.json",
-    "platform": [
-        "nvidia",
-        "intel",
-        "xilinx"
-    ]
-}

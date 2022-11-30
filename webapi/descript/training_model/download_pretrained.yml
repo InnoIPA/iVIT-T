@@ -1,0 +1,19 @@
+tags:
+  - training_model
+summary: Download pre-trained model of some arch
+description: Download pre-trained model of some arch
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+responses:
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: 
+        "True"

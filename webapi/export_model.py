@@ -1,16 +1,12 @@
-import logging
 from flask import Blueprint, request, jsonify, send_from_directory
 from flasgger import swag_from
 from pathlib import Path
 from webapi import app
-from .common.utils import MAINCFGPAHT, exists,read_json, success_msg, error_msg, YAML_MAIN_PATH
-from .common.training_tool import Fillin
-from .common.export_tool import set_export_json, convert_model, check_convert_exist
+from .common.utils import exists,read_json, success_msg, error_msg, regular_expression
+from .common.config import PLATFORM_CFG, ROOT, YAML_MAIN_PATH
+from .common.export_tool import set_export_json, Convert_model, check_convert_exist
 from .common.inspection import Check
 chk = Check()
-ct_model = convert_model()
-fill_in = Fillin()
-
 app_export = Blueprint( 'export_model', __name__)
 # Define API Docs path and Blue Print
 YAML_PATH       = YAML_MAIN_PATH + "/export_model"
@@ -22,9 +18,9 @@ def get_export_platform(uuid):
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
         return error_msg("UUID:{} does not exist.".format(uuid))
     # Get platform
-    platform = app.config["PROJECT_INFO"][uuid]["front_project"]["platform"]
+    platform = app.config["PROJECT_INFO"][uuid]["platform"]
     # Get all platform list
-    platform_list = read_json(MAINCFGPAHT)["platform"]
+    platform_list = read_json(PLATFORM_CFG)["platform"]
     # Filter platform
     if "xilinx" == platform:
         return jsonify({"export_platform":[platform]})
@@ -45,53 +41,37 @@ def start_convert(uuid):
         if not "export_platform" in request.get_json().keys():
             return error_msg("KEY:export_platform does not exist.")
         # Get project name
-        prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
+        prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
         # Get type
-        type = app.config["PROJECT_INFO"][uuid]["front_project"]["type"]
-        # Get iteration folder name (Get value of front)
-        iter_name = request.get_json()['iteration']
+        type = app.config["PROJECT_INFO"][uuid]["type"]
+        # Get model.json
+        if type == "object_detection":
+            model = "yolo"
+        elif type == "classification":
+            model = type
         # Get export_platform (Get value of front)
         export_platform = request.get_json()['export_platform']
-        # Setting config.json
-        fill_in.set_config_json(prj_name, iter_name, type)
-        # Check convert model does exist
-        status = check_convert_exist(type, prj_name, iter_name, export_platform)
+        front_iteration = request.get_json()['iteration']
+        # Mapping iteration
+        dir_iteration = chk.mapping_iteration(uuid, prj_name, front_iteration, front=True)
+        if "error" in dir_iteration:
+            return error_msg(str(dir_iteration[1]))
+        # Check convert model does not exist
+        status = check_convert_exist(type, prj_name, dir_iteration, export_platform)
+        ct_model = Convert_model(uuid, prj_name, dir_iteration, front_iteration, export_platform)
         if status:
-            # Setting model.json and front_train.json
-            set_export_json(type, prj_name, iter_name, export_platform)
+            # Setting model.json
+            set_export_json(model, prj_name, dir_iteration, export_platform)
             # Run command
-            command = 'python3 convert.py'
+            command = 'python3 convert.py -c {}'.format(ROOT + '/' +prj_name+'/'+ dir_iteration + '/'+ model + '.json')
             # Covert model
-            ct_model.thread_convert(command, uuid, prj_name, iter_name, export_platform)
+            ct_model.thread_convert(command)
             return success_msg("Start to convert model to {}.".format(export_platform))
         else:
-            ct_model.check_file(uuid, export_platform, prj_name, iter_name)
-            return success_msg("The model does converted:[Platform:{},Project:{}/{}]".format(export_platform, prj_name, iter_name))
-        
-# @app.route('/<uuid>/download', methods=['POST'])
-# @swag_from("{}/{}".format(YAML_PATH, "download.yml"))
-# def download(uuid):
-#     if request.method == 'POST':
-#         # Check uuid is/isnot in app.config["PROJECT_INFO"]
-#         if not ( uuid in app.config["PROJECT_INFO"].keys()):
-#             return error_msg("UUID:{} does not exist.".format(uuid))
-#         # Check key of front
-#         if not "iteration" in request.get_json().keys():
-#             return error_msg("KEY:iteration does not exist.")
-#         # Get project name
-#         prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
-#         # Get iteration folder name (Get value of front)
-#         iter_name = request.get_json()['iteration']
-#         # Export path
-#         path = str(Path(__file__).resolve().parents[1]/"")
-#         export_path = path+"/Project/"+prj_name+"/"+iter_name+"/export"
-#         # Setting path
-#         zip_folder = export_path.split("export")[0]
-#         filename = prj_name+".zip"
-#         if exists(zip_folder+filename):
-#             return send_from_directory(directory=export_path.split("export")[0], path=prj_name+".zip", as_attachment=True)
-#         else:
-#             return error_msg("This {}.zip does not exist.".format(prj_name))
+            info_db = ct_model.check_file()
+            if info_db is not None:
+                return error_msg(str(info_db[1]))
+            return success_msg("The model does converted:[Platform:{},Project:{}/{}]".format(export_platform, prj_name, front_iteration))
 
 @app.route('/<uuid>/share_api', methods=['POST'])
 @swag_from("{}/{}".format(YAML_PATH, "share_api.yml"))
@@ -104,16 +84,20 @@ def share_api(uuid):
         if not "iteration" in request.get_json().keys():
             return error_msg("KEY:iteration does not exist.")
         # Get project name
-        prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
+        prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
         # Get iteration folder name (Get value of front)
-        iter_name = request.get_json()['iteration']
+        front_iteration = request.get_json()['iteration']
+        # Mapping iteration
+        dir_iteration = chk.mapping_iteration(uuid, prj_name, front_iteration, front=True)
+        if "error" in dir_iteration:
+            return error_msg(str(dir_iteration[1]))
         # Export path
-        export_path = "./Project/"+prj_name+"/"+iter_name+"/export"
+        export_path = ROOT + '/' + prj_name + "/" + dir_iteration + "/export"
         # Setting path
         zip_folder = export_path.split("export")[0]
         filename = prj_name+".zip"
         if exists(zip_folder+filename):
-            return success_msg("{}:{}/{}/{}/share".format(request.environ['SERVER_NAME'], request.environ['SERVER_PORT'], uuid, iter_name))
+            return success_msg("{}:{}/{}/{}/share".format(request.environ['SERVER_NAME'], request.environ['SERVER_PORT'], uuid, front_iteration))
         else:
             return error_msg("This {}.zip does not exist.".format(prj_name))
 
@@ -124,10 +108,15 @@ def share(uuid, iteration):
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
         return error_msg("UUID:{} does not exist.".format(uuid))
     # Get project name
-    prj_name = app.config["PROJECT_INFO"][uuid]["front_project"]["project_name"]
+    prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
     # Export path
     path = str(Path(__file__).resolve().parents[1]/"")
-    export_path = path+"/Project/"+prj_name+"/"+iteration+"/export"
+    # Mapping iteration
+    front_iteration = iteration
+    dir_iteration = chk.mapping_iteration(uuid, prj_name, front_iteration, front=True)
+    if "error" in dir_iteration:
+        return error_msg(str(dir_iteration[1]))
+    export_path = path + "/project/" + prj_name + "/" + dir_iteration + "/export"
     # check zip exist
     zip_folder = export_path.split("export")[0]
     filename = prj_name+".zip"

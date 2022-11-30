@@ -29,6 +29,11 @@ responses:
       
   '400':
     schema:
-      type: string
+      type: array
       description: Error message
-      example: "This {prj_name}.zip does not exist."
+      example: 
+          [
+            "UUID:{uuid} does not exist.",
+            "The itertaion does not exist:[{prj_name}:{iteration}]",
+            "This {prj_name}.zip does not exist."
+          ]

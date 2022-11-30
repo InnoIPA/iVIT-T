@@ -22,3 +22,13 @@ responses:
                 "intel"
             ]
         }
+
+  '400':
+    schema:
+      type: array
+      description: Error message
+      example: 
+          [
+            "UUID:{uuid} does not exist."
+          ]
+          

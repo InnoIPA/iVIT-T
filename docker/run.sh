@@ -147,12 +147,19 @@ if [ "${BACKRUN}" = true ];then
 	RUNCODE="-dt"
 	BASHCODE="bash"
 else
-	DARKNET="chmod +x ./ObjectDetection/YOLO/darknet/darknetrun.sh && ./ObjectDetection/YOLO/darknet/darknetrun.sh"
+	DARKNET="chmod +x ./objectdetection/yolo/darknet/darknetrun.sh && ./objectdetection/yolo/darknet/darknetrun.sh"
 	DLPRETRAINED="python3 pretrainedmodel/pretrained_download.py -all"
 	RUNCODE="-it"
 	BASHCODE="bash -c \"${DARKNET} && ${DLPRETRAINED} && ${COMMAND} \" "
 fi
 
+# ---------------------------------------------------------
+# Running Database
+echo -e "${YELLOW}"
+echo "-----Running database-----"
+echo -e "${NC}"
+
+sudo ./webapi/pgdb/run_db.sh -p 6535 -s ivit_admin -d ivit -u ivit
 # ---------------------------------------------------------
 # Run container
 DOCKER_CMD="docker run \

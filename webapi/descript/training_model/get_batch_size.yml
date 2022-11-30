@@ -1,0 +1,28 @@
+tags:
+  - training_model
+summary: Get options of batch size 
+description: Get options of batch size
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+responses:
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example:
+        {"batch_size": [1,2,4,8]}
+      
+  '400':
+    schema:
+      type: arrray
+      description: Error message
+      example:
+        [
+          "UUID:{uuid} does not exist.",
+        ]

@@ -19,6 +19,9 @@ parameters:
         "iteration":
           type: string
           example: iteration1
+        "threshold":
+          type: float
+          example: 0.5
 
 responses:
   '200':
@@ -150,3 +153,13 @@ responses:
                 ]
             }
         }
+
+  '400':
+    schema:
+      type: array
+      description: Error message
+      example: 
+        [
+          "UUID:{uuid} does not exist.",
+          "The model have not best model, keep training-[{prj_name}:{iteration}]"
+        ]

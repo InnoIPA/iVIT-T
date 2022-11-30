@@ -35,5 +35,9 @@ responses:
       type: array
       description: Error message
       example:
-        [ "This metrics.json does not exist in {iteration} of Project:{prj_name}",
-          "This {iteration} does not exist in Project:{prj_name}"]
+        [ 
+          "UUID:{uuid} does not exist.",
+          "The itertaion does not exist:[{prj_name}:{iteration}]",
+          "This metrics.json does not exist in {iteration} of Project:{prj_name}",
+          "This {iteration} does not exist in Project:{prj_name}"
+        ]

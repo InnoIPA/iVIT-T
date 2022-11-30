@@ -1,0 +1,7 @@
+{
+    "HOST":"localhost",
+    "PORT":"6535",
+    "DBNAME":"ivit",
+    "USER":"ivit",
+    "PASSWORD":"ivit_admin"
+}

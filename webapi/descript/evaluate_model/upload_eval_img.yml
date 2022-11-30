@@ -44,6 +44,13 @@ responses:
         
   '400':
     schema:
-      type: string
+      type: array
       description: Error message
-      example: "No upload files."
+      example: 
+          [
+            "UUID:{uuid} does not exist.",
+            "The itertaion does not exist:[{prj_name}:{iteration}]",
+            "No upload files.",
+            "Upload file is over 10 images, image_name:[{ile.filename}]"
+          ]
+          

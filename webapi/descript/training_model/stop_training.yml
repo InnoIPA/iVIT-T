@@ -1,0 +1,24 @@
+tags:
+  - training_model
+summary: Stop training model
+description: Stop training model
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+responses:
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: "Stop training in iteration:[{iter_name}] of Project:[{prj_name}]"
+      
+  '400':
+    schema:
+      type: string
+      description: Error message
+      example: "Thread does not exist in iteration:[{iter_name}] of Project:[{prj_name}]"

@@ -25,4 +25,12 @@ responses:
     schema:
       type: string
       description: Successful operation
-      example: "Create new project:{prj_name}"
+      example: "Create new project:[09c12b11-4a1b-4609-8241-1fe204c27922:test_api]"
+  '400':
+    schema:
+      type: array
+      description: Error message
+      example:
+        [ "[Errno 17] File exists: './project/test_api/workspace'",
+          "Can't connect to the database",
+          "..."]

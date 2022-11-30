@@ -29,3 +29,15 @@ responses:
       type: string
       description: Successful operation
       example: "Start to convert model to {export_platform}"
+
+  '400':
+    schema:
+      type: array
+      description: Error message
+      example: 
+          [
+            "UUID:{uuid} does not exist.",
+            "The itertaion does not exist:[{prj_name}:{iteration}]",
+            "Can't connect to the database",
+            "..."
+          ]

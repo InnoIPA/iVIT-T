@@ -1,0 +1,7 @@
+{
+  "platform": [
+    "nvidia",
+    "intel",
+    "xilinx"
+  ]
+}

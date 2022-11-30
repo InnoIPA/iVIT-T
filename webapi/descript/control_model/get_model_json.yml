@@ -26,23 +26,6 @@ responses:
       description: Successful operation
       example:
             {
-                "front_train": {
-                    "GPU": [
-                        "NVIDIA GeForce RTX 2060 SUPER:0"
-                    ],
-                    "batch_size": 2,
-                    "effect_dataset_num": 30,
-                    "export_platform": "intel",
-                    "input_shape": [
-                        256,
-                        256,
-                        3
-                    ],
-                    "model": "yolov4",
-                    "spend_time": "60m",
-                    "step": 4000,
-                    "training_method": "Quick Training"
-                },
                 "train_param": {
                     "export_platform": "intel",
                     "model_config": {
@@ -56,7 +39,7 @@ responses:
                     },
                     "platform": "intel",
                     "train_config": {
-                        "GPU": "0",
+                        "gpu": "0",
                         "batch": 64,
                         "datagenerator": {
                             "angle": 0,
@@ -96,5 +79,9 @@ responses:
       type: array
       description: Error message
       example:
-        [ "This model.json does not exist in {iteration} of Project:{prj_name}",
-          "This {iteration} does not exist in Project:{prj_name}"]
+        [ 
+          "UUID:{uuid} does not exist.",
+          "The itertaion does not exist:[{prj_name}:{iteration}]",
+          "This model.json does not exist in [{iteration}] of Project:[{prj_name}]",
+          "This {iteration} does not exist in Project:{prj_name}"
+        ]

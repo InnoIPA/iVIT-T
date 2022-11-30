@@ -1,0 +1,16 @@
+tags:
+  - training_model
+summary: Get table of mapping iteration 
+description: Get table of mapping iteration 
+
+responses:
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: 
+              {
+                  "eb37d73e-0a04-4828-818f-381ee8dcb6e3": {
+                      "iteration1": "iteration1"
+                  }
+              }

@@ -34,9 +34,9 @@ responses:
                       608,
                       3
                   ],
-                  "spend_time":"10s",
-                  "training_method":"quickly",
-                  "GPU":["NVIDIA GeForce RTX 2060 SUPER:0"],
+                  "spend_time":"10",
+                  "training_method":"Quick Training",
+                  "gpu":["NVIDIA GeForce RTX 2060 SUPER:0"],
                   "effect_dataset_num":30
               }
   '400':
@@ -44,5 +44,7 @@ responses:
       type: array
       description: Error message
       example:
-        [ "This front_train.json does not exist in {iteration} of Project:{prj_name}",
-          "This {iteration} does not exist in Project:{prj_name}"]
+        [ "UUID:{uuid} does not exist.",
+          "Can't connect to the database",
+          "This model does not exist:[{prj_name}:{iteration}]",
+          "..."]
