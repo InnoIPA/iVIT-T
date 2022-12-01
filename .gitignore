@@ -7,6 +7,7 @@ anchors.txt
 counters_per_class.txt
 chart_yolov4-tiny.png
 chart_yolov3-tiny.png
+chart_yolov4-leaky.png
 chart_yolov3.png
 chart_yolov4.png
 chart.png

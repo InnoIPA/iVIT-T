@@ -92,7 +92,6 @@ def evaluate(uuid):
         if type == "object_detection":
             model = "yolo"
             score = "confidence"
-            threshold = threshold * 100
         elif type == "classification":
             model = type
             score = "score"
