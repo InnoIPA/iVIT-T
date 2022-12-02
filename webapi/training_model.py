@@ -222,12 +222,12 @@ def get_mapping_iteration():
     logging.info("Get information from app.config['MAPPING_ITERATION']!")
     return app.config["MAPPING_ITERATION"]
 
-@app_train.route('/prj_training_stats', methods=['GET'])
-@swag_from("{}/{}".format(YAML_PATH, "prj_training_stats.yml"))
-def prj_training_stats():
+@app_train.route('/prj_training_status', methods=['GET'])
+@swag_from("{}/{}".format(YAML_PATH, "prj_training_status.yml"))
+def prj_training_status():
     logging.info("Get information from app.config['MAPPING_ITERATION']!")
     stats = {}
-    if app.config['MAPPING_ITERATION'] > 0:
+    if len(app.config['MAPPING_ITERATION'].keys()) > 0:
         for key in app.config['MAPPING_ITERATION'].keys():
             stats[key]['iteration'] = app.config['MAPPING_ITERATION'][key]['iteration']['front_name']
             stats[key]['status'] = app.config['MAPPING_ITERATION'][key]['status']
