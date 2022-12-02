@@ -1,0 +1,17 @@
+tags:
+  - training_model
+summary: Get status of training task
+description: Get status of training task
+
+responses:
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: 
+              {
+                  "eb37d73e-0a04-4828-818f-381ee8dcb6e3": {
+                      "iteration": "iteration4",
+                      "status": false
+                  }
+              }

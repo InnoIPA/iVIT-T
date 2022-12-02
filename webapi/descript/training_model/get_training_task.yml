@@ -81,7 +81,7 @@ responses:
                       "remaining_time": null,
                       "iteration": {
                           "dir_name": "iteration2",
-                          "mapping_name": "iteration4"
+                          "front_name": "iteration4"
                       },
                       "status": false
                   }
