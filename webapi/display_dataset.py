@@ -48,8 +48,6 @@ def filter_dataset(uuid):
         # Get value of front
         iteration = request.get_json()['iteration']
         class_name = request.get_json()['class_name']
-        # Regular expression
-        class_name = regular_expression(class_name)
         # Get img path
         dict_img_path = get_img_path_db(uuid, prj_name, iteration, class_name)
         # Prevent error 
@@ -75,8 +73,6 @@ def display_url(uuid):
         # Get value of front
         iteration = request.get_json()['iteration']
         class_name = request.get_json()['class_name']
-        # Regular expression
-        class_name = regular_expression(class_name)
         # Get img path
         dict_img_path = get_img_path_db(uuid, prj_name, iteration, class_name)
         # Prevent error 
