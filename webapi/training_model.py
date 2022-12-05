@@ -225,12 +225,13 @@ def get_mapping_iteration():
 @app_train.route('/prj_training_status', methods=['GET'])
 @swag_from("{}/{}".format(YAML_PATH, "prj_training_status.yml"))
 def prj_training_status():
-    logging.info("Get information from app.config['MAPPING_ITERATION']!")
+    logging.info("Get information from app.config['TRAINING_TASK']!")
     stats = {}
-    if len(app.config['MAPPING_ITERATION'].keys()) > 0:
-        for key in app.config['MAPPING_ITERATION'].keys():
-            stats[key]['iteration'] = app.config['MAPPING_ITERATION'][key]['iteration']['front_name']
-            stats[key]['status'] = app.config['MAPPING_ITERATION'][key]['status']
+    if len(app.config['TRAINING_TASK'].keys()) > 0:
+        for key in app.config['TRAINING_TASK'].keys():
+            stats[key] = {"iteration":"", "status":False}
+            stats[key]['iteration'] = app.config['TRAINING_TASK'][key]['iteration']['front_name']
+            stats[key]['status'] = app.config['TRAINING_TASK'][key]['status']
     return stats
 
 @app_train.route('/socket_listen_list', methods=['GET'])

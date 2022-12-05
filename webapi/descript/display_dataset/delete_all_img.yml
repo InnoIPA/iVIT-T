@@ -1,0 +1,27 @@
+tags:
+  - display_dataset
+summary: Delete all images
+description: Delete all images
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+              
+responses:
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: Delete All images in Project:[{prj_name}]
+  '400':
+    schema:
+      type: array
+      description: Error message
+      example:
+        [ "UUID:{uuid} does not exist.",
+          "The project have problem:[{prj_name}]",
+          "Can't connect to the database",
+          "..."]

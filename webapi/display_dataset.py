@@ -1,13 +1,14 @@
 from flask import Blueprint, request, jsonify, send_from_directory
 from flasgger import swag_from
-import logging, os
+import logging, os, shutil
 from pathlib import Path
 from natsort import natsorted
 from webapi import app
-from .common.utils import success_msg, error_msg, exists, regular_expression
+from .common.utils import success_msg, error_msg, exists
 from .common.config import ROOT, YAML_MAIN_PATH
+from .common.upload_tools import create_class_dir
 from .common.display_tool import count_dataset, get_img_path_db
-from .common.database import delete_data_table_cmd, execute_db
+from .common.database import delete_data_table_cmd, execute_db, update_data_table_cmd
 app_dy_dt = Blueprint( 'display_dataset', __name__)
 # Define API Docs path and Blue Print
 YAML_PATH       = YAML_MAIN_PATH + "/display_dataset"
@@ -116,7 +117,7 @@ def delete_img(uuid):
         image_info_list = request.get_json()['image_info']
         # Loop dictionary key
         for key in image_info_list.keys(): 
-            if key == "Unlabeled":
+            if key == "Unlabeled" or type == "object_detection":
                 label = ""
             else:
                 label = key
@@ -143,6 +144,40 @@ def delete_img(uuid):
                 return error_msg("The class:[{}] does not exist in the project:[{}]".format(key, prj_name))
 
         return success_msg("Delete images:[{}] in project:[{}]".format(image_info_list, prj_name))
+
+@app_dy_dt.route('/<uuid>/delete_all_img', methods=['DELETE']) 
+@swag_from("{}/{}".format(YAML_PATH, "delete_all_img.yml"))
+def delete_all_img(uuid):
+    if request.method == 'DELETE':
+        # Check uuid is/isnot in app.config["PROJECT_INFO"]
+        if not ( uuid in app.config["PROJECT_INFO"].keys()):
+            return error_msg("UUID:{} does not exist.".format(uuid))
+        # Get project name
+        prj_name = app.config["PROJECT_INFO"][uuid]["project_name"] 
+        # Get type
+        type = app.config["PROJECT_INFO"][uuid]['type']
+        # Check folder does exist
+        ws_path = ROOT + '/' + prj_name + "/workspace"
+        if os.path.isdir(ws_path):
+            # Delete workspace
+            shutil.rmtree(ws_path)
+            # Create new folder
+            create_class_dir("Unlabeled", prj_name, type)
+            # Delete ws table in db
+            command = delete_data_table_cmd("workspace", "project_uuid=\'{}\'".format(uuid))
+            info_db = execute_db(command, True)
+            if info_db is not None:
+                return error_msg(str(info_db[1]))
+            # Update prj table in db
+            values = "effect_img_nums=0, unlabeled_img_nums=0"
+            select = "project_uuid=\'{}\'".format(uuid)
+            command = update_data_table_cmd("project", values, select)
+            info_db = execute_db(command, True)
+            if info_db is not None:
+                return error_msg(str(info_db[1]))
+            return success_msg("Delete All images in Project:[{}]".format(prj_name))
+        else:
+            return error_msg("The project have problem:[{}].".format(prj_name))
 
 @app_dy_dt.route('/<uuid>/iter_class_num', methods=['POST'])
 @swag_from("{}/{}".format(YAML_PATH, "iter_class_num.yml")) 
