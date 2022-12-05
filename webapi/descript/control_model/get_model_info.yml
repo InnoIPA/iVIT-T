@@ -37,7 +37,7 @@ responses:
                   "spend_time":"10",
                   "training_method":"Quick Training",
                   "gpu":["NVIDIA GeForce RTX 2060 SUPER:0"],
-                  "effect_dataset_num":30
+                  "effect_dataset_nums":30
               }
   '400':
     schema:
