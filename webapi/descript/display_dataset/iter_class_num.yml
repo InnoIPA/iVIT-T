@@ -40,6 +40,5 @@ responses:
       description: Error message
       example:
         [ "UUID:{uuid} does not exist.",
-          "The dataset does not exist:[{prj_name}/{iteration}]",
           "Can't connect to the database",
           "..."]
