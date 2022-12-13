@@ -60,6 +60,13 @@ If you want to use the UI version, you can follow this Tutorial:
 
 ## The format of dataset 
 - Image format: .jpg/.jpge/.png/.bmp/.JPG/.JPGE/.PNG/.BMP
+
+### Classification
+- Folder(class)/img1, img2, ..., imgN
+
+### Object detection
+- Folder/img1, txt1, img2, txt2, ..., imgN, txtN
+
 - Annotation format: .txt (YOLO)
 ```
     Format:
