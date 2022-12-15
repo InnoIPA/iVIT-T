@@ -3,11 +3,10 @@ from flasgger import swag_from
 import shutil, logging, copy, time
 from webapi import app
 from .common.utils import success_msg, error_msg, write_json, exists, read_txt
-from .common.config import ROOT, YAML_MAIN_PATH, METHOD_OF_TRAINING, BATCH_SIZE, SOCKET_LISTENERS
+from .common.config import ROOT, YAML_MAIN_PATH, METHOD_OF_TRAINING, TRAINING_CLASS, SOCKET_LISTENERS
 from .common.training_tool import Fillin, create_iter_folder, Prepare_data, Training, cal_input_shape, cal_batch_size
 from .common.inspection import Check, Pretrained
 chk = Check()
-training = Training()
 app_train = Blueprint( 'training_model', __name__)
 # Define API Docs path and Blue Print
 YAML_PATH       = YAML_MAIN_PATH + "/training_model"
@@ -151,6 +150,7 @@ def create_training_iter(uuid):
 @app_train.route('/<uuid>/start_training', methods=['GET'])
 @swag_from("{}/{}".format(YAML_PATH, "start_training.yml"))
 def start_training(uuid):
+    training = Training()
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
         return error_msg("UUID:{} does not exist.".format(uuid))
@@ -171,6 +171,7 @@ def start_training(uuid):
     if not app.config["TRAINING_TASK"][uuid]['status']:
         # Recorded start_time
         app.config["TRAINING_TASK"][uuid]["start_time"] = time.time()
+        TRAINING_CLASS.update({uuid:{"class":training}})
         app.config["TRAINING_TASK"][uuid]['status'] = training.thread_training(command, uuid, type, metrics=False)
         return success_msg('Training in iteration:{} of Project:{}'.format(iter_name, prj_name)) 
     else:
@@ -187,9 +188,9 @@ def stop_training(uuid):
     # Get iteration name
     iter_name = app.config["TRAINING_TASK"][uuid]["iteration"]["dir_name"]
     # Check is running thread
-    if len(training.thread_list) > 0 and app.config["TRAINING_TASK"][uuid]['status']:
+    if len(TRAINING_CLASS[uuid]['class'].thread_list) > 0 and app.config["TRAINING_TASK"][uuid]['status']:
         # Stop training
-        training.thread_list[uuid]["stop"].set()
+        TRAINING_CLASS[uuid]['class'].thread_list[uuid]["stop"].set()
         return success_msg("Stop training in iteration:[{}] of Project:[{}]".format(iter_name, prj_name))
     else:
         return error_msg("Thread does not exist in iteration:[{}] of Project:[{}]".format(iter_name, prj_name))
