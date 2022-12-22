@@ -32,5 +32,6 @@ responses:
       description: Error message
       example:
         [ "[Errno 17] File exists: './project/test_api/workspace'",
+          "The project_name include special characters:[{project_name}]"
           "Can't connect to the database",
           "..."]

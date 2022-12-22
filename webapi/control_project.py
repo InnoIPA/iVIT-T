@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flasgger import swag_from
 import logging, os, shutil, copy
 from webapi import app
-from .common.utils import exists, success_msg, error_msg, read_json, regular_expression
+from .common.utils import exists, success_msg, error_msg, read_json, regular_expression, special_words
 from .common.config import PLATFORM_CFG, ROOT, YAML_MAIN_PATH
 from .common.init_tool import get_project_info, fill_in_prjdict
 from .common.database import PJ_INFO_DB, fill_in_db, delete_data_table_cmd, execute_db, update_data_table_cmd
@@ -58,7 +58,11 @@ def create_project():
             return error_msg("This keys:{} is not fill in.".format(msg))
         # Regular_expression
         for key in param:
-            param[key] = regular_expression(param[key])
+            if key == "project_name" and special_words(param[key]):
+                return error_msg("The project_name include special characters:[{}]".format(param[key]))
+            else:
+                param[key] = regular_expression(param[key])
+
         # Create project folder and create workspace in project folder
         error = create_pj_dir(param['project_name'])
         if error:
