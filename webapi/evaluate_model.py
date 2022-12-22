@@ -9,7 +9,6 @@ from .common.inspection import Check
 from .common.upload_tools import Upload_DB
 from .common.evaluate_tool import Evaluate, threshold_process
 from .common.labeling_tool import save_bbox
-eval = Evaluate()
 chk = Check()
 app_eval = Blueprint( 'evaluate_model', __name__)
 # Define API Docs path and Blue Print
@@ -69,6 +68,7 @@ def upload_eval_img(uuid):
 @swag_from("{}/{}".format(YAML_PATH, "evaluate.yml")) 
 def evaluate(uuid):
     if request.method == 'POST':
+        eval = Evaluate()
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
             return error_msg("UUID:{} does not exist.".format(uuid))
