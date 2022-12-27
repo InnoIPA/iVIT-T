@@ -121,6 +121,8 @@ def rename_project(uuid):
         prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
         # Get value of front
         new_name = request.get_json()['new_name']
+        if special_words(new_name) :
+            return error_msg("The project_name include special characters:[{}]".format(new_name))
         # Regular expression
         new_name = regular_expression(new_name)
         # Change app.config["PROJECT_INFO"][uuid][”project_name”] 

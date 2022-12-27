@@ -2,10 +2,12 @@ from flask import Blueprint, request, jsonify, send_from_directory
 from flasgger import swag_from
 from pathlib import Path
 from webapi import app
-from .common.utils import exists,read_json, success_msg, error_msg, regular_expression
-from .common.config import PLATFORM_CFG, ROOT, YAML_MAIN_PATH
+from .common.utils import exists,read_json, success_msg, error_msg
+from .common.config import PLATFORM_CFG, ROOT, YAML_MAIN_PATH, EXPORT_LIST
 from .common.export_tool import set_export_json, Convert_model, check_convert_exist
 from .common.inspection import Check
+from signal import SIGKILL
+import os
 chk = Check()
 app_export = Blueprint( 'export_model', __name__)
 # Define API Docs path and Blue Print
@@ -28,9 +30,9 @@ def get_export_platform(uuid):
         platform = [ val for val in platform_list if val != "xilinx"]
         return jsonify({"export_platform":platform})
 
-@app_export.route('/<uuid>/start_convert', methods=['POST']) 
-@swag_from("{}/{}".format(YAML_PATH, "start_convert.yml"))
-def start_convert(uuid):
+@app_export.route('/<uuid>/start_converting', methods=['POST']) 
+@swag_from("{}/{}".format(YAML_PATH, "start_converting.yml"))
+def start_converting(uuid):
     if request.method == 'POST':
         # Check uuid is/isnot in app.config["PROJECT_INFO"]
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
@@ -71,7 +73,26 @@ def start_convert(uuid):
             info_db = ct_model.check_file()
             if info_db is not None:
                 return error_msg(str(info_db[1]))
-            return success_msg("The model does converted:[Platform:{},Project:{}/{}]".format(export_platform, prj_name, front_iteration))
+            return success_msg("The model has been converted:[Platform:{}, Project:{}/{}]".format(export_platform, prj_name, front_iteration))
+
+@app_export.route('/<uuid>/stop_converting', methods=['GET']) 
+@swag_from("{}/{}".format(YAML_PATH, "stop_converting.yml"))
+def stop_converting(uuid):
+    # Check uuid is/isnot in app.config["PROJECT_INFO"]
+    if not ( uuid in app.config["PROJECT_INFO"].keys()):
+        return error_msg("UUID:{} does not exist.".format(uuid))
+    # Get project name
+    prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
+    # Check is running thread
+    if len(EXPORT_LIST) > 0:
+        # Get iteration name
+        iter_name = EXPORT_LIST[0][uuid]["iteration"]
+        # Stop converting
+        EXPORT_LIST[0][uuid]['stop'].set()
+        os.kill(int(EXPORT_LIST[0][uuid]['PID']), SIGKILL)
+        return success_msg("Stop converting in iteration:[{}] of Project:[{}]".format(iter_name, prj_name))
+    else:
+        return error_msg("Thread does not exist in iteration of Project:[{}]".format(prj_name))
 
 @app.route('/<uuid>/share_api', methods=['POST'])
 @swag_from("{}/{}".format(YAML_PATH, "share_api.yml"))

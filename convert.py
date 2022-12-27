@@ -4,6 +4,7 @@ from common.utils import read_json
 
 def cmd(command):
     process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT,shell=False)
+    logging.info("PID:{},".format(process.pid))
     for line in iter(process.stdout.readline,b''):
         line = line.rstrip().decode()
         if line.isspace(): 

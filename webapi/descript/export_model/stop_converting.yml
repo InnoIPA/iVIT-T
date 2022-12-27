@@ -1,0 +1,24 @@
+tags:
+  - export_model
+summary: Stop converting model
+description: Stop converting model
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+responses:
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: "Stop converting in iteration:[{iter_name}] of Project:[{prj_name}]"
+      
+  '400':
+    schema:
+      type: string
+      description: Error message
+      example: "Thread does not exist in iteration:[{iter_name}] of Project:[{prj_name}]"
