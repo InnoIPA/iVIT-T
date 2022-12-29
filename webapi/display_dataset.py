@@ -168,8 +168,13 @@ def delete_all_img(uuid):
             info_db = execute_db(command, True)
             if info_db is not None:
                 return error_msg(str(info_db[1]))
+            # Remove covert images
+            main_path = ROOT + '/' + prj_name
+            cover_list = [ main_path + "/" + name for name in os.listdir(main_path) if "cover" in name]
+            if len(cover_list) > 0 and exists(cover_list[0]):
+                os.remove(cover_list[0])
             # Update prj table in db
-            values = "effect_img_nums=0, unlabeled_img_nums=0"
+            values = "effect_img_nums=0, unlabeled_img_nums=0, show_image_path=\'\'"
             select = "project_uuid=\'{}\'".format(uuid)
             command = update_data_table_cmd("project", values, select)
             info_db = execute_db(command, True)

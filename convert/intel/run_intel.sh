@@ -3,7 +3,7 @@
 # Set the default value of the getopts variable 
 mount_gpu="--gpus=all"
 workspace="/workspace"
-main_container="ivit-t"
+main_container="ivit-t_test"
 mode=false
 docker_image="intel-convert"
 docker_name=${docker_image}

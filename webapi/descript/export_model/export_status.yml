@@ -1,0 +1,16 @@
+tags:
+  - export_model
+summary: Check the status of the export methods
+description: Check the status of the export methods
+
+responses:
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example:
+              {
+                  "url":True,
+                  "local":True,
+                  "icap": 'app.config["ICAP_STATUS"]'
+              }

@@ -11,8 +11,10 @@ from webapi.control_model import app_cl_model
 from webapi.training_model import app_train
 from webapi.export_model import app_export
 from webapi.evaluate_model import app_eval
+from webapi.icap import app_icap
 from webapi.common.database import init_db
 from webapi.common.init_tool import init_sample_to_db
+from webapi.common.thingsboard import init_for_icap
 import webapi.common.config
 
 if __name__ == '__main__':
@@ -37,6 +39,11 @@ if __name__ == '__main__':
     app.register_blueprint(app_train)
     app.register_blueprint(app_export)
     app.register_blueprint(app_eval)
+    app.register_blueprint(app_icap)
+
+    # Register iCAP
+    logging.info("Initial iCAP register...")
+    init_for_icap()
 
     logging.info("Running webapi server...")
     socketio.run(app, host = "0.0.0.0", port=args.port, debug=False)

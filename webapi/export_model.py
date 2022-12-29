@@ -145,3 +145,14 @@ def share(uuid, iteration):
         return send_from_directory(directory=export_path.split("export")[0], path=prj_name+".zip", as_attachment=True)
     else:
         return error_msg("This {}.zip does not exist.".format(prj_name))
+
+@app.route('/export_status', methods=['GET'])
+@swag_from("{}/{}".format(YAML_PATH, "export_status.yml"))
+def export_status():
+    return jsonify(
+        {
+            "url":True,
+            "local":True,
+            "icap": app.config["ICAP_STATUS"]
+        }
+    )
