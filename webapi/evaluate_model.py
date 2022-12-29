@@ -104,6 +104,8 @@ def evaluate(uuid):
         # Run command
         eval.thread_eval(uuid, type, command)
         result = eval.cmd_q.get()
+        if "Error" in result.keys():
+            return error_msg(result["Error"])
         EVAL_VAL[uuid] = result
         # Threshold
         log_dict = threshold_process(uuid, threshold, score)

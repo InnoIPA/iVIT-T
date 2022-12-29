@@ -123,7 +123,7 @@ def share_api(uuid):
             return error_msg("This {}.zip does not exist.".format(prj_name))
 
 @app.route('/<uuid>/<iteration>/share', methods=['GET'])
-@swag_from("{}/{}".format(YAML_PATH, "share.yml"))
+# @swag_from("{}/{}".format(YAML_PATH, "share.yml"))
 def share(uuid, iteration):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
