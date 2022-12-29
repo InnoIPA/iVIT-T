@@ -1,0 +1,11 @@
+tags:
+  - icap
+summary: Get the device ID to register at iCAP
+description: Get the device ID to register at iCAP
+
+responses:
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example:  "DEVICE_ID"

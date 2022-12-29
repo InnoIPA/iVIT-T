@@ -1,0 +1,44 @@
+tags:
+  - icap
+summary: Change IP/PORT to register at iCAP
+description: Change IP/PORT to register at iCAP
+
+parameters:
+  - in: formData
+    name: iteration
+    required: true
+    type: string
+    example: iteration1
+
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "address":
+          type: string
+          example: "IP:PORT"
+
+  - in: formData
+    name: address
+    required: true
+    type: string
+    example: "IP:PORT"
+
+responses:
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: "DEVICE_ID"
+      
+  '400':
+    schema:
+      type: array
+      description: Error message
+      example:
+            [
+              "Exception error",
+              "Connect to iCAP ... Failed",
+            ]
