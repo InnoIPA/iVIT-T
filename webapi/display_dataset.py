@@ -7,7 +7,7 @@ from webapi import app
 from .common.utils import success_msg, error_msg, exists
 from .common.config import ROOT, YAML_MAIN_PATH
 from .common.upload_tools import create_class_dir
-from .common.display_tool import count_dataset, get_img_path_db
+from .common.display_tool import count_dataset, get_img_path_db, check_unlabeled_images
 from .common.database import delete_data_table_cmd, execute_db, update_data_table_cmd
 app_dy_dt = Blueprint( 'display_dataset', __name__)
 # Define API Docs path and Blue Print
@@ -198,6 +198,13 @@ def iter_class_num(uuid):
         prj_name = app.config["PROJECT_INFO"][uuid]["project_name"] 
         # Get value of front
         iteration = request.get_json()['iteration']
+        # Get type
+        type = app.config["PROJECT_INFO"][uuid]['type']
+        # Check unlabeled images
+        if iteration== "workspace" and type == "object_detection":
+            info_db = check_unlabeled_images(uuid, prj_name, iteration)
+            if "error" in info_db:
+                return error_msg(str(info_db[1]))
         # Get class number
         num_info = count_dataset(uuid, prj_name, iteration)
         if "error" in num_info:

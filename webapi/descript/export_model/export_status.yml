@@ -10,7 +10,7 @@ responses:
       description: Successful operation
       example:
               {
-                  "url":True,
+                  "URL":True,
                   "local":True,
-                  "icap": 'app.config["ICAP_STATUS"]'
+                  "iCAP":False,
               }

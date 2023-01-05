@@ -151,8 +151,8 @@ def share(uuid, iteration):
 def export_status():
     return jsonify(
         {
-            "url":True,
+            "URL":True,
             "local":True,
-            "icap": app.config["ICAP_STATUS"]
+            "iCAP": app.config["ICAP_STATUS"]
         }
     )

@@ -44,28 +44,30 @@ def upload(uuid):
                         if not (filename.split(".")[-1] in ALLOWED_EXTENSIONS["image"]):
                             return error_msg("This type:[{}] of filename:[{}] ".format(filename.split(".")[-1], filename))
                         # Save image
-                        save_file(file, dir_path, filename)
+                        status = save_file(file, dir_path, filename)
 
                     elif type == "object_detection":
                         # Skip other format exclude image format
                         if (not (filename.split(".")[-1] in ALLOWED_EXTENSIONS["label"])) and (not (filename.split(".")[-1] in ALLOWED_EXTENSIONS["image"])):
                             return error_msg("This type:[{}] of filename:[{}] ".format(filename.split(".")[-1], filename)) 
                         # Save image and annotation
-                        save_file(file, dir_path, filename)
+                        status = save_file(file, dir_path, filename)
                         
                     # Remove file size is 0
                     if os.stat(dir_path+"/"+filename).st_size == 0:
                         os.remove(dir_path+"/"+filename)
                         return error_msg("The size of file is 0:[{}]".format(filename))
-
-                    # Update db
-                    updb = Upload_DB(uuid, prj_name, type, label, dir_path, filename)
-                    if filename != "classes.txt":
-                        info = updb.upload_fillin_ws_info()
-                        if info is not None:
-                            return error_msg(str(info[1]))
-                    # Append to list
-                    col_filename.append(filename)
+                    
+                    # The status of save image prevent to write twice db
+                    if status:
+                        # Update db
+                        updb = Upload_DB(uuid, prj_name, type, label, dir_path, filename)
+                        if filename != "classes.txt":
+                            info = updb.upload_fillin_ws_info()
+                            if info is not None:
+                                return error_msg(str(info[1]))
+                        # Append to list
+                        col_filename.append(filename)
                 else:
                     error_msg("The file is null:[{}]".format(filename))
 
