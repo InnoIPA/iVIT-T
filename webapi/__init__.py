@@ -17,5 +17,5 @@ app.config['SWAGGER'] = {
 
 swagger = Swagger(app)
 CORS(app)
-socketio = SocketIO(app, cors_allowed_origins='*')
+socketio = SocketIO(app, cors_allowed_origins=['http://127.0.0.1/', "https://127.0.0.1/"])
 app.config['JSON_SORT_KEYS'] = False
