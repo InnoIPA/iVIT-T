@@ -46,4 +46,4 @@ if __name__ == '__main__':
     init_for_icap()
 
     logging.info("Running webapi server...")
-    socketio.run(app, host = "0.0.0.0", port=args.port, debug=False)
+    socketio.run(app, host = "127.0.0.1", port=args.port, debug=False)
