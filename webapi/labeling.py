@@ -4,7 +4,7 @@ import logging, os, shutil
 from webapi import app
 from .common.utils import exists, read_json, read_txt, success_msg, error_msg, write_txt, regular_expression
 from .common.config import ROOT, YAML_MAIN_PATH
-from .common.labeling_tool import yolo_txt_convert, save_bbox, del_cls_txt, add_cls_txt, del_cls_db, cls_change_class, obj_savebbox_db
+from .common.labeling_tool import yolo_txt_convert, save_bbox, del_cls_txt, add_cls_txt, del_cls_db, cls_change_class, obj_savebbox_db, rename_cls_class
 app_labeling = Blueprint( 'labeling', __name__)
 # Define API Docs path and Blue Print
 YAML_PATH       = YAML_MAIN_PATH + "/labeling"
@@ -104,12 +104,17 @@ def rename_class(uuid):
         new_name = regular_expression(new_name)   
         # Classification required rename class folder
         if type == "classification":
-            dir_path = ROOT + '/' +prj_name+"/workspace/"+class_name
-            new_path = ROOT + '/' +prj_name+"/workspace/"+new_name
+            dir_path = ROOT + '/' + prj_name + "/workspace/" + class_name
+            new_path = ROOT + '/' + prj_name + "/workspace/" + new_name
             if os.path.isdir(dir_path):
                 os.rename(dir_path, new_path)
             else:
                 return error_msg("This class:[{}] does not exist in project:[{}]".format(class_name, prj_name)) 
+            
+            # Renamed database img_path
+            info = rename_cls_class(prj_name, class_name, new_name, uuid)
+            if info is not None:
+                return error_msg(str(info[1]))
         # Rename class in classes.txt
         classes_path = ROOT + '/' +prj_name+"/workspace/classes.txt"
         if exists(classes_path):
