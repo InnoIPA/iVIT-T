@@ -65,7 +65,7 @@ def get_default_param(uuid):
         if platform ==  "intel" or platform == "nvidia":
             platform = "other"
         # Get default param
-        default = METHOD_OF_TRAINING[type][platform][training_method]
+        default = copy.deepcopy(METHOD_OF_TRAINING[type][platform][training_method])
         # Check batch_size of the optimization 
         batch_size = cal_batch_size(uuid)
         if not default["batch_size"] in batch_size:
