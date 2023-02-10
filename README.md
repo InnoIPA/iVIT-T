@@ -59,14 +59,47 @@ If you want to use the UI version, you can follow this Tutorial:
 - [Tutorial](https://github.com/InnoIPA/ivit-t-web)
 
 ## The format of dataset 
-- Image format: .jpg/.jpge/.png/.bmp/.JPG/.JPGE/.PNG/.BMP
+- Image format: .jpg/.jpeg/.png/.bmp/.JPG/.JPEG/.PNG/.BMP
 
 ### Classification
 - Folder(class)/img1, img2, ..., imgN
+```
+├── class_1
+│   ├── 1.jpg
+│   ├── 2.jpg
+│   ├── 3.jpg
+...
+│   ├── 29.jpg
+│   └── 30.jpg
+└── class_2
+    ├── 1.jpg
+    ├── 2.jpg
+    ├── 3.jpg
+    ...
+    ├── 29.jpg
+    └── 30.jpg
+```
 
 ### Object detection
 - Folder/img1, txt1, img2, txt2, ..., imgN, txtN
-
+```
+Folder
+├── 0.jpg
+├── 0.txt
+├── 10000.jpg
+├── 10000.txt
+├── 10001.jpg
+├── 1000.jpg
+├── 1000.txt
+├── 10069.jpg
+├── 10069.txt
+├── 1006.jpg
+├── 1006.txt
+├── 10078.jpg
+...
+├── 840.jpg
+└── 840.txt
+```
 - Annotation format: .txt (YOLO)
 ```
     Format:
