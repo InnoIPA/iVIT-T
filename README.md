@@ -100,6 +100,7 @@ Folder
 ├── 840.jpg
 └── 840.txt
 ```
+
 - Annotation format: .txt (YOLO)
 ```
     Format:

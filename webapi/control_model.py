@@ -228,7 +228,7 @@ def check_best_model(uuid):
                 if len(best_list) == 0:
                     return error_msg("This best model does not exist in [{}] of Project:[{}]".format(front_iteration, prj_name))
                 else:
-                    logging.info("This bast model dose exist.")
+                    logging.info("This best model dose exist.")
                     return jsonify({"Exist":True})
             else:
                 return error_msg("This model.json does not exist in [{}] of Project:[{}]".format(front_iteration, prj_name))
