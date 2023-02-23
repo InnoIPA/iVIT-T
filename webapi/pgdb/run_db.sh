@@ -134,6 +134,7 @@ else
 	-e PGDATA=/var/lib/postgresql/data/pgdata \
 	-e POSTGRES_USER=${USER} \
 	-e POSTGRES_PASSWORD=${PASSWORD} \
+	-e POSTGRES_INITDB_ARGS='--data-checksums' \
 	-e POSTGRES_DB=${DBNAME} \
 	${DOCKER_IMAGE}:${TAG_VER}"
 
