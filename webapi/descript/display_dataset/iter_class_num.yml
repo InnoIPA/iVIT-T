@@ -32,7 +32,8 @@ responses:
             "classes_num": {
                 "cat": 20,
                 "dog": 20
-            }
+            },
+            'sort_list': ['cat', 'dog']
         }
   '400':
     schema:
