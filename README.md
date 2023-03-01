@@ -116,3 +116,14 @@ Folder
     label2
     ...
 ```
+
+# Reference
+- OpenVINO docs:
+    - https://docs.openvino.ai/latest/home.html
+- Vitis-AI:
+    - https://github.com/Xilinx/Vitis-AI.git
+- Hailo docs:
+    - https://hailo.ai/developer-zone/documentation/sw-suite-2023-01-1/?sp_referrer=suite_install.html
+- To convert the model to someone format, we refer to the repository:
+    - https://github.com/david8862/keras-YOLOv3-model-set
+    - https://github.com/Tianxiaomo/pytorch-YOLOv4.git
