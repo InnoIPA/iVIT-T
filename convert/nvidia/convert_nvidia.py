@@ -1,4 +1,4 @@
-import sys, os, argparse, subprocess, shutil, logging
+import sys, os, argparse, time, shutil, logging
 # Append to API
 
 from pathlib import Path
@@ -17,7 +17,8 @@ def main(args):
     input_model = model_dict["train_config"]["save_model_path"] +'/'+ model_name
     output_dir = model_dict["train_config"]["save_model_path"]+'/nvidia_model'
     export_dir = model_dict["train_config"]["save_model_path"].split("weights")[0]+'export'
-    project_name = args.config.split("/project/")[-1].split("/")[0]
+    project_name = args.config.split("project/")[-1].split("/")[0]
+    start = time.time()
 
 	# Create target Directory
     if os.path.isdir(export_dir):
@@ -36,8 +37,11 @@ def main(args):
 
     elif "yolo" in args.config:
         convert_yolo(input_model, output_dir, export_dir, project_name, model_dict, args.config)
-        
-    logging.info('Converted.')
+
+	# Computing time
+    end = time.time()
+    logging.warning("Converting total time:{}".format(end - start))
+    # logging.info('Converted.')
 
 if __name__ == '__main__':
     config_logger('./convert.log', 'a', "info")

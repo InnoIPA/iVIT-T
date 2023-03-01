@@ -1,0 +1,12 @@
+tags:
+  - icap
+summary: Get IP at iVIT-T
+description: Get IP at iVIT-T
+
+responses:
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: {'ip': "172.16.92.124" }
+            

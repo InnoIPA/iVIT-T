@@ -1,4 +1,4 @@
-import sys, os, argparse, subprocess, shutil,  logging, yaml
+import sys, os, argparse, shutil, logging, time
 # Append to API
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[2]/"common"))
@@ -17,7 +17,8 @@ def main(args):
 	output_dir = model_dict["train_config"]["save_model_path"]+'/intel_model'
 	export_dir = model_dict["train_config"]["save_model_path"].split("weights")[0]+'export'
 	shape =  model_dict["model_config"]["input_shape"]
-	project_name = args.config.split("/project/")[-1].split("/")[0]
+	project_name = args.config.split("project/")[-1].split("/")[0]
+	start = time.time()
 
 	# Create target Directory
 	if os.path.isdir(export_dir):
@@ -40,6 +41,10 @@ def main(args):
 		from convert_yolo import convert_yolo
 		convert_yolo(input_model, output_dir, INTEL_CONVERT_PATH,
                     		export_dir, project_name, model_dict, args.config, shape)
+
+	# Computing time
+	end = time.time()
+	logging.info("Converting total time:{}".format(end - start))
 
 if __name__ == '__main__':
     config_logger('./convert.log', 'a', "info")

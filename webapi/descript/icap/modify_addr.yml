@@ -1,0 +1,14 @@
+tags:
+  - icap
+summary: Check IP/PORT of iCAP 
+description: Check IP/PORT of iCAP 
+
+responses:
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example:  
+            {
+              "address": "IP:PORT"
+            }

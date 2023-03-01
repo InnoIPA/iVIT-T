@@ -1,4 +1,4 @@
-import sys, os, argparse, subprocess, shutil, logging
+import sys, os, argparse, shutil, logging, time
 
 # Append to API
 from pathlib import Path
@@ -9,15 +9,15 @@ from utils import read_json, write_json
 from convert_cls import convert_cls
 from convert_yolo import convert_yolo
 
-def cmd(command):
-	logging.info(command.split())
-	process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT,shell=False)
-	for line in iter(process.stdout.readline,b''):
-		line = line.rstrip().decode()
-		if line.isspace(): 
-			continue
-		else:
-			print(line)
+# def cmd(command):
+# 	logging.info(command.split())
+# 	process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT,shell=False)
+# 	for line in iter(process.stdout.readline,b''):
+# 		line = line.rstrip().decode()
+# 		if line.isspace(): 
+# 			continue
+# 		else:
+# 			logging.info(line)
 
 def main(args):
     # Read model_json
@@ -29,7 +29,8 @@ def main(args):
     export_dir = model_dict["train_config"]["save_model_path"].split("weights")[0]+'export'
     shape =  model_dict["model_config"]["input_shape"]
     shape_str = "{},{},{}".format(shape[0],shape[1],shape[2])
-    project_name = args.config.split("/project/")[-1].split("/")[0]
+    project_name = args.config.split("project/")[-1].split("/")[0]
+    start = time.time()
 
 	# Create target Directory
     if os.path.isdir(export_dir):
@@ -48,6 +49,10 @@ def main(args):
 
     elif "yolo" in args.config:
         convert_yolo(input_model, output_dir, export_dir, project_name, model_dict, args.config, shape, shape_str)
+
+	# Computing time
+    end = time.time()
+    logging.info("Converting total time:{}".format(end - start))
 
 if __name__ == '__main__':
     config_logger('./convert.log', 'a', "info")

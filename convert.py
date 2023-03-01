@@ -35,7 +35,14 @@ def main(args):
         command = "python3 convert/xilinx/run_xilinx.py -c {}".format(args.config)
         # Run command
         cmd(command)
-        logging.info('Converted.')
+
+    elif platform == "hailo":
+        logging.info('Convert the model to use the model of hailo device')
+        command = "python3 convert/hailo/run_hailo.py -c {}".format(args.config)
+        # Run command
+        cmd(command)
+
+    logging.info('Converted.')
 
 if __name__ == '__main__':
     config_logger('./convert.log', 'w', "info")

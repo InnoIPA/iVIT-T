@@ -1,11 +1,25 @@
 # Release Notes
 
-## Release 1.01
+## Release 1.1
+### New Features/Highlights
+- Added new platform - Hailo
+- Support convert to Hailo model
+- Supoort export model to iCAP
+
+### Release Notes
+### Web API
+- Added new platform - Hailo
+- Support convert to Hailo model
+- Supoort export model to iCAP
+
+---
+## Release 1.0.1
 ### New Features/Highlights
 - Added database
 ### Release Notes
 ### Web API
 - Added database
+
 ---
 ## Release 1.0
 ### New Features/Highlights

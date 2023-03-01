@@ -1,34 +1,49 @@
+import os, logging
 from flask import Blueprint, request, jsonify, send_from_directory
 from flasgger import swag_from
 from pathlib import Path
 from webapi import app
-from .common.utils import exists,read_json, success_msg, error_msg
+from .common.utils import exists,read_json, success_msg, error_msg 
 from .common.config import PLATFORM_CFG, ROOT, YAML_MAIN_PATH, EXPORT_LIST
-from .common.export_tool import set_export_json, Convert_model, check_convert_exist
+from .common.export_tool import set_export_json, Convert_model, check_convert_exist, icap_upload_file, post_metadata
 from .common.inspection import Check
 from signal import SIGKILL
-import os
+
 chk = Check()
 app_export = Blueprint( 'export_model', __name__)
 # Define API Docs path and Blue Print
 YAML_PATH       = YAML_MAIN_PATH + "/export_model"
 
-@app_export.route('/<uuid>/get_export_platform', methods=['GET']) 
+@app_export.route('/<uuid>/get_export_platform/<arch>', methods=['GET']) 
 @swag_from("{}/{}".format(YAML_PATH, "get_export_platform.yml"))
-def get_export_platform(uuid):
+def get_export_platform(uuid, arch):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
         return error_msg("UUID:{} does not exist.".format(uuid))
+    if not arch:
+        return error_msg("Arch is null.")
     # Get platform
     platform = app.config["PROJECT_INFO"][uuid]["platform"]
     # Get all platform list
     platform_list = read_json(PLATFORM_CFG)["platform"]
     # Filter platform
-    if "xilinx" == platform:
-        return jsonify({"export_platform":[platform]})
-    else:
-        platform = [ val for val in platform_list if val != "xilinx"]
-        return jsonify({"export_platform":platform})
+    type = app.config["PROJECT_INFO"][uuid]["type"]
+    if "classification" == type:
+        if "xilinx" == platform:
+            return jsonify({"export_platform":[platform]})
+        else:
+            platform = [ val for val in platform_list if val != "xilinx"]
+            return jsonify({"export_platform":platform})
+        
+    elif "object_detection" == type:
+        exclude_list = ["xilinx", "hailo"]
+        if "yolov4-tiny" in arch:
+            exclude_list = ["xilinx"]
+        if platform in exclude_list:
+            return jsonify({"export_platform":exclude_list})
+        else:
+            platform = [ val for val in platform_list if not val in exclude_list]
+            return jsonify({"export_platform":platform})
 
 @app_export.route('/<uuid>/start_converting', methods=['POST']) 
 @swag_from("{}/{}".format(YAML_PATH, "start_converting.yml"))
@@ -156,3 +171,49 @@ def export_status():
             "iCAP": app.config["ICAP_STATUS"]
         }
     )
+
+@app.route('/<uuid>/export_icap', methods=['POST'])
+@swag_from("{}/{}".format(YAML_PATH, "export_icap.yml"))
+def export_icap(uuid):
+    if request.method == 'POST':
+        # Check uuid is/isnot in app.config["PROJECT_INFO"]
+        if not ( uuid in app.config["PROJECT_INFO"].keys()):
+            return error_msg("UUID:{} does not exist.".format(uuid))
+        # Check key of front
+        if not "iteration" in request.get_json().keys():
+            return error_msg("KEY:iteration does not exist.")
+        # Get platform
+        platform = app.config["PROJECT_INFO"][uuid]["platform"]
+        # Get type
+        type = app.config["PROJECT_INFO"][uuid]["type"]
+        # Get project name
+        prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
+        # Get iteration folder name (Get value of front)
+        front_iteration = request.get_json()['iteration']
+        
+        # Mapping iteration
+        dir_iteration = chk.mapping_iteration(uuid, prj_name, front_iteration, front=True)
+        if "error" in dir_iteration:
+            return error_msg(str(dir_iteration[1]))
+        # Export path
+        export_path = ROOT + '/' + prj_name + "/" + dir_iteration + "/export"
+        # Setting path
+        zip_folder = export_path.split("export")[0]
+        filename = prj_name+".zip"
+        if exists(zip_folder + filename):
+            # Checksum
+            res = icap_upload_file(zip_folder, filename, app.config["TB_DEVICE_ID"], prj_name, platform, app.config["TB"], app.config["TB_PORT"])
+            if "5" in str(res.status_code) or "4" in str(res.status_code):
+                logging.error("Upload files status:{}".format(res.status_code))
+                return error_msg(res.json()["error"])
+            logging.info("Upload files status:{}".format(res.status_code))
+            success_info = res.json()
+            # Update thingsboard model info
+            res = post_metadata(success_info, prj_name, platform, type, export_path, app.config["TB"], app.config["TB_PORT"])
+            if "5" in str(res.status_code) or "4" in str(res.status_code):
+                logging.error("The status of post metadata:{}".format(res.status_code))
+                return error_msg(res.json()["error"])
+            logging.info("The status of post metadata:{}".format(res.status_code))
+            return jsonify(res.json()), 200
+        else:
+            return error_msg("This {}.zip does not exist.".format(prj_name))

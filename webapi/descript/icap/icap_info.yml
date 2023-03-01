@@ -1,0 +1,20 @@
+tags:
+  - icap
+summary: Get the information to register at iCAP
+description: Get the information to register at iCAP
+
+responses:
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example:  
+              {
+                "TB_STATS": "TB_STATS",
+                "TB_DEV_NAME": "TB_DEV_NAME",
+                "TB_DEV_TYPE": "TB_DEV_TYPE",
+                "TB_DEV_ALAIS": "TB_DEV_ALAIS",
+                "TB_CREATE_TIME": "TB_CREATE_TIME",
+                "TB_DEVICE_ID": "TB_DEVICE_ID",
+                "TB_TOKEN": "TB_TOKEN",
+              }

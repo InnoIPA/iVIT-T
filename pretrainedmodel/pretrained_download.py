@@ -3,7 +3,7 @@ import multiprocessing as mp
 
 YOLOFILE = ['yolov3.conv.81', 'yolov3-tiny.conv.15', 'yolov4.conv.137']
 YOLOARCH = ["yolov3-tiny", "yolov4", "yolov4-tiny"]
-CLSARCH = ["resnet_18", "resnet_50"]
+CLSARCH = ["resnet_18", "resnet_50", "vgg_16"]
 PATH = './pretrainedmodel'
 
 def cls_pretrained(arch, all=False):

@@ -28,9 +28,6 @@ def get_model(uuid):
     platform = app.config["PROJECT_INFO"][uuid]["platform"]
     # Get type
     type = app.config["PROJECT_INFO"][uuid]["type"]
-    # platform == intel or nvidia
-    if platform ==  "intel" or platform == "nvidia":
-        platform = "other"
     # Get model option
     model = app.config['MODEL'][platform][type]
     return jsonify({"model": model})
@@ -61,9 +58,6 @@ def get_default_param(uuid):
         platform = app.config["PROJECT_INFO"][uuid]["platform"]
         # Get value of front
         training_method = request.get_json()['training_method']
-        # platform == intel or nvidia
-        if platform ==  "intel" or platform == "nvidia":
-            platform = "other"
         # Get default param
         default = copy.deepcopy(METHOD_OF_TRAINING[type][platform][training_method])
         # Check batch_size of the optimization 

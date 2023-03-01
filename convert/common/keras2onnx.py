@@ -18,6 +18,6 @@ def main():
     convert_main(args)
 
 if __name__ == '__main__':
-    config_logger('./convert.log', 'a', "info")
+    # config_logger('./convert.log', 'a', "info")
     main()
 

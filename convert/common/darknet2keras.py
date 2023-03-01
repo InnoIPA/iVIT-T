@@ -35,5 +35,5 @@ parser.add_argument(
     action='store_true')
 
 if __name__ == '__main__':
-    config_logger('./convert.log', 'a', "info")
+    # config_logger('./convert.log', 'a', "info")
     convert_main(parser.parse_args())

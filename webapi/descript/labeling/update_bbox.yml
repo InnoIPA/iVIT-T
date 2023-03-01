@@ -1,7 +1,7 @@
 tags:
   - labeling
-summary: Update bounding boxes of image
-description: Update bounding boxes of image
+summary: Update bounding boxes of image, bbox:[x0,y0,x1,y1]
+description: Update bounding boxes of image, bbox:[x0,y0,x1,y1]
 
 parameters:
   - in: path

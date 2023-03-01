@@ -8,4 +8,4 @@ responses:
     schema:
       type: string
       description: Successful operation
-      example:  "DEVICE_ID"
+      example:  { "device_id": "DEVICE_ID" }

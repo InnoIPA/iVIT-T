@@ -1,0 +1,65 @@
+tags:
+  - export_model
+summary: Export model to iCAP
+description: Export model to iCAP
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "iteration":
+          type: string
+          example: iteration1
+
+responses:
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: {
+                  "data": {
+                      "id": "58169480-ace0-11ed-b82d-df49313d086e",
+                      "applyDeviceTypeId": "47096bb0-ac34-11ed-b82d-df49313d086e",
+                      "createdTime": 1676431506888,
+                      "additionalInfo": {
+                          "description": "{\"description\":{\"project_name\":\"safety_helmet_detecion_xilinx\",\"file_id\":\"UUID-safety_helmet_detecion_xilinx-xilinx.zip\",\"file_size\":6500000,\"checksum\":\"74d3c24783a619d5bb949fd512d8743f\",\"checksumAlgorithm\":\"MD5\",\"model_type\":\"obj\",\"model_classes\":[\"helmet\",\"head\"]},\"applyDeviceModel\":\"xilinx\"}"
+                      },
+                      "tenantId": {
+                          "entityType": "TENANT",
+                          "id": "de2e2c30-974c-11ed-b67d-470fd306c48f"
+                      },
+                      "type": "SOFTWARE",
+                      "title": "UUID-safety_helmet_detecion_xilinx-xilinx",
+                      "version": "1.0.1",
+                      "tag": "UUID-safety_helmet_detecion_xilinx-Xilinx-1.0.1",
+                      "url": "http://10.204.16.110:9527/file/ota_repo/UUID-safety_helmet_detecion_xilinx-xilinx.zip",
+                      "hasData": false,
+                      "fileName": null,
+                      "contentType": null,
+                      "checksumAlgorithm": "MD5",
+                      "checksum": "74d3c24783a619d5bb949fd512d8743f",
+                      "dataSize": null
+                  }
+                }
+      
+  '400':
+    schema:
+      type: array
+      description: Error message
+      example: 
+          [
+            "UUID:{uuid} does not exist.",
+            "The itertaion does not exist:[{prj_name}:{iteration}]",
+            "This {prj_name}.zip does not exist.",
+            "API not allowed",
+            "..."
+          ]
