@@ -29,6 +29,9 @@ def get_model(uuid):
     # Get type
     type = app.config["PROJECT_INFO"][uuid]["type"]
     # Get model option
+    if platform !=  "xilinx" or platform != "hailo":
+        platform = "other"
+    # Get model option
     model = app.config['MODEL'][platform][type]
     return jsonify({"model": model})
 
@@ -58,6 +61,9 @@ def get_default_param(uuid):
         platform = app.config["PROJECT_INFO"][uuid]["platform"]
         # Get value of front
         training_method = request.get_json()['training_method']
+        # Platform filter
+        if platform !=  "xilinx" or platform != "hailo":
+            platform = "other"
         # Get default param
         default = copy.deepcopy(METHOD_OF_TRAINING[type][platform][training_method])
         # Check batch_size of the optimization 
