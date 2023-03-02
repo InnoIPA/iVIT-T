@@ -22,3 +22,11 @@ pretrainedmodel/*
 bad_label.list
 bad.list
 pgdata/
+*/unet/*
+tensorflow_2.sh
+*/pgdb/pgdata/*
+*/pgdb/postgres.py
+pytorch-YOLOv4/
+hailo_sw_suite_2023-01.tar
+hailo_sw_suite_docker_run.sh
+*.png
