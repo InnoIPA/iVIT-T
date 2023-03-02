@@ -28,8 +28,8 @@ def get_model(uuid):
     platform = app.config["PROJECT_INFO"][uuid]["platform"]
     # Get type
     type = app.config["PROJECT_INFO"][uuid]["type"]
-    # Get model option
-    if platform !=  "xilinx" or platform != "hailo":
+    # Platform filter
+    if platform ==  "intel" or platform == "nvidia":
         platform = "other"
     # Get model option
     model = app.config['MODEL'][platform][type]
@@ -62,7 +62,7 @@ def get_default_param(uuid):
         # Get value of front
         training_method = request.get_json()['training_method']
         # Platform filter
-        if platform !=  "xilinx" or platform != "hailo":
+        if platform ==  "intel" or platform == "nvidia":
             platform = "other"
         # Get default param
         default = copy.deepcopy(METHOD_OF_TRAINING[type][platform][training_method])

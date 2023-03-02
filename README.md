@@ -7,6 +7,8 @@ A library to training model of TensorFlow-Keras and Darknet. This library enable
 * [CLI mode](#cli-mode)
 * [Web API mode](#web-api-mode)
 * [Web UI](#web-ui)
+* [The format of dataset](#the-format-of-dataset)
+* [Reference](#reference)
 
 # See What's New
 - [Release Notes](docs/release_notes.md)

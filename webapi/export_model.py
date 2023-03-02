@@ -30,20 +30,19 @@ def get_export_platform(uuid, arch):
     type = app.config["PROJECT_INFO"][uuid]["type"]
     if "classification" == type:
         if "xilinx" == platform:
-            return jsonify({"export_platform":[platform]})
+            return jsonify({"export_platform":platform_list})
         else:
             platform = [ val for val in platform_list if val != "xilinx"]
             return jsonify({"export_platform":platform})
         
     elif "object_detection" == type:
-        exclude_list = ["xilinx", "hailo"]
-        if "yolov4-tiny" in arch:
-            exclude_list = ["xilinx"]
-        if platform in exclude_list:
-            return jsonify({"export_platform":exclude_list})
+        if platform != "xilinx":
+            if arch == "yolov4":
+                return jsonify({"export_platform":["nvidia", "intel"]})
+            if platform == "yolov4-tiny":
+                return jsonify({"export_platform":["nvidia", "intel", "hailo"]})
         else:
-            platform = [ val for val in platform_list if not val in exclude_list]
-            return jsonify({"export_platform":platform})
+            return jsonify({"export_platform":platform_list})
 
 @app_export.route('/<uuid>/start_converting', methods=['POST']) 
 @swag_from("{}/{}".format(YAML_PATH, "start_converting.yml"))
