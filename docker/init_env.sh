@@ -25,7 +25,7 @@ function google_download(){
 # ---------------------------------------------------------
 # Set the default value of the getopts variable 
 platform="0,1,2,3"
-platform_list=('nvidia' 'intel' 'xilinx', 'hailo')
+platform_list=('nvidia' 'intel' 'xilinx' 'hailo')
 
 # ---------------------------------------------------------
 # Color ANIS

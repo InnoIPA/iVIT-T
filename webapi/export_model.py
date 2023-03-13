@@ -39,7 +39,7 @@ def get_export_platform(uuid, arch):
         if platform != "xilinx":
             if arch == "yolov4":
                 return jsonify({"export_platform":["nvidia", "intel"]})
-            if platform == "yolov4-tiny":
+            if arch == "yolov4-tiny":
                 return jsonify({"export_platform":["nvidia", "intel", "hailo"]})
         else:
             return jsonify({"export_platform":platform_list})
