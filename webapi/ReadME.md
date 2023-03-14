@@ -19,5 +19,6 @@ We recommand Postman to test your web api , you could see more detail in {IP Add
         <img width="80%" height="100%" src="docs/apidocs-2.png">
         <img width="80%" height="100%" src="docs/apidocs-3.png">
         <img width="80%" height="100%" src="docs/apidocs-4.png">
+        <img width="80%" height="100%" src="docs/apidocs-5.png">
     </div>
 </details>

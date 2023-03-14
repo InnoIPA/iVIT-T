@@ -1,5 +1,9 @@
 # iVIT-T
 
+<div align="center">
+  <img width="100%" height="100%" src="docs/thumbnail_iVIT-T Logo.png">
+</div>
+
 A library to training model of TensorFlow-Keras and Darknet. This library enables the training of the model of classification, object detection.
 * [See What's New](#see-whats-new)
 * [Pre-requirements](#pre-requirements)
