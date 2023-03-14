@@ -183,34 +183,41 @@ def export_icap(uuid):
         # Check key of front
         if not "iteration" in request.get_json().keys():
             return error_msg("KEY:iteration does not exist.")
-        # Get platform
-        platform = app.config["PROJECT_INFO"][uuid]["platform"]
         # Get type
         type = app.config["PROJECT_INFO"][uuid]["type"]
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
         # Get iteration folder name (Get value of front)
         front_iteration = request.get_json()['iteration']
-        
         # Mapping iteration
         dir_iteration = chk.mapping_iteration(uuid, prj_name, front_iteration, front=True)
         if "error" in dir_iteration:
             return error_msg(str(dir_iteration[1]))
         # Export path
         export_path = ROOT + '/' + prj_name + "/" + dir_iteration + "/export"
+        # Get model.json
+        if type == "object_detection":
+            model = "yolo"
+        elif type == "classification":
+            model = type
+        config_path = export_path + "/" + model + ".json"
+        if not exists(config_path):
+            return error_msg("The config of export does not exist in the Project:[{}]".format(config_path))
+        # Get export platform
+        export_platform = read_json(config_path)["export_platform"]        
         # Setting path
         zip_folder = export_path.split("export")[0]
         filename = prj_name+".zip"
         if exists(zip_folder + filename):
             # Checksum
-            res = icap_upload_file(zip_folder, filename, app.config["TB_DEVICE_ID"], prj_name, platform, app.config["TB"], app.config["TB_PORT"])
+            res = icap_upload_file(zip_folder, filename, app.config["TB_DEVICE_ID"], prj_name, export_platform, app.config["TB"], app.config["TB_PORT"])
             if "5" in str(res.status_code) or "4" in str(res.status_code):
                 logging.error("Upload files status:{}".format(res.status_code))
                 return error_msg(res.json()["error"])
             logging.info("Upload files status:{}".format(res.status_code))
             success_info = res.json()
             # Update thingsboard model info
-            res = post_metadata(success_info, prj_name, platform, type, export_path, app.config["TB"], app.config["TB_PORT"])
+            res = post_metadata(success_info, prj_name, export_platform, type, export_path, app.config["TB"], app.config["TB_PORT"])
             if "5" in str(res.status_code) or "4" in str(res.status_code):
                 logging.error("The status of post metadata:{}".format(res.status_code))
                 return error_msg(res.json()["error"])
