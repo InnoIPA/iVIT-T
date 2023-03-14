@@ -38,9 +38,11 @@ def get_export_platform(uuid, arch):
     elif "object_detection" == type:
         if platform != "xilinx":
             if arch == "yolov4":
-                return jsonify({"export_platform":["nvidia", "intel"]})
+                platform = [ val for val in platform_list if val != "xilinx" and val != "hailo"]
+                return jsonify({"export_platform":platform})
             if arch == "yolov4-tiny":
-                return jsonify({"export_platform":["nvidia", "intel", "hailo"]})
+                platform = [ val for val in platform_list if val != "xilinx"]
+                return jsonify({"export_platform":platform})
         else:
             return jsonify({"export_platform":platform_list})
 
