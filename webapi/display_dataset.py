@@ -9,9 +9,11 @@ from .common.config import ROOT, YAML_MAIN_PATH
 from .common.upload_tools import create_class_dir
 from .common.display_tool import count_dataset, get_img_path_db, check_unlabeled_images
 from .common.database import delete_data_table_cmd, execute_db, update_data_table_cmd
+from .common.inspection import Check
 app_dy_dt = Blueprint( 'display_dataset', __name__)
 # Define API Docs path and Blue Print
 YAML_PATH       = YAML_MAIN_PATH + "/display_dataset"
+chk = Check()
 
 @app_dy_dt.route('/<uuid>/get_dataset', methods=['GET']) 
 @swag_from("{}/{}".format(YAML_PATH, "get_dataset.yml"))
@@ -49,6 +51,11 @@ def filter_dataset(uuid):
         # Get value of front
         iteration = request.get_json()['iteration']
         class_name = request.get_json()['class_name']
+        # Mapping iteration
+        if iteration != "workspace":
+            iteration = chk.mapping_iteration(uuid, prj_name, iteration, front=True)
+            if "error" in iteration:
+                return error_msg(str(iteration[1]))
         # Get img path
         dict_img_path = get_img_path_db(uuid, prj_name, iteration, class_name)
         # Prevent error 
@@ -74,6 +81,11 @@ def display_url(uuid):
         # Get value of front
         iteration = request.get_json()['iteration']
         class_name = request.get_json()['class_name']
+        # Mapping iteration
+        if iteration != "workspace":
+            iteration = chk.mapping_iteration(uuid, prj_name, iteration, front=True)
+            if "error" in iteration:
+                return error_msg(str(iteration[1]))
         # Get img path
         dict_img_path = get_img_path_db(uuid, prj_name, iteration, class_name)
         # Prevent error 
@@ -205,6 +217,11 @@ def iter_class_num(uuid):
             info_db = check_unlabeled_images(uuid, prj_name, iteration)
             if "error" in info_db:
                 return error_msg(str(info_db[1]))
+        else:
+            # Mapping iteration
+            iteration = chk.mapping_iteration(uuid, prj_name, iteration, front=True)
+            if "error" in iteration:
+                return error_msg(str(iteration[1]))
         # Get class number
         num_info = count_dataset(uuid, prj_name, iteration)
         if "error" in num_info:
