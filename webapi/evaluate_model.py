@@ -91,10 +91,8 @@ def evaluate(uuid):
         # Get model.json
         if type == "object_detection":
             model = "yolo"
-            score = "confidence"
         elif type == "classification":
             model = type
-            score = "score"
         # Setting evaluate.json
         status, msg = eval.set_eval_json(prj_name, dir_iteration, model)
         if not status:
@@ -108,7 +106,7 @@ def evaluate(uuid):
             return error_msg(result["Error"])
         EVAL_VAL[uuid] = result
         # Threshold
-        log_dict = threshold_process(uuid, threshold, score)
+        log_dict = threshold_process(uuid, threshold)
 
     return jsonify({"detections":log_dict})
 
@@ -120,28 +118,12 @@ def eval_thresh(uuid):
         if not ( uuid in app.config["PROJECT_INFO"].keys()):
             return error_msg("UUID:{} does not exist.".format(uuid))
         # Check key of front
-        if not "iteration" in request.get_json().keys():
-            return error_msg("KEY:iteration does not exist.")  
         if not "threshold" in request.get_json().keys():
             return error_msg("KEY:threshold does not exist.")    
-        # Get project name
-        prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
-        # Get type
-        type = app.config["PROJECT_INFO"][uuid]["type"]
         # Get value of front
-        front_iteration = request.get_json()['iteration']
         threshold = request.get_json()['threshold']
-        # Mapping iteration
-        dir_iteration = chk.mapping_iteration(uuid, prj_name, front_iteration, front=True)
-        if "error" in dir_iteration:
-            return error_msg(str(dir_iteration[1]))
-        # Get score/threshold
-        if type == "object_detection":
-            score = "confidence"
-        elif type == "classification":
-            score = "score"
         # Threshold
-        log_dict = threshold_process(uuid, threshold, score)
+        log_dict = threshold_process(uuid, threshold)
 
     return jsonify({"detections":log_dict})
     

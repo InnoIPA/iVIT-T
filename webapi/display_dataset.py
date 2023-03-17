@@ -6,7 +6,7 @@ from natsort import natsorted
 from webapi import app
 from .common.utils import success_msg, error_msg, exists
 from .common.config import ROOT, YAML_MAIN_PATH
-from .common.upload_tools import create_class_dir
+from .common.upload_tools import create_class_dir, Upload_DB
 from .common.display_tool import count_dataset, get_img_path_db, check_unlabeled_images
 from .common.database import delete_data_table_cmd, execute_db, update_data_table_cmd
 from .common.inspection import Check
@@ -145,6 +145,12 @@ def delete_img(uuid):
                         info_db = execute_db(command, True)
                         if info_db is not None:
                             return error_msg(str(info_db[1]))
+                        # Update project of Database
+                        update = Upload_DB(uuid, prj_name, type, label, "", "")
+                        error_db = update.update_prj_db()
+                        # Prevent error 
+                        if error_db:
+                            return error_msg(str(error_db[1]))
                     else:
                         logging.error("This image:[{}] does not exist in workspace.".format(label+'/'+name))
 
