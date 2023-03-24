@@ -35,7 +35,7 @@ echo -e "${BLUE}"
 echo "$(date +"%T") Install other msicellaneous packages "
 echo -e "${NC}"
 pip3 install --disable-pip-version-check keras2onnx tf2onnx onnx onnxruntime keras_applications 
-pip3 install --disable-pip-version-check pyyaml==5.4.1 colorlog
+pip3 install --disable-pip-version-check pyyaml==5.4.1 colorlog matplotlib
 
 echo -e "${BLUE}"
 echo "Done${REST}"

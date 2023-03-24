@@ -33,8 +33,10 @@ def convert_yolo(input_model:str, output_dir:str, export_dir:str, project_name:s
     cmd(command)
 
     # Check model is exist
-    check_model(output_h5, ".h5")
-
+    status = check_model(output_h5, ".h5")
+    if not status:
+        return False
+    
     # keras2tensorflow
     logging.info("Convert Keras to Tensorflow...")
     logging.info("Step:2/5,")
@@ -43,8 +45,10 @@ def convert_yolo(input_model:str, output_dir:str, export_dir:str, project_name:s
     cmd(command)
 
     # Check model is exist
-    check_model(output_pb, ".pb")
-
+    status = check_model(output_pb, ".pb")
+    if not status:
+        return False
+    
     # change path
     XILINX_CONVERT_PATH = "./convert/xilinx/Vitis-AI/vitis-ai-utility/model2xmodel_package/common"
     os.chdir(os.path.abspath(os.path.expanduser(XILINX_CONVERT_PATH)))
@@ -61,8 +65,10 @@ def convert_yolo(input_model:str, output_dir:str, export_dir:str, project_name:s
     cmd(command)
 
     # Check model is exist
-    check_model( ROOT +output_dir.split('project/')[-1]+"/quantize_eval_model.pb", "quantize.pb")
-    
+    status = check_model( ROOT +output_dir.split('project/')[-1]+"/quantize_eval_model.pb", "quantize.pb")
+    if not status:
+        return False
+        
     # convert xmodel
     logging.info("Step:4/5,")
     logging.info("Convert model to Xilnix...")
@@ -74,8 +80,10 @@ def convert_yolo(input_model:str, output_dir:str, export_dir:str, project_name:s
     cmd(command)
 
     # Check model is exist
-    check_model(ROOT +output_dir.split('project/')[-1]+"/"+project_name+".xmodel", ".xmodel")
-
+    status = check_model(ROOT +output_dir.split('project/')[-1]+"/"+project_name+".xmodel", ".xmodel")
+    if not status:
+        return False
+    
     #export xmodel
     logging.info("Step:5/5,")
     logging.info("Export model")
@@ -94,7 +102,8 @@ def convert_yolo(input_model:str, output_dir:str, export_dir:str, project_name:s
 
     text = f.read()
     logging.info(text.split("anchors")[-1].split("\nclasses")[0].split("=")[-1])
-    anchor = text.split("anchors")[-1].split("\nclasses")[0].split("=")[-1]
+    anchor = text.split("anchors")[-1].split("\nclasses")[0].split("=")[-1].replace(" ", "")
+    logging.info(anchor)
     f.close()
     orignal = read_json(ROOT +export_dir.split('project/')[-1]+'/yolo.json')
     orignal["anchors"] = anchor

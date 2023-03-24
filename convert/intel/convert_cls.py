@@ -8,8 +8,8 @@ sys.path.append(str(Path(__file__).resolve().parents[3]/"common"))
 from utils import cmd, ROOT
 from common.check import check_model
 
-def convert_cls(input_model:str, output_dir:str, convert_path:str,
-                    model_name:str, export_dir:str, project_name:str, model_dict:dict, cfg_path:str, shape:list):
+def convert_cls(input_model:str, output_dir:str, model_name:str, export_dir:str, 
+                        project_name:str, model_dict:dict, cfg_path:str, shape:list):
 
     h,w,c = shape
     logging.info('Start converting...')
@@ -23,22 +23,25 @@ def convert_cls(input_model:str, output_dir:str, convert_path:str,
     cmd(command)
 
     # Check model is exist
-    check_model(output_model, ".pb")
-    
-    # tensorflow2IR
+    status = check_model(output_model, ".pb")
+    if not status:
+        return False
+        
+    # Tensorflow2IR
     logging.info('Convert Tensorflow to OpenVINO...')
     logging.info("Step:2/3,")
-    os.chdir(os.path.abspath(os.path.expanduser(convert_path+"/model_optimizer")))
-    command = "python3 mo_tf.py --input_model {} --output_dir {} --input_shape [1,{},{},{}] --disable_nhwc_to_nchw".format(ROOT + split_output_model[-1], 
-                                                                                                                            ROOT + output_dir.split('project/')[-1],
-                                                                                                                            c,h,w)
+    command = "mo --framework=tf --data_type=FP16 --input_model {} --output_dir {} --input_shape [1,{},{},{}] \
+                        --mean_values=[123.68,116.78,103.94] --disable_nhwc_to_nchw".format(ROOT + split_output_model[-1], 
+                                                                                            ROOT + output_dir.split('project/')[-1],
+                                                                                            c,h,w)
     cmd(command)
 
     # Check model is exist
-    os.chdir(os.path.abspath(os.path.expanduser("/workspace")))
     m_name = model_name.split(".")[0]
-    check_model(output_dir+"/"+m_name+".bin", ".bin")
-
+    status = check_model(output_dir+"/"+m_name+".bin", ".bin")
+    if not status:
+        return False
+    
     #export bin/mapping/xml
     logging.info("Step:3/3,")
     logging.info("Export model")

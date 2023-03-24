@@ -25,8 +25,10 @@ def convert_cls(input_model:str, output_dir:str, export_dir:str, project_name:st
     cmd(command)
 
     # Check model is exist
-    check_model(output_model, ".pb")
-
+    status = check_model(output_model, ".pb")
+    if not status:
+        return False
+    
     # Generate train.txt
     logging.info("Generate train.txt:{}".format(output_txt))
     logging.info("Step:2/5,")
@@ -59,8 +61,10 @@ def convert_cls(input_model:str, output_dir:str, export_dir:str, project_name:st
     cmd(command)
 
     # Check model is exist
-    check_model(ROOT +output_dir.split('project/')[-1]+"/"+project_name+".xmodel", ".xmodel")
-
+    status = check_model(ROOT +output_dir.split('project/')[-1]+"/"+project_name+".xmodel", ".xmodel")
+    if not status:
+        return False
+    
     #export xmodel
     logging.info("Step:5/5,")
     logging.info("Export model")

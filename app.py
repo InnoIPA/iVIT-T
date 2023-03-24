@@ -1,6 +1,5 @@
-from common.logger import config_logger
-import argparse, logging
-
+import logging, sys
+from argparse import ArgumentParser, SUPPRESS
 from webapi import app, socketio
 from webapi.control_project import app_cl_pj
 from webapi.upload_dataset import app_ud_dt
@@ -16,13 +15,16 @@ from webapi.common.database import init_db
 from webapi.common.init_tool import init_sample_to_db
 from webapi.common.thingsboard import init_for_icap
 import webapi.common.config
+from common.logger import config_logger
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-port", "--port", help="Input port number")
-    args = parser.parse_args()
-    # Create log
-    config_logger('./app.log', 'w', "info")
+def build_argparser():
+    parser = ArgumentParser(add_help=False)
+    args = parser.add_argument_group('Options')
+    args.add_argument('-h', '--help', action='help', default=SUPPRESS, help='Show this help message and exit.')
+    args.add_argument('-port', '--port', required=True, help = "Input port number")
+    return parser
+
+def main(args):
     # Create initial table in db
     logging.info("Initial database...")
     init_db()
@@ -44,6 +46,12 @@ if __name__ == '__main__':
     # Register iCAP
     logging.info("Initial iCAP register...")
     init_for_icap()
-
+    # Running webapi sever
     logging.info("Running webapi server...")
     socketio.run(app, host = "0.0.0.0", port=args.port, debug=False)
+
+if __name__ == '__main__':
+    # Create log
+    config_logger('./app.log', 'w', "info")
+    args = build_argparser().parse_args()
+    sys.exit(main(args) or 0)

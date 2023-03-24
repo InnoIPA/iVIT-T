@@ -1,12 +1,17 @@
-import sys, os, argparse, shutil, logging, time
+import sys, os, shutil, logging, time
+from argparse import ArgumentParser, SUPPRESS
 # Append to API
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[2]/"common"))
 from logger import config_logger
 from utils import read_json, write_json
 
-INTEL_VERSION = "openvino_2021.4.752"
-INTEL_CONVERT_PATH = "/opt/intel/{}/deployment_tools".format(INTEL_VERSION)
+def build_argparser():
+    parser = ArgumentParser(add_help=False)
+    args = parser.add_argument_group('Options')
+    args.add_argument('-h', '--help', action='help', default=SUPPRESS, help='Show this help message and exit.')
+    args.add_argument('-c', '--config', required=True, help = "The path of model config")
+    return parser
 
 def main(args):
 	# Read model_json
@@ -23,6 +28,8 @@ def main(args):
 	# Create target Directory
 	if os.path.isdir(export_dir):
 		shutil.rmtree(export_dir)
+	if os.path.isdir(output_dir):
+		shutil.rmtree(output_dir)
 	try:
 		os.makedirs(output_dir, exist_ok=True, mode=0o777)
 		os.makedirs(export_dir, exist_ok=True, mode=0o777)
@@ -34,21 +41,17 @@ def main(args):
     # tensorflow 2 convert		
 	if "classification" in args.config:
 		from convert_cls import convert_cls
-		convert_cls(input_model, output_dir, INTEL_CONVERT_PATH,
-							model_name, export_dir, project_name, model_dict, args.config, shape)
+		convert_cls(input_model, output_dir, model_name, export_dir, project_name, model_dict, args.config, shape)
 
 	elif "yolo" in args.config:
 		from convert_yolo import convert_yolo
-		convert_yolo(input_model, output_dir, INTEL_CONVERT_PATH,
-                    		export_dir, project_name, model_dict, args.config, shape)
+		convert_yolo(input_model, output_dir, model_name, export_dir, project_name, model_dict, args.config, shape)
 
 	# Computing time
 	end = time.time()
 	logging.info("Converting total time:{}".format(end - start))
 
 if __name__ == '__main__':
-    config_logger('./convert.log', 'a', "info")
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config', help = "The path of model config")
-    args = parser.parse_args()
-    sys.exit(main(args) or 0)
+	config_logger('./convert.log', 'a', "info")
+	args = build_argparser().parse_args()
+	sys.exit(main(args) or 0)

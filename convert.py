@@ -1,6 +1,14 @@
-import sys, subprocess, logging, argparse
-from common.logger import config_logger
-from common.utils import read_json 
+import sys, subprocess, logging
+from argparse import ArgumentParser, SUPPRESS
+from common import config_logger
+from common import read_json 
+
+def build_argparser():
+    parser = ArgumentParser(add_help=False)
+    args = parser.add_argument_group('Options')
+    args.add_argument('-h', '--help', action='help', default=SUPPRESS, help='Show this help message and exit.')
+    args.add_argument('-c', '--config', required=True, help = "The path of model config")
+    return parser
 
 def cmd(command):
     process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT,shell=False)
@@ -46,7 +54,5 @@ def main(args):
 
 if __name__ == '__main__':
     config_logger('./convert.log', 'w', "info")
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config', help = "The path of model config")
-    args = parser.parse_args()
+    args = build_argparser().parse_args()
     sys.exit(main(args) or 0)

@@ -1,9 +1,17 @@
-import sys, os, argparse, shutil,  logging, time
+import sys, os, shutil,  logging, time
+from argparse import ArgumentParser, SUPPRESS
 # Append to API
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[2]/"common"))
 from logger import config_logger
 from utils import read_json, write_json
+
+def build_argparser():
+    parser = ArgumentParser(add_help=False)
+    args = parser.add_argument_group('Options')
+    args.add_argument('-h', '--help', action='help', default=SUPPRESS, help='Show this help message and exit.')
+    args.add_argument('-c', '--config', required=True, help = "The path of model config")
+    return parser
 
 def main(args):
 	# Read model_json
@@ -20,6 +28,8 @@ def main(args):
 	# Create target Directory
 	if os.path.isdir(export_dir):
 		shutil.rmtree(export_dir)
+	if os.path.isdir(output_dir):
+		shutil.rmtree(output_dir)
 	try:
 		os.makedirs(output_dir, exist_ok=True, mode=0o777)
 		os.makedirs(export_dir, exist_ok=True, mode=0o777)
@@ -42,7 +52,5 @@ def main(args):
 
 if __name__ == '__main__':
 	config_logger('./convert.log', 'a', "info")
-	parser = argparse.ArgumentParser()
-	parser.add_argument('-c', '--config', help = "The path of model config")
-	args = parser.parse_args()
+	args = build_argparser().parse_args()
 	sys.exit(main(args) or 0)

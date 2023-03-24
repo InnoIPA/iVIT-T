@@ -1,4 +1,4 @@
-FROM openvino/ubuntu18_data_dev:2021.4.2
+FROM openvino/ubuntu20_dev:2022.3.0
 # ------------------------------------------------------------------
 # Close noninteractive
 ENV DEBIAN_FRONTEND noninteractive
