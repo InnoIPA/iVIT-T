@@ -57,7 +57,7 @@ def filter_dataset(uuid):
             if "error" in iteration:
                 return error_msg(str(iteration[1]))
         # Get img path
-        dict_img_path = get_img_path_db(uuid, prj_name, iteration, class_name)
+        dict_img_path = get_img_path_db(uuid, prj_name, iteration, class_name, front=False)
         # Prevent error 
         if "error" in dict_img_path:
             return error_msg(str(dict_img_path[1]))
@@ -87,7 +87,7 @@ def display_url(uuid):
             if "error" in iteration:
                 return error_msg(str(iteration[1]))
         # Get img path
-        dict_img_path = get_img_path_db(uuid, prj_name, iteration, class_name)
+        dict_img_path = get_img_path_db(uuid, prj_name, iteration, class_name, front=False)
         # Prevent error 
         if "error" in dict_img_path:
             return error_msg(str(dict_img_path[1]))
@@ -230,7 +230,7 @@ def iter_class_num(uuid):
             if "error" in iteration:
                 return error_msg(str(iteration[1]))
         # Get class number
-        num_info = count_dataset(uuid, prj_name, iteration)
+        num_info = count_dataset(uuid, prj_name, iteration, front=False)
         if "error" in num_info:
             return error_msg(str(num_info[1]))
         logging.info("Get numbers of dataset:[{}] in project:[{}]".format(iteration, prj_name))
