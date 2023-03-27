@@ -1,21 +1,11 @@
 import logging, sys
+from common import config_logger
 from argparse import ArgumentParser, SUPPRESS
-from webapi import app, socketio
-from webapi.control_project import app_cl_pj
-from webapi.upload_dataset import app_ud_dt
-from webapi.display_dataset import app_dy_dt
-from webapi.labeling import app_labeling
-from webapi.augmentation import app_aug
-from webapi.control_model import app_cl_model
-from webapi.training_model import app_train
-from webapi.export_model import app_export
-from webapi.evaluate_model import app_eval
-from webapi.icap import app_icap
-from webapi.common.database import init_db
-from webapi.common.init_tool import init_sample_to_db
-from webapi.common.thingsboard import init_for_icap
-import webapi.common.config
-from common.logger import config_logger
+from webapi import app, socketio, \
+                    app_cl_pj, app_ud_dt, app_dy_dt, app_labeling, \
+                    app_aug, app_cl_model, app_train, app_export, app_eval, app_icap
+from webapi.common import init_db, init_sample_to_db, init_for_icap
+from webapi.common.config import *
 
 def build_argparser():
     parser = ArgumentParser(add_help=False)

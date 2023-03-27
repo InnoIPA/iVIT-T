@@ -119,6 +119,19 @@ def create_training_iter(uuid):
         if not status:
             shutil.rmtree('{}/{}/{}'.format(ROOT,prj_name, iter_name), ignore_errors=True)
             return error_msg("Class:{} is not over 15 images.".format(msg))
+        # -----------------------------------------Fillin-------------------------------------------
+        # For loop param use app.config["TRAINING_TASK"][uuid][”model_param”]
+        stats, msg = fill_in.fill_model_cfg()
+        pre_trained = True
+        # Pre-trained model does not exist.
+        if not stats:
+            if msg == "arch":
+                pre_trained = False
+            else:
+                shutil.rmtree('{}/{}/{}'.format(ROOT,prj_name, iter_name), ignore_errors=True)
+                return error_msg("The input shape is wrong.")
+        elif type(stats) == list:
+            return error_msg(str(stats[1]))
         # -----------------------------------------Data-------------------------------------------
         # Update mapping table
         chk.update_mapping_name(prj_path, uuid)
@@ -128,15 +141,7 @@ def create_training_iter(uuid):
         info_db = pdata.append_database()
         if info_db is not None:
             return error_msg(str(info_db[1]))
-        # -----------------------------------------Fillin-------------------------------------------
-        # For loop param use app.config["TRAINING_TASK"][uuid][”model_param”]
-        stats = fill_in.fill_model_cfg()
-        pre_trained = True
-        # Pre-trained model does not exist.
-        if not stats:
-            pre_trained = False
-        elif type(stats) == list:
-            return error_msg(str(stats[1]))
+
         # Create new model.json
         model_param_path = prj_path + '/' + iter_name + '/' + model_json
         write_json(model_param_path, app.config["TRAINING_TASK"][uuid]['model_param'])

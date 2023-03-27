@@ -133,3 +133,7 @@ Folder
 - To convert the model to someone format, we refer to the repository:
     - https://github.com/david8862/keras-YOLOv3-model-set
     - https://github.com/Tianxiaomo/pytorch-YOLOv4.git
+- Sample images from Pexels
+    - https://www.pexels.com/
+- Sample images from roboflow
+    - https://universe.roboflow.com/

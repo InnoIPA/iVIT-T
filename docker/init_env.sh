@@ -75,11 +75,11 @@ done
 
 # ---------------------------------------------------------
 # apt install jq, wget, unzip
-echo "-----Installing jq to write JSON-----"
+echo "----- Installing jq to write JSON -----"
 apt-get install -y jq
-echo "-----Installing wget to download file-----"
+echo "----- Installing wget to download file -----"
 apt-get install -y wget
-echo "-----Installing unzip file-----"
+echo "----- Installing unzip file -----"
 apt-get install -y unzip
 
 # ---------------------------------------------------------
@@ -115,7 +115,7 @@ echo " |B|u|i|l|i|n|g| |D|a|t|a|b|a|s|e|"
 echo " +-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+"
 echo -e "${NC}"
 
-sudo rm -r ./webapi/pgdb/pgdata
+# sudo rm -r ./webapi/pgdb/pgdata
 sudo ./webapi/pgdb/run_db.sh -p 6535 -s ivit_admin -d ivit -u ivit
 
 # --------------------------------------------------------
@@ -130,18 +130,18 @@ for i in ${arr_index[@]}
 do
     if [[ ${i} == *"0"* ]]; then
 		echo -e "${GREEN}"
-        echo "-----Building image of nvidia-----"
+        echo "----- Building image of nvidia -----"
 		echo -e "${NC}"
     fi
     if [[ ${i} == *"1"* ]]; then
 		echo -e "${BLUE}"
-        echo "-----Building image of intel-----"
+        echo "----- Building image of intel -----"
 		echo -e "${NC}"
 		docker build -t intel-convert -f ./convert/intel/intel.Dockerfile ./convert --no-cache
     fi
     if [[ ${i} == *"2"* ]]; then
 		echo -e "${RED}"
-        echo "-----Building image of xilinx-----"
+        echo "----- Building image of xilinx -----"
 		echo -e "${NC}"
 		
         cd ./convert/xilinx
@@ -149,7 +149,7 @@ do
 		docker pull xilinx/vitis-ai-cpu:1.4.1.978
 		# download convert folder
 		cd ./Vitis-AI
-		echo "-----Download conver folder of xilinx-----"
+		echo "----- Download conver folder of xilinx -----"
 		FILEID="1yzYhz6T2u2GNCoqVjRcwaHDJ1_QoTBQk"
 		STORREFILE="vitis-ai-utility.zip"
 		google_download $FILEID $STORREFILE
@@ -160,7 +160,7 @@ do
     fi
     if [[ ${i} == *"3"* ]]; then
 		echo -e "${CYAN}"
-        echo "-----Building image of hailo-----"
+        echo "----- Building image of hailo -----"
 		echo -e "${NC}"
 
         cd ./convert/hailo
@@ -170,7 +170,7 @@ do
 		unzip $STORREFILE
 		rm $STORREFILE
 		# Download hailo docker/convert package
-		echo "-----Download conver folder of hailo-----"
+		echo "----- Download conver folder of hailo -----"
 		FILEID="1UvoBn8eEP91goi9-wg3bS90vFRuaUgIv"
 		STORREFILE="pytorch-YOLO.zip"
 		google_download $FILEID $STORREFILE
@@ -179,4 +179,4 @@ do
     fi
 done
 
-echo "-----Finish-----"
+echo "----- Finish -----"

@@ -1,21 +1,33 @@
-from flask import Flask
-from flask_socketio import SocketIO
-from flask_cors import CORS
-from flasgger import Swagger
-import eventlet
+# Copyright (c) 2023 Innodisk Corporation
+# 
+# This software is released under the MIT License.
+# https://opensource.org/licenses/MIT
 
-# Initial Flask application
-app = Flask(__name__)
+from .init_webapi import app, socketio
+from .control_project import app_cl_pj
+from .upload_dataset import app_ud_dt
+from .display_dataset import app_dy_dt
+from .labeling import app_labeling
+from .augmentation import app_aug
+from .control_model import app_cl_model
+from .training_model import app_train
+from .export_model import app_export
+from .evaluate_model import app_eval
+from .icap import app_icap
 
-# Threaded
-eventlet.monkey_patch() 
-# Define web api docs
-app.config['SWAGGER'] = {
-    'title': 'iVIT-T',
-    'uiversion': 3
-}
+__all__ = [
+    "app",
+    "socketio",
+    'app_cl_pj',
+    "app_ud_dt",
+    "app_dy_dt",
+    "app_labeling",
+    "app_aug",
+    "app_cl_model",
+    "app_train",
+    "app_export",
+    "app_eval",
+    "app_icap"
+]
 
-swagger = Swagger(app)
-CORS(app, supports_credentials=True)
-socketio = SocketIO(app, cors_allowed_origins='*')
-app.config['JSON_SORT_KEYS'] = False
+__path__ = __import__('pkgutil').extend_path(__path__, __name__)

@@ -95,7 +95,7 @@ sed -i  's/\("PASSWORD":"\).*/\1'"$PASSWORD"'"/g'   ./webapi/pgdb/pgdb.json
 # ---------------------------------------------------------
 # Download samples
 echo -e "${YELLOW}"
-echo "-----Downloading samples-----"
+echo "----- Downloading samples -----"
 echo -e "${NC}"
 
 if [ -d "./project/fruit_object_detection" ]; then

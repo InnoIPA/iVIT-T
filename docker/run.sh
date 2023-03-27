@@ -103,7 +103,7 @@ done
 # ---------------------------------------------------------
 # Install jq
 echo -e "${YELLOW}"
-echo "-----Installing jq-----"
+echo "----- Installing JQ -----"
 echo -e "${NC}"
 
 if ! type jq >/dev/null 2>&1; then
@@ -115,7 +115,7 @@ fi
 # ---------------------------------------------------------
 # Get version number
 echo -e "${YELLOW}"
-echo "-----Get version number-----"
+echo "----- Get version number -----"
 echo -e "${NC}"
 
 TAG_VER=$(cat ${CONF} | jq -r '.VERSION')
@@ -175,7 +175,7 @@ fi
 # ---------------------------------------------------------
 # Running Database
 echo -e "${YELLOW}"
-echo "-----Running database-----"
+echo "----- Running database -----"
 echo -e "${NC}"
 
 sudo ./webapi/pgdb/run_db.sh -p 6535 -s ivit_admin -d ivit -u ivit
@@ -198,7 +198,7 @@ ${BASHCODE}"
 
 # ---------------------------------------------------------
 echo -e "${YELLOW}"
-echo "-----Command: ${DOCKER_CMD}-----"
+echo "----- Command: ${DOCKER_CMD} -----"
 echo -e "${NC}"
 
 bash -c "${DOCKER_CMD}"
