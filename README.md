@@ -62,9 +62,9 @@ In the "run.sh", this "-p" is the port number, you can setting haven't used the 
 - [Tutorial](./webapi/ReadME.md)
 
 ## Web UI
-If you want to use the UI version, you can follow this Tutorial:
+If you want to use the UI version, click url:
 
-- [Tutorial](https://github.com/InnoIPA/ivit-t-web)
+- http://localhost:6538/
 
 ## The format of dataset 
 - Image format: .jpg/.jpeg/.png/.bmp/.JPG/.JPEG/.PNG/.BMP

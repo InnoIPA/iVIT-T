@@ -170,15 +170,21 @@ else
 	DLPRETRAINED="python3 pretrainedmodel/pretrained_download.py -all"
 	RUNCODE="-it"
 	BASHCODE="bash -c \"${DARKNET} && ${DLPRETRAINED} && ${COMMAND} \" "
+
+	# Running webui
+	echo -e "${YELLOW}"
+	echo "----- Running WebUI -----"
+	echo -e "${NC}"
+
+	sudo ./webui/web_run.sh -p ${PORT}
+	# Running Database
+	echo -e "${YELLOW}"
+	echo "----- Running database -----"
+	echo -e "${NC}"
+
+	sudo ./webapi/pgdb/run_db.sh -p 6535 -s ivit_admin -d ivit -u ivit
 fi
 
-# ---------------------------------------------------------
-# Running Database
-echo -e "${YELLOW}"
-echo "----- Running database -----"
-echo -e "${NC}"
-
-sudo ./webapi/pgdb/run_db.sh -p 6535 -s ivit_admin -d ivit -u ivit
 # ---------------------------------------------------------
 # Run container
 DOCKER_CMD="docker run \
