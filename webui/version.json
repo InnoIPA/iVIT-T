@@ -3,5 +3,5 @@
   "PROJECT": "ivit-t-webui",
   "VERSION": "0.0.0",
   "PORT": 6538,
-  "API_PORT": 6550
+  "API_PORT": 6530
 }

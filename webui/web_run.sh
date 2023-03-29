@@ -6,11 +6,11 @@
 
 # ---------------------------------------------------------
 # Color ANIS
-RED='\033[1;31m'
-BLUE='\033[1;34m'
-GREEN='\033[1;32m'
-YELLOW='\033[1;33m'
-CYAN='\033[1;36m'
+RED='\033[1;31m';
+BLUE='\033[1;34m';
+GREEN='\033[1;32m';
+YELLOW='\033[1;33m';
+CYAN='\033[1;36m';
 NC='\033[0m';
 
 # ---------------------------------------------------------
@@ -74,17 +74,17 @@ while getopts "p:mh" option; do
 	esac
 done
 
-# ---------------------------------------------------------
-# Install JQ
-echo -e "${YELLOW}"
-echo "----- Installing JQ -----"
-echo -e "${NC}"
+# # ---------------------------------------------------------
+# # Install JQ
+# echo -e "${GREEN}"
+# echo "----- Installing JQ -----"
+# echo -e "${NC}"
 
-if ! type jq >/dev/null 2>&1; then
-    sudo apt-get install -y jq
-else
-    echo 'The jq has been installed.';
-fi
+# if ! type jq >/dev/null 2>&1; then
+#     sudo apt-get install -y jq
+# else
+#     echo 'The jq has been installed.';
+# fi
 
 # ---------------------------------------------------------
 # Get version number
@@ -96,13 +96,13 @@ DOCKER_IMAGE="${USER}/${BASE_NAME}"
 DOCKER_IMAGE="${BASE_NAME}"
 CONTAINER_NAME="${BASE_NAME}"
 
-mv ./version.json ./temp.json
+mv ${CONF} ./temp.json
 # Writing json platform
-jq -r '.API_PORT |= '${PORT}'' ./temp.json > ./version.json
+jq -r '.API_PORT |= '${PORT}'' ./temp.json > ${CONF}
 rm ./temp.json
 
-echo -e "${YELLOW}"
-echo "----- Get version number:${TAG_VER} -----"
+echo -e "${GREEN}"
+echo "----- UI version number:${TAG_VER} -----"
 echo -e "${NC}"
 
 # ---------------------------------------------------------
@@ -117,7 +117,7 @@ DOCKER_CMD="docker run \
             ${DOCKER_IMAGE}:${TAG_VER}"
 
 # ---------------------------------------------------------
-echo -e "${YELLOW}"
+echo -e "${GREEN}"
 echo "----- Command: ${DOCKER_CMD} -----"
 echo -e "${NC}"
 

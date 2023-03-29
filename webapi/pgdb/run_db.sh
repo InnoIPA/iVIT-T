@@ -1,4 +1,9 @@
 #!/bin/bash
+# Copyright (c) 2023 Innodisk Corporation
+# 
+# This software is released under the MIT License.
+# https://opensource.org/licenses/MIT
+
 # --------------------------------------------------------
 # Sub function
 function print_magic(){
@@ -15,11 +20,11 @@ function print_magic(){
 
 # ---------------------------------------------------------
 # Color ANIS
-RED='\033[1;31m'
-BLUE='\033[1;34m'
-GREEN='\033[1;32m'
-YELLOW='\033[1;33m'
-CYAN='\033[1;36m'
+RED='\033[1;31m';
+BLUE='\033[1;34m';
+GREEN='\033[1;32m';
+YELLOW='\033[1;33m';
+CYAN='\033[1;36m';
 NC='\033[0m';
 
 # ---------------------------------------------------------
@@ -31,7 +36,7 @@ CONF="./webapi/pgdb/pgdb.json"
 DBNAME="postgres"
 USER="postgres"
 PASSWORD="admin"
-CONTAINER_NAME="ivit_t_postgres"
+CONTAINER_NAME="ivit-t-postgres"
 DEFAULT_DBFOLDER="/var/lib/postgresql/data"
 OUTSIDE_DBFOLDER="/webapi/pgdb"
 DOCKER_IMAGE="postgres"
@@ -94,12 +99,12 @@ sed -i  's/\("PASSWORD":"\).*/\1'"$PASSWORD"'"/g'   ./webapi/pgdb/pgdb.json
 
 # ---------------------------------------------------------
 # Download samples
-echo -e "${YELLOW}"
+echo -e "${BLUE}"
 echo "----- Downloading samples -----"
 echo -e "${NC}"
 
 if [ -d "./project/fruit_object_detection" ]; then
-	echo "-----The samples of directory does exists-----"
+	echo "----- The samples of directory does exists -----"
 else
 	FILEID="1mwmos6VD7p-VsVtDJcD-tzWizJm8NWWJ"
 	STORREFILE="samples"
@@ -117,10 +122,14 @@ fi
 
 # ---------------------------------------------------------
 # Open container
+echo -e "${BLUE}"
+echo "----- Inspect ${CONTAINER_NAME} -----"
+echo -e "${NC}"
+
 docker inspect ${CONTAINER_NAME} -f '{{.Name}}' > /dev/null
 if [ $? -eq 0 ] ;then
 
-	echo -e "${YELLOW}"
+	echo -e "${BLUE}"
 	echo "container:${CONTAINER_NAME} exist!"
 	echo -e "${NC}"
 
@@ -140,11 +149,10 @@ else
 	${DOCKER_IMAGE}:${TAG_VER}"
 
 # ---------------------------------------------------------
-	echo -e "${YELLOW}"
-	echo "-----Command: ${DOCKER_CMD}-----"
+	echo -e "${BLUE}"
+	echo "----- Command: ${DOCKER_CMD} -----"
 	echo -e "${NC}"
 
 	bash -c "${DOCKER_CMD}"
-
 fi
 
