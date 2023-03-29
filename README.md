@@ -124,15 +124,24 @@ Folder
 ```
 
 # Reference
-- OpenVINO docs:
+- Darknet
+    - https://github.com/AlexeyAB/darknet
+- Tensorflow
+    - https://github.com/tensorflow/tensorflow
+- OpenVINO:
     - https://docs.openvino.ai/latest/home.html
+    - https://github.com/openvinotoolkit/openvino
 - Vitis-AI:
     - https://github.com/Xilinx/Vitis-AI.git
-- Hailo docs:
+    - https://github.com/Xilinx/Vitis-AI
+- Hailo:
     - https://hailo.ai/developer-zone/documentation/sw-suite-2023-01-1/?sp_referrer=suite_install.html
+    - https://github.com/hailo-ai/hailort
 - To convert the model to someone format, we refer to the repository:
     - https://github.com/david8862/keras-YOLOv3-model-set
     - https://github.com/Tianxiaomo/pytorch-YOLOv4.git
+- Flask
+    - https://github.com/pallets/flask
 - Sample images from Pexels
     - https://www.pexels.com/
 - Sample images from roboflow
