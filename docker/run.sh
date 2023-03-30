@@ -56,7 +56,9 @@ COMMAND="bash"
 WEB_API="./docker/run_web_api.sh"
 WORKSPACE="/workspace"
 CONF="./docs/version.json"
-BACKRUN=false
+# WEBCONF="./webui/web_version.json"
+RELEASE=false
+WEBKEY=false
 
 # ---------------------------------------------------------
 # help
@@ -73,7 +75,7 @@ function help(){
 	echo "h		help."
 	echo "-----------------------------------------------------------------------"
 }
-while getopts "g:p:sbmh" option; do
+while getopts "g:p:srmh" option; do
 	case $option in
 		g )
 			GPU=$OPTARG
@@ -84,8 +86,8 @@ while getopts "g:p:sbmh" option; do
 		s )
 			SERVER=true
 			;;
-		b )
-			BACKRUN=true
+		r )
+			RELEASE=true
 			;;
         m )
 			MAGIC=true
@@ -126,6 +128,7 @@ echo -e "${NC}"
 TAG_VER=$(cat ${CONF} | jq -r '.VERSION')
 USER=$(cat ${CONF} | jq -r '.USER')
 BASE_NAME=$(cat ${CONF} | jq -r '.PROJECT')
+# WEB_PORT=$(cat ${WEBCONF} | jq -r '.WEB_PORT')
 
 DOCKER_IMAGE="${USER}/${BASE_NAME}"
 CONTAINER_NAME="${BASE_NAME}"
@@ -150,6 +153,7 @@ MOUNT_GPU="${MOUNT_GPU} device=${GPU}"
 if [[ -n ${PORT} ]];then 
 	# COMMAND="python3 ${WEB_API} --host 0.0.0.0 --port ${port} --af ${framework}"
 	COMMAND="source ${WEB_API} -p ${PORT}"
+	WEBKEY=true
 fi
 
 # ---------------------------------------------------------
@@ -166,7 +170,7 @@ print_magic "${TITLE}" "${MAGIC}"
 
 # ---------------------------------------------------------
 # Bulid darknet & check status
-if [ "${BACKRUN}" = true ];then
+if [ "${RELEASE}" = true ];then
 	DARKNET=""
 	RUNCODE="-dt"
 	BASHCODE="bash"
@@ -175,19 +179,21 @@ else
 	DLPRETRAINED="python3 pretrainedmodel/pretrained_download.py -all"
 	RUNCODE="-it"
 	BASHCODE="bash -c \"${DARKNET} && ${DLPRETRAINED} && ${COMMAND} \" "
+	
+	if [ "${WEBKEY}" = true ];then 
+		# Running webui
+		echo -e "${YELLOW}"
+		echo "----- Running WebUI -----"
+		echo -e "${NC}"
 
-	# Running webui
-	echo -e "${YELLOW}"
-	echo "----- Running WebUI -----"
-	echo -e "${NC}"
+		sudo ./webui/run_web.sh -p ${PORT}
+		# Running Database
+		echo -e "${YELLOW}"
+		echo "----- Running database -----"
+		echo -e "${NC}"
 
-	sudo ./webui/web_run.sh -p ${PORT}
-	# Running Database
-	echo -e "${YELLOW}"
-	echo "----- Running database -----"
-	echo -e "${NC}"
-
-	sudo ./webapi/pgdb/run_db.sh -p 6535 -s ivit_admin -d ivit -u ivit
+		sudo ./webapi/pgdb/run_db.sh -p 6535 -s ivit_admin -d ivit -u ivit
+	fi
 fi
 
 # ---------------------------------------------------------
@@ -215,7 +221,8 @@ echo -e "${NC}"
 bash -c "${DOCKER_CMD}"
 
 # ---------------------------------------------------------
-if [ "${BACKRUN}" = false ];then
+if [ ${RELEASE} = false ] && [ ${WEBKEY} = true ]
+then
 	echo -e "${YELLOW}"
 	echo "----- Close container -----"
 	echo -e "${NC}"

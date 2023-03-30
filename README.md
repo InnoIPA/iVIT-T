@@ -64,7 +64,9 @@ In the "run.sh", this "-p" is the port number, you can setting haven't used the 
 ## Web UI
 If you want to use the UI version, click url:
 
-- http://localhost:6538/
+- http://localhost:6538/ 
+
+- Port: 6538 -> "WEB_PORT" from ./webui/web_version.json
 
 ## The format of dataset 
 - Image format: .jpg/.jpeg/.png/.bmp/.JPG/.JPEG/.PNG/.BMP

@@ -2,6 +2,6 @@
   "USER": "willqiuinnodisk",
   "PROJECT": "ivit-t-webui",
   "VERSION": "0.0.0",
-  "PORT": 6538,
+  "WEB_PORT": 6538,
   "API_PORT": 6530
 }

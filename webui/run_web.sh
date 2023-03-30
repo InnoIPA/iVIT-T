@@ -36,7 +36,7 @@ NC='\033[0m';
 PORT=""
 COMMAND="bash"
 WORKSPACE="/etc/nginx/html"
-CONF="./webui/version.json"
+CONF="./webui/web_version.json"
 
 # ---------------------------------------------------------
 # help
@@ -91,9 +91,9 @@ done
 TAG_VER=$(cat ${CONF} | jq -r '.VERSION')
 USER=$(cat ${CONF} | jq -r '.USER')
 BASE_NAME=$(cat ${CONF} | jq -r '.PROJECT')
+WEB_PORT=$(cat ${CONF} | jq -r '.WEB_PORT')
 
 DOCKER_IMAGE="${USER}/${BASE_NAME}"
-DOCKER_IMAGE="${BASE_NAME}"
 CONTAINER_NAME="${BASE_NAME}"
 
 mv ${CONF} ./temp.json
@@ -112,6 +112,7 @@ DOCKER_CMD="docker run \
             --rm -dt \
             --net=host --ipc=host \
             -e API_PORT=${PORT} \
+			-e WEB_PORT=${WEB_PORT} \
             -w ${WORKSPACE} \
             -v /etc/localtime:/etc/localtime:ro \
             ${DOCKER_IMAGE}:${TAG_VER}"
