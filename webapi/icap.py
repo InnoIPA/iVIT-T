@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flasgger import swag_from
 from .common.utils import handle_exception
 from .common.config import YAML_MAIN_PATH
-from .common.thingsboard import init_for_icap, get_tb_info, KEY_TB_DEVICE_ID, KEY_DEVICE_TYPE, TB, TB_PORT
+from .common.thingsboard import init_for_icap, get_tb_info, KEY_TB_DEVICE_ID, KEY_DEVICE_TYPE, TB, TB_PORT, register_mqtt_event
 from webapi import app
 import logging
 
@@ -73,6 +73,7 @@ def modify_addr():
         
     try:
         if(init_for_icap()):
+            register_mqtt_event()
             return jsonify( get_tb_info() ), 200
         else:
             return jsonify( 'Connect to iCAP ... Failed' ), 400

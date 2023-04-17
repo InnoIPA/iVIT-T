@@ -134,7 +134,7 @@ def share_api(uuid):
         zip_folder = export_path.split("export")[0]
         filename = prj_name+".zip"
         if exists(zip_folder+filename):
-            return success_msg("{}:{}/{}/{}/share".format(request.environ['SERVER_NAME'], request.environ['SERVER_PORT'], uuid, front_iteration))
+            return success_msg("{}:{}/{}/{}/share".format(app.config["HOST"], request.environ['SERVER_PORT'], uuid, front_iteration))
         else:
             return error_msg("This {}.zip does not exist.".format(prj_name))
 

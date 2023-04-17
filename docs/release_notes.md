@@ -47,7 +47,7 @@
 - Training 
     - Intel: Darknet-YOLOv4/ Darknet-YOLOv4-tiny
     - Nvida: Darknet-YOLOv4/ Darknet-YOLOv4-tiny
-    - Xilinx: Darknet-YOLOv4/ Darknet-YOLOv3-tiny
+    - Xilinx: Darknet-YOLOv4-leaky/ Darknet-YOLOv3-tiny
 - Simply evaluate model
 - Convert model to edge platform
     - Intel(.xml/.bin/.mapping)

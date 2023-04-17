@@ -71,9 +71,10 @@ def get_default_param(uuid):
         if not default["batch_size"] in batch_size:
             default["batch_size"] = min(batch_size)
         # Suggest input_shape calculation
-        default = cal_input_shape(default, uuid)
-        if "error" in default:
-            return error_msg(str(default[1]))
+        if not (type == "object_detection" and platform == "xilinx"):
+            default = cal_input_shape(default, uuid)
+            if "error" in default:
+                return error_msg(str(default[1]))
         return jsonify({"training_param":default})
 
 @app_train.route('/<uuid>/create_training_iter', methods=['POST']) 
@@ -95,10 +96,12 @@ def create_training_iter(uuid):
         prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
         # Get type
         model_type = app.config["PROJECT_INFO"][uuid]["type"]
+        # Get platform
+        platform = app.config["PROJECT_INFO"][uuid]["platform"]
         # --------------------------------------Fillin----------------------------------------------
         # Append to app.config["TRAINING_TASK"]
         app.config["TRAINING_TASK"].update({uuid:copy.deepcopy(app.config['TRAINING_CONFIG'])})
-        fill_in = Fillin(uuid, model_type, prj_name)
+        fill_in = Fillin(uuid, model_type, prj_name, platform)
         # Fill in app.config["TRAINING_TASK"][uuid]
         fill_in.fill_front_train(request.get_json())
         # Fill effect_img_nums
@@ -110,6 +113,7 @@ def create_training_iter(uuid):
         prj_path = ROOT + '/' + prj_name
         status, iter_max = chk.iter_twenty(prj_path, uuid)
         if status:
+            del app.config["TRAINING_TASK"][uuid]
             return error_msg("This iteration is over 20 in Project:{}".format(prj_name))
         # Create iteration folder and other folder
         iter_name = "iteration" + str(iter_max + 1)
@@ -117,6 +121,7 @@ def create_training_iter(uuid):
         # Check image over 15 pic
         status, msg = chk.classes_images(uuid)
         if not status:
+            del app.config["TRAINING_TASK"][uuid]
             shutil.rmtree('{}/{}/{}'.format(ROOT,prj_name, iter_name), ignore_errors=True)
             return error_msg("Class:{} is not over 15 images.".format(msg))
         # -----------------------------------------Fillin-------------------------------------------
@@ -128,8 +133,13 @@ def create_training_iter(uuid):
             if msg == "arch":
                 pre_trained = False
             else:
+                del app.config["TRAINING_TASK"][uuid]
                 shutil.rmtree('{}/{}/{}'.format(ROOT,prj_name, iter_name), ignore_errors=True)
-                return error_msg("The input shape is wrong.")
+                if "input_shape" in msg:
+                    return error_msg("The input shape is wrong.")
+                else:
+                    return error_msg(msg)
+                
         elif type(stats) == list:
             return error_msg(str(stats[1]))
         # -----------------------------------------Data-------------------------------------------
@@ -193,10 +203,11 @@ def stop_training(uuid):
     # Get iteration name
     iter_name = app.config["TRAINING_TASK"][uuid]["iteration"]["dir_name"]
     # Check is running thread
-    if len(TRAINING_CLASS[uuid]['class'].thread_list) > 0 and app.config["TRAINING_TASK"][uuid]['status']:
-        # Stop training
-        TRAINING_CLASS[uuid]['class'].thread_list[uuid]["stop"].set()
-        return success_msg("Stop training in iteration:[{}] of Project:[{}]".format(iter_name, prj_name))
+    if uuid in list(TRAINING_CLASS.keys()):
+        if len(TRAINING_CLASS[uuid]['class'].thread_list) > 0 and app.config["TRAINING_TASK"][uuid]['status']:
+            # Stop training
+            TRAINING_CLASS[uuid]['class'].thread_list[uuid]["stop"].set()
+            return success_msg("Stop training in iteration:[{}] of Project:[{}]".format(iter_name, prj_name))
     else:
         return error_msg("Thread does not exist in iteration:[{}] of Project:[{}]".format(iter_name, prj_name))
 

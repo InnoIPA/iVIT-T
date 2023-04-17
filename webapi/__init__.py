@@ -3,7 +3,7 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-from .init_webapi import app, socketio
+from .init_webapi import app, socketio, mqtt
 from .control_project import app_cl_pj
 from .upload_dataset import app_ud_dt
 from .display_dataset import app_dy_dt
@@ -18,6 +18,7 @@ from .icap import app_icap
 __all__ = [
     "app",
     "socketio",
+    "mqtt",
     'app_cl_pj',
     "app_ud_dt",
     "app_dy_dt",

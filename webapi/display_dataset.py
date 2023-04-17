@@ -92,7 +92,7 @@ def display_url(uuid):
         if "error" in dict_img_path:
             return error_msg(str(dict_img_path[1]))
         # Setting url
-        url = "http://{}:{}".format(request.environ['SERVER_NAME'], request.environ['SERVER_PORT'])
+        url = "http://{}:{}".format(app.config["HOST"], request.environ['SERVER_PORT'])
         img_path = [ url + "/display_img/"+ path.split("./")[-1] for path in dict_img_path["img_path"]]
         logging.info("Get the image url of this class:[{}] in the project:[{}]".format(class_name, prj_name))
         return jsonify({"img_path":img_path})

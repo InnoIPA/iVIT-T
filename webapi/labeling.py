@@ -2,9 +2,9 @@ from flask import Blueprint, request, jsonify
 from flasgger import swag_from
 import logging, os, shutil
 from webapi import app
-from .common.utils import exists, read_json, read_txt, success_msg, error_msg, write_txt, regular_expression
+from .common.utils import exists, read_json, get_classes_list, success_msg, error_msg, write_txt, regular_expression
 from .common.config import ROOT, YAML_MAIN_PATH
-from .common.labeling_tool import yolo_txt_convert, save_bbox, del_cls_txt, add_cls_txt, del_cls_db, cls_change_class, obj_savebbox_db, rename_cls_class
+from .common.labeling_tool import yolo_txt_convert, save_bbox, del_class_txt, add_class_txt, del_cls_db, cls_change_class, obj_savebbox_db, rename_cls_class
 app_labeling = Blueprint( 'labeling', __name__)
 # Define API Docs path and Blue Print
 YAML_PATH       = YAML_MAIN_PATH + "/labeling"
@@ -37,7 +37,7 @@ def add_class(uuid):
                 pass
         # Add to classes.txt
         classes_path = ROOT + '/' + prj_name + "/workspace/classes.txt"
-        add_cls_txt(type, class_name, classes_path)
+        add_class_txt(classes_path, class_name)
             
         return success_msg("Added new class:[{}] in Project:[{}]".format(class_name, prj_name))
 
@@ -59,25 +59,22 @@ def delete_class(uuid):
         class_name = request.get_json()['class_name']
         # Regular expression
         class_name = regular_expression(class_name)  
-        # classification required remove class folder
+        # Changed class in classes.txt
         main_path = ROOT + '/' +prj_name + "/workspace"
+        orignal_cls = del_class_txt(prj_name, type, main_path, class_name)
+        if "error" in orignal_cls:
+            return error_msg(str(orignal_cls[1]))
+        # Changed class in database
+        info = del_cls_db(class_name, uuid, orignal_cls, type)
+        if info:
+            return error_msg(str(info[1]))
+        # classification required remove class folder
         if type == "classification":
             dir_path = main_path+"/"+class_name
             if os.path.isdir(dir_path):
                 shutil.rmtree(dir_path, ignore_errors=True)
             else:
                 return error_msg("This class:[{}] does not exist in project:[{}]".format(class_name, prj_name)) 
-        # Changed class in classes.txt
-        classes_path = main_path+"/classes.txt"
-        orignal_cls = []
-        orignal_cls = del_cls_txt(class_name, classes_path, main_path, prj_name, orignal_cls, type)
-        if "error" in orignal_cls:
-            return error_msg(str(orignal_cls[1]))
-        # Changed class in database
-        info = del_cls_db(class_name, uuid, orignal_cls, type)
-        if info is not None:
-            return error_msg(str(info[1]))
-
         return success_msg("Delete class:{} in Project:{}".format(class_name, prj_name))
 
 @app_labeling.route('/<uuid>/rename_class', methods=['PUT'])
@@ -102,6 +99,24 @@ def rename_class(uuid):
         # Regular expression
         class_name = regular_expression(class_name) 
         new_name = regular_expression(new_name)   
+        # Rename class in classes.txt
+        classes_path = ROOT + '/' + prj_name + "/workspace/classes.txt"
+        if exists(classes_path):
+            # Read orignal file
+            class_text = get_classes_list(classes_path)
+            # Change class string
+            if class_name in class_text:
+                idx = class_text.index(class_name)
+                class_text[idx] = new_name
+            else:
+                return error_msg(400, {}, "This class does not exist in classes.txt of the Project:[{}:{}]".format(prj_name, class_name), log=True)
+            # Remove orignal file
+            os.remove(classes_path)
+            # Writing classes.txt
+            for cls in class_text:
+                write_txt(classes_path, cls)
+        else:
+            return error_msg("This classes.txt does not exist.")
         # Classification required rename class folder
         if type == "classification":
             dir_path = ROOT + '/' + prj_name + "/workspace/" + class_name
@@ -110,29 +125,10 @@ def rename_class(uuid):
                 os.rename(dir_path, new_path)
             else:
                 return error_msg("This class:[{}] does not exist in project:[{}]".format(class_name, prj_name)) 
-            
             # Renamed database img_path
             info = rename_cls_class(prj_name, class_name, new_name, uuid)
             if info is not None:
                 return error_msg(str(info[1]))
-        # Rename class in classes.txt
-        classes_path = ROOT + '/' +prj_name+"/workspace/classes.txt"
-        if exists(classes_path):
-            # Read orignal file
-            class_text = [cls for cls in read_txt(classes_path).split("\n") if cls !=""]
-            # Change class string
-            if class_name in class_text:
-                idx = class_text.index(class_name)
-                class_text[idx] = new_name
-            else:
-                return error_msg("This class:[{}] does not exist in classes.txt of Project:[{}]".format(class_name, prj_name))
-            # Remove orignal file
-            os.remove(classes_path)
-            # Writing classes.txt
-            for cls in class_text:
-                write_txt(classes_path, cls)
-        else:
-            return error_msg("This classes.txt does not exist.")
         return success_msg("Renamed class:{} to {} in Project:{}".format(class_name, new_name, prj_name))
 
 @app_labeling.route('/<uuid>/edit_img_class', methods=['POST']) 
@@ -149,6 +145,10 @@ def edit_img_class(uuid):
             return error_msg("KEY:class_name does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
+        # Get type
+        type = app.config["PROJECT_INFO"][uuid]["type"]
+        if type != "classification":
+            return error_msg(400, {}, "Type is not \'Classification\':[{}]".format(type), log=True)
         # Get value of front 
         images_info = request.get_json()['images_info']
         class_name = request.get_json()['class_name'] 

@@ -6,7 +6,7 @@ from .common.utils import exists, success_msg, error_msg, read_json, regular_exp
 from .common.config import PLATFORM_CFG, ROOT, YAML_MAIN_PATH
 from .common.init_tool import get_project_info, fill_in_prjdict
 from .common.database import PJ_INFO_DB, fill_in_db, delete_data_table_cmd, execute_db, update_data_table_cmd
-from .common.inspection import Check, create_pj_dir
+from .common.inspection import Check, create_pj_dir, change_docs_prjname
 chk = Check()
 app_cl_pj = Blueprint( 'control_project', __name__)
 # Define API Docs path and Blue Print
@@ -91,9 +91,9 @@ def delete_project(uuid):
     # Get project name
     prj_name = app.config["UUID_LIST"][uuid]
     # Delete folder, app.config["PROJECT_INFO"], app.config["UUID_LIST"], database
-    if os.path.isdir(ROOT + '/' +prj_name):
+    if os.path.isdir(ROOT + '/' + prj_name) and prj_name != "":
         # Delete data from folder
-        shutil.rmtree(ROOT + '/' +prj_name)
+        shutil.rmtree(ROOT + '/' + prj_name)
         # Delete data from app.config
         del app.config["PROJECT_INFO"][uuid]
         del app.config["UUID_LIST"][uuid]
@@ -119,6 +119,8 @@ def rename_project(uuid):
             return error_msg("KEY:new_name does not exist.")
         # Get project name
         prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
+        # Get type
+        type = app.config["PROJECT_INFO"][uuid]["type"]
         # Get value of front
         new_name = request.get_json()['new_name']
         if special_words(new_name) :
@@ -130,9 +132,11 @@ def rename_project(uuid):
         # Change app.config["UUID_LIST"]
         app.config["UUID_LIST"][uuid] = new_name
         # Change folder name
-        if not exists(ROOT + '/' +prj_name):
+        main_path = ROOT + '/' + prj_name
+        new_main_path = ROOT + '/' + new_name
+        if not exists(main_path):
             return error_msg("The project does not exist:[{}]".format(prj_name))
-        os.rename(ROOT + '/' +prj_name, ROOT + '/' +new_name)
+        os.rename(main_path, new_main_path)
         # Change project name from database
         show_image_path = ""
         if exists("./project/{}/cover.jpg".format(new_name)):
@@ -142,6 +146,10 @@ def rename_project(uuid):
         info_db = execute_db(command, True)
         if info_db is not None:
             return error_msg(str(info_db[1]))
-        
+        # Change project name in all iteration documents
+        iter_name = [ os.path.join(new_main_path, name) for name in os.listdir(new_main_path) if name != "workspace" and os.path.isdir(os.path.join(new_main_path, name))]
+        if len(iter_name) > 0:
+            change_docs_prjname(iter_name, prj_name, new_name, type)
         logging.info("Renamed project:{} from {}".format(new_name, prj_name))
+
         return jsonify(request.get_json())

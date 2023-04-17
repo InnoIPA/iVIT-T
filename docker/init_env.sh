@@ -150,8 +150,8 @@ do
 		echo -e "${NC}"
 		
         cd ./convert/xilinx
-        git clone --recurse-submodules --branch 1.4 https://github.com/Xilinx/Vitis-AI 
-		docker pull xilinx/vitis-ai-cpu:1.4.1.978
+        git clone --recurse-submodules --branch 2.5 https://github.com/Xilinx/Vitis-AI 
+		docker pull xilinx/vitis-ai-cpu:2.5.0
 		# download convert folder
 		cd ./Vitis-AI
 		echo "----- Download conver folder of xilinx -----"
