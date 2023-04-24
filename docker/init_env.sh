@@ -162,6 +162,7 @@ do
 		rm $STORREFILE
 		cp ./vitis-ai-utility/vitis-ai-start.sh ./vitis-ai-start.sh
 		cp ./vitis-ai-utility/docker_run.sh ./docker_run.sh
+		cd /workspace
     fi
     if [[ ${i} == *"3"* ]]; then
 		echo -e "${CYAN}"
