@@ -26,26 +26,29 @@ responses:
       type: object
       description: Successful operation
       example: 
-        {
-          "training_param":{
-              "batch_size": 2,
-              "input_shape": [
-                  608,
-                  608,
-                  3
-              ],
-              "model": "yolov4",
-              "step": 10000
-            }
-        }
-
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{
+                        "training_param":{
+                            "batch_size": 2,
+                            "input_shape": [
+                                608,
+                                608,
+                                3
+                            ],
+                            "model": "yolov4",
+                            "step": 10000
+                          }
+                        }
+              }
   '400':
     schema:
-      type: arrray
+      type: object
       description: Error message
       example:
-        [
-          "UUID:{uuid} does not exist.",
-          "Can't connect to the database",
-          "..."
-        ]
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

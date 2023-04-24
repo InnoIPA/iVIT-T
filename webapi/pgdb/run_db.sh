@@ -154,5 +154,6 @@ else
 	echo -e "${NC}"
 
 	bash -c "${DOCKER_CMD}"
+
 fi
 

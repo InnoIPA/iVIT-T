@@ -36,7 +36,7 @@ def main(args):
         if os.path.isdir(key):
             shutil.rmtree(key)
         elif os.path.isfile(key):
-            os.remove(key)  
+            os.remove(key)
 
 if __name__ == '__main__':
     config_logger('./convert.log', 'a', "info")

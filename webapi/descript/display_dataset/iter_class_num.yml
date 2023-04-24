@@ -23,23 +23,49 @@ parameters:
 responses:
   '200':
     schema:
-      type: string
+      type: object
       description: Successful operation
       example: 
-        {
-            "All": 40,
-            "Unlabeled": 0,
-            "classes_num": {
-                "cat": 20,
-                "dog": 20
-            },
-            'sort_list': ['cat', 'dog']
-        }
+              {
+                  "status": 200,
+                  "message":"Success",
+                  "data":{
+                          "All": 50,
+                          "Unlabeled": 0,
+                          "classes_info": {
+                              "apple": {
+                                  "color_id": 0,
+                                  "color_hex": "#3fb6f2",
+                                  "class_id": 0,
+                                  "nums": 20
+                              },
+                              "banana": {
+                                  "color_id": 1,
+                                  "color_hex": "#f2b89b",
+                                  "class_id": 1,
+                                  "nums": 20
+                              },
+                              "orange": {
+                                  "color_id": 2,
+                                  "color_hex": "#f211a7",
+                                  "class_id": 2,
+                                  "nums": 20
+                              }
+                          },
+                          "sort_list": [
+                              "apple",
+                              "banana",
+                              "orange"
+                          ]
+                  }
+              }
   '400':
     schema:
-      type: array
+      type: object
       description: Error message
       example:
-        [ "UUID:{uuid} does not exist.",
-          "Can't connect to the database",
-          "..."]
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

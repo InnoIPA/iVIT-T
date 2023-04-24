@@ -13,24 +13,30 @@ parameters:
 responses:
   '200':
     schema:
-      type: string
+      type: object
       description: Successful operation
       example:
-        {
-          "folder_name": [
-              "iteration1",
-              "iteration2",
-              "iteration3",
-              "iteration4",
-              "iteration5",
-              "workspace"
-          ]
-        }
+              {
+                "statue": 200,
+                "massage": "",
+                "data":{
+                        "folder_name": [
+                            "iteration1",
+                            "iteration2",
+                            "iteration3",
+                            "iteration4",
+                            "iteration5",
+                            "workspace"
+                        ]
+                }
+              }
   '400':
     schema:
-      type: array
+      type: object
       description: Error message
       example:
-        [ "UUID:{uuid} does not exist.",
-          "The project does not exist!:[{prj_name}]"
-        ]
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

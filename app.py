@@ -4,7 +4,9 @@ from argparse import ArgumentParser, SUPPRESS
 from webapi import app, socketio, \
                     app_cl_pj, app_ud_dt, app_dy_dt, app_labeling, \
                     app_aug, app_cl_model, app_train, app_export, app_eval, app_icap
-from webapi.common import init_db, init_sample_to_db, init_for_icap, register_mqtt_event, get_target_addr
+from webapi.common import init_db, init_sample_to_db, init_color_table_db, \
+                            init_for_icap, register_mqtt_event, get_target_addr, \
+                            update_version_function
 from webapi.common.config import *
 
 def build_argparser():
@@ -18,9 +20,12 @@ def main(args):
     # Create initial table in db
     logging.info("Initial database...")
     init_db()
+    init_color_table_db()
     # Fill in db from sample
     logging.info("Initial sample project...")
     init_sample_to_db()
+    # Update Version
+    update_version_function()
 
     app.register_blueprint(app_cl_pj)
     app.register_blueprint(app_ud_dt)

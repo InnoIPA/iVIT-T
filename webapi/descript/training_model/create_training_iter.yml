@@ -38,18 +38,22 @@ responses:
       type: object
       description: Successful operation
       example: 
-        {"iter_name":"iter_name","prj_name":"prj_name", "pre_trained":True}
-      
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{
+                          "iter_name":"iter_name",
+                          "prj_name":"prj_name", 
+                          "pre_trained":True
+                        }
+              }
   '400':
     schema:
       type: arrray
       description: Error message
       example:
-        [
-          "UUID:{uuid} does not exist.",
-          "KEY:{msg} is not filled in or the type is wrong.",
-          "This iteration is over 20 in Project:{prj_name}",
-          "Class:{class_name} is not over 15 images.",
-          "Can't connect to the database",
-          "..."
-        ]
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

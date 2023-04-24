@@ -16,13 +16,20 @@ responses:
       type: object
       description: Successful operation
       example:
-        {"batch_size": [1,2,4,8]}
-      
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{
+                        "batch_size": [1,2,4,8]
+                        }
+              }
   '400':
     schema:
-      type: arrray
+      type: object
       description: Error message
       example:
-        [
-          "UUID:{uuid} does not exist.",
-        ]
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

@@ -6,7 +6,11 @@ description: Get IP at iVIT-T
 responses:
   '200':
     schema:
-      type: string
+      type: object
       description: Successful operation
-      example: {'ip': "172.16.92.124" }
-            
+      example:
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{'ip': "172.16.92.124"}
+              }        

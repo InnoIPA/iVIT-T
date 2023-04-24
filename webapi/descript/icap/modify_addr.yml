@@ -6,9 +6,21 @@ description: Check IP/PORT of iCAP
 responses:
   '200':
     schema:
-      type: string
+      type: object
       description: Successful operation
       example:  
-            {
-              "address": "IP:PORT"
-            }
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{ "address": "IP:PORT" }
+              }
+  '400':
+    schema:
+      type: object
+      description: Error message
+      example: 
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

@@ -10,8 +10,13 @@ responses:
       description: Successful operation
       example: 
               {
-                  "eb37d73e-0a04-4828-818f-381ee8dcb6e3": {
-                      "iteration": "iteration4",
-                      "status": false
+                  "status": 200,
+                  "message":"Success",
+                  "data": {    
+                            "eb37d73e-0a04-4828-818f-381ee8dcb6e3":
+                            {
+                              "iteration": "iteration4",
+                              "status": false
+                            }
                   }
               }

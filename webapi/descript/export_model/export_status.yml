@@ -10,7 +10,11 @@ responses:
       description: Successful operation
       example:
               {
-                  "URL":True,
-                  "local":True,
-                  "iCAP":False,
+                "status": 200,
+                "message":"Success",
+                "data":{
+                          "URL":True,
+                          "local":True,
+                          "iCAP":False,
+                        }
               }

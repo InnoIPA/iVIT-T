@@ -29,27 +29,31 @@ parameters:
 responses:
   '200':
     schema:
-      type: string
+      type: object
       description: Successful operation
       example: 
-        {
-            "img_path": [
-                "./project/dog_cat_classification/workspace/2.jpg",
-                "./project/dog_cat_classification/workspace/3.jpg",
-                "./project/dog_cat_classification/workspace/6.jpg",
-                "./project/dog_cat_classification/workspace/7.jpg",
-                "./project/dog_cat_classification/workspace/9.jpg",
-                "./project/dog_cat_classification/workspace/10.jpg",
-            ],
-            "length": 6
-        }
+              {
+                "statue": 200,
+                "massage": "",
+                "data":{
+                        "img_path": [
+                            "./project/dog_cat_classification/workspace/2.jpg",
+                            "./project/dog_cat_classification/workspace/3.jpg",
+                            "./project/dog_cat_classification/workspace/6.jpg",
+                            "./project/dog_cat_classification/workspace/7.jpg",
+                            "./project/dog_cat_classification/workspace/9.jpg",
+                            "./project/dog_cat_classification/workspace/10.jpg",
+                        ],
+                        "length": 6
+                }
+              }
   '400':
     schema:
-      type: array
+      type: object
       description: Error message
       example:
-        [ "UUID:{uuid} does not exist.",
-          "The dataset does not exist:[{prj_name}/{iteration}]",
-          "The class:[{class_name}] does not exist in the project:[{prj_name}]",
-          "Can't connect to the database",
-          "..."]
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

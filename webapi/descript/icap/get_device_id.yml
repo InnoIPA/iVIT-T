@@ -6,6 +6,11 @@ description: Get the device ID to register at iCAP
 responses:
   '200':
     schema:
-      type: string
+      type: object
       description: Successful operation
-      example:  { "device_id": "DEVICE_ID" }
+      example:
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{"device_id": "DEVICE_ID"}
+              }

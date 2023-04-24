@@ -6,28 +6,32 @@ description: Get information on all project
 responses:
   '200':
     schema:
-      type: string
+      type: object
       description: Successful operation
       example: 
-        {
-            "bd924761-3e91-4d47-b66d-ccd84f6a86fb": {
-                "project_name": "fruit_object_detection",
-                "platform": "nvidia",
-                "type": "object_detection",
-                "effect_img_nums": 50,
-                "total_img_nums": 50,
-                "iteration": 0,
-                "cover_img": "/display_img/project/fruit_object_detection/workspace//apple_1.jpg",
-                "create_time": 1666671952.8273804
-            },
-            "d6770459-cae2-4c93-a1b1-28b4a4dc581c": {
-                "project_name": "dog_cat_classification",
-                "platform": "nvidia",
-                "type": "classification",
-                "effect_img_nums": 30,
-                "total_img_nums": 30,
-                "iteration": 0,
-                "cover_img": "/display_img/project/dog_cat_classification/workspace/cat/1.jpeg",
-                "create_time": 1666668517.8947194
-            }
-        }
+              {
+                  "status": 200,
+                  "message": "Success",
+                  "data": {
+                      "07302d2e-6818-42cd-badf-5de18a62048d": {
+                          "project_name": "fruit_object_detection",
+                          "platform": "nvidia",
+                          "type": "object_detection",
+                          "effect_img_nums": 50,
+                          "total_img_nums": 50,
+                          "iteration": 0,
+                          "cover_img": "/display_img/project/fruit_object_detection/cover.jpg",
+                          "create_time": 1678079022.5486133
+                      },
+                      "1f166652-4801-4d8a-b494-6218bd23dec3": {
+                          "project_name": "dog_cat_classification",
+                          "platform": "nvidia",
+                          "type": "classification",
+                          "effect_img_nums": 30,
+                          "total_img_nums": 30,
+                          "iteration": 0,
+                          "cover_img": "/display_img/project/dog_cat_classification/cover.jpeg",
+                          "create_time": 1678079022.5486133
+                      }
+                  }
+              }

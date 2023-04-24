@@ -23,15 +23,21 @@ parameters:
 responses:
   '200':
     schema:
-      type: string
+      type: object
       description: Successful operation
-      example: "Create new project:[09c12b11-4a1b-4609-8241-1fe204c27922:test_api]"
+      example: 
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{}
+              }
   '400':
     schema:
-      type: array
+      type: object
       description: Error message
       example:
-        [ "[Errno 17] File exists: './project/test_api/workspace'",
-          "The project_name include special characters:[{project_name}]",
-          "Can't connect to the database",
-          "..."]
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

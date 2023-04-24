@@ -26,15 +26,22 @@ parameters:
 responses:
   '200':
     schema:
-      type: string
+      type: object
       description: Successful operation
-      example: "Renamed class:{class_name} to {new_name} in Project:{prj_name}"
+      example:
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{}
+              }
+
   '400':
     schema:
-      type: array
+      type: object
       description: Error message
       example:
-        [ "UUID:{uuid} does not exist.",
-          "This class:[{class_name}] does not exist in project:[{prj_name}]",
-          "This class:[{class_name}] does not exist in classes.txt of Project:[{prj_name}]"
-        ]
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

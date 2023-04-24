@@ -23,17 +23,21 @@ parameters:
 responses:
   '200':
     schema:
-      type: string
+      type: object
       description: Successful operation
-      example: "{IP}:{Port}/{uuid}/{iteration}/share"
-      
+      example: 
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{"url":"{IP}:{Port}/{uuid}/{iteration}/share"}
+              }
   '400':
     schema:
-      type: array
+      type: object
       description: Error message
       example: 
-          [
-            "UUID:{uuid} does not exist.",
-            "The itertaion does not exist:[{prj_name}:{iteration}]",
-            "This {prj_name}.zip does not exist."
-          ]
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

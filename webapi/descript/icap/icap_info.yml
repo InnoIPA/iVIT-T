@@ -10,11 +10,15 @@ responses:
       description: Successful operation
       example:  
               {
-                "TB_STATS": "TB_STATS",
-                "TB_DEV_NAME": "TB_DEV_NAME",
-                "TB_DEV_TYPE": "TB_DEV_TYPE",
-                "TB_DEV_ALAIS": "TB_DEV_ALAIS",
-                "TB_CREATE_TIME": "TB_CREATE_TIME",
-                "TB_DEVICE_ID": "TB_DEVICE_ID",
-                "TB_TOKEN": "TB_TOKEN",
+                "status": 200,
+                "message":"Success",
+                "data":{
+                          "TB_STATS": "TB_STATS",
+                          "TB_DEV_NAME": "TB_DEV_NAME",
+                          "TB_DEV_TYPE": "TB_DEV_TYPE",
+                          "TB_DEV_ALAIS": "TB_DEV_ALAIS",
+                          "TB_CREATE_TIME": "TB_CREATE_TIME",
+                          "TB_DEVICE_ID": "TB_DEVICE_ID",
+                          "TB_TOKEN": "TB_TOKEN"
+                        }
               }

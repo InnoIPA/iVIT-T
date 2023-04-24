@@ -9,6 +9,8 @@ responses:
       type: string
       description: Successful operation
       example:  
-            {
-              "address": "IP:PORT"
-            }
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{"address": "IP:PORT"}
+              }

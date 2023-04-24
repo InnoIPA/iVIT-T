@@ -26,25 +26,30 @@ responses:
       description: Successful operation
       example:
               {
-                  "model": "yolov4-tiny",
-                  "batch_size": 2,
-                  "step": 4000,
-                  "input_shape": [
-                      608,
-                      608,
-                      3
-                  ],
-                  "spend_time":"10",
-                  "training_method":"Quick Training",
-                  "gpu":["NVIDIA GeForce RTX 2060 SUPER:0"],
-                  "effect_dataset_nums":30
+                  "status": 200,
+                  "message":"Success",
+                  "data":{
+                            "model": "yolov4-tiny",
+                            "batch_size": 2,
+                            "step": 4000,
+                            "input_shape": [
+                                608,
+                                608,
+                                3
+                            ],
+                            "spend_time":"10",
+                            "training_method":"Quick Training",
+                            "gpu":["NVIDIA GeForce RTX 2060 SUPER:0"],
+                            "effect_dataset_nums":30
+                          }
               }
   '400':
     schema:
-      type: array
+      type: object
       description: Error message
       example:
-        [ "UUID:{uuid} does not exist.",
-          "Can't connect to the database",
-          "This model does not exist:[{prj_name}:{iteration}]",
-          "..."]
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

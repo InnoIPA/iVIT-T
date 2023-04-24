@@ -24,15 +24,21 @@ parameters:
 responses:
   '200':
     schema:
-      type: string
+      type: object
       description: Successful operation
-      example: Delete images:[{image_list}] in project:[{prj_name}]
+      example: 
+              {
+                "statue": 200,
+                "massage": "Success",
+                "data":{}
+              }
   '400':
     schema:
-      type: array
+      type: object
       description: Error message
       example:
-        [ "UUID:{uuid} does not exist.",
-          "The class:[{class_name}] does not exist in the project:[{prj_name}]",
-          "Can't connect to the database",
-          "..."]
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

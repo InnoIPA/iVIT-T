@@ -1,7 +1,7 @@
 tags:
   - labeling
-summary: Update bounding boxes of image, bbox:[x0,y0,x1,y1]
-description: Update bounding boxes of image, bbox:[x0,y0,x1,y1]
+summary: Update bounding boxes of image, bbox:[x0,y0,x1,y1] for object_detection
+description: Update bounding boxes of image, bbox:[x0,y0,x1,y1] for object_detection
 
 parameters:
   - in: path
@@ -31,18 +31,21 @@ parameters:
 responses:
   '200':
     schema:
-      type: string
+      type: object
       description: Successful operation
-      example: "Update box:{box_info} in image:{image_name} of Project:{prj_name}"
-      
+      example: 
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{}
+              }
   '400':
     schema:
-      type: array
+      type: object
       description: Error message
-      example: [
-                "UUID:{uuid} does not exist",
-                "This [{txt}] does not exist.",
-                "This image:[{filename}] does not exist in Project:[{prj_name}]",
-                "Can't connect to the database",
-                "..."
-              ]
+      example:
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

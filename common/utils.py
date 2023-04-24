@@ -28,7 +28,7 @@ def read_txt(path:str):
 # Get classes list
 def get_classes_list(classes_path:str):
     return [cls for cls in read_txt(classes_path).split("\n") if cls !=""]
-	
+
 def cmd(command, split_action=True):
 	COLOR_ERR = ["0m", "1m[", "32m", "33m", "33;1m", "34m", "35m", "36m", "37m", "42m", "m]", "34;49m"]
 	if split_action:

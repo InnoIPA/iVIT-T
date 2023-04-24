@@ -8,4 +8,8 @@ responses:
       type: string
       description: Successful operation
       example:  
-            { "device_type": "KEY_DEVICE_TYPE" }
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{"device_type": "KEY_DEVICE_TYPE"}
+              }

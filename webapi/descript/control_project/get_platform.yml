@@ -6,13 +6,17 @@ description: Get options of platform
 responses:
   '200':
     schema:
-      type: string
+      type: object
       description: Successful operation
       example: 
-        {
-            "platform": [
-                "nvidia",
-                "intel",
-                "xilinx"
-            ]
-        }
+              {
+                  "status": 200,
+                  "message": "Success",
+                  "data": {
+                            "platform": [
+                                "nvidia",
+                                "intel",
+                                "xilinx"
+                            ]
+                          }
+              }

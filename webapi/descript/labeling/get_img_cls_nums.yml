@@ -5,7 +5,7 @@ description: Get class of one image
 
 parameters:
   - in: path
-    name: type
+    name: uuid
     required: true
     schema:
       type: string
@@ -19,16 +19,41 @@ parameters:
 responses:
   '200':
     schema:
-      type: string
+      type: object
       description: Successful operation
       example:
-        {
-            "Sticker": 1,
-            "Memory": 1
-        }
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{
+                        "orange": {
+                              "color_id": 2,
+                              "color_hex": "#f211a7",
+                              "class_id": 2,
+                              "nums": 1
+                          },
+                          "apple": {
+                              "color_id": 0,
+                              "color_hex": "#3fb6f2",
+                              "class_id": 0,
+                              "nums": 1
+                          },
+                          "banana": {
+                              "color_id": 1,
+                              "color_hex": "#f2b89b",
+                              "class_id": 1,
+                              "nums": 1
+                          }
+                        }
+              }
       
   '400':
     schema:
-      type: string
+      type: object
       description: Error message
-      example: "This image does not exist:{img_path}"
+      example: 
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

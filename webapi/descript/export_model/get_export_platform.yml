@@ -21,20 +21,24 @@ responses:
       type: object
       description: Successful operation
       example: 
-        {
-            "export_platform": [
-                "nvidia",
-                "intel"
-            ]
-        }
-
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{
+                        "export_platform": [
+                            "nvidia",
+                            "intel"
+                        ]
+                      }
+              }
   '400':
     schema:
       type: array
       description: Error message
       example: 
-          [
-            "UUID:{uuid} does not exist.",
-            "Arch is null."
-          ]
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }
           

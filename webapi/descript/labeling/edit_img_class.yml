@@ -1,7 +1,7 @@
 tags:
   - labeling
-summary: Change class of image 
-description: Change class of image 
+summary: Change class of image for classification
+description: Change class of image for classification
 
 parameters:
   - in: path
@@ -27,16 +27,21 @@ parameters:
 responses:
   '200':
     schema:
-      type: string
+      type: object
       description: Successful operation
-      example: "Change images:{image_name} to [{class_name}] in Project:[{prj_name}]"
+      example: 
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{}
+              }
   '400':
     schema:
-      type: array
+      type: object
       description: Error message
       example:
-        [ "UUID:{uuid} does not exist.",
-          "This class:[{class_name}] does not exist in array of orignal classes:[{label_list}], project:[{prj_name}]",
-          "This old class:[{label}] does not exist in Project:[{prj_name}]",
-          "Can't connect to the database",
-          "..."]
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

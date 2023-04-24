@@ -9,9 +9,13 @@ responses:
       type: object
       description: Successful operation
       example: 
-        {
-            "method_training": [
-                "Quick Training",
-                "Advanced Training"
-            ]
-        }
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{
+                          "method_training": [
+                              "Quick Training",
+                              "Advanced Training"
+                          ]
+                        }
+              }

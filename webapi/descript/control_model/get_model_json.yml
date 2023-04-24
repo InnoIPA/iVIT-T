@@ -25,63 +25,66 @@ responses:
       type: object
       description: Successful operation
       example:
-            {
-                "train_param": {
-                    "export_platform": "intel",
-                    "model_config": {
-                        "arch": "yolov4",
-                        "classes": 2,
-                        "input_shape": [
-                            256,
-                            256,
-                            3
-                        ]
-                    },
-                    "platform": "intel",
-                    "train_config": {
-                        "gpu": "0",
-                        "batch": 64,
-                        "datagenerator": {
-                            "angle": 0,
-                            "exposure": 1.5,
-                            "hue": 0.1,
-                            "mosaic": 0,
-                            "random": 1,
-                            "saturation": 1.5
-                        },
-                        "label_path": "./Project/memory_sticker_detection/iteration1/dataset/classes.txt",
-                        "lr_config": {
-                            "burn_in": 1000,
-                            "policy": "steps",
-                            "scales": [
-                                0.1,
-                                0.1
-                            ]
-                        },
-                        "max_batches": 4000,
-                        "optimizer": {
-                            "decay": 0.0005,
-                            "learning_rate": 0.0013,
-                            "momentum": 0.9
-                        },
-                        "pretrained_model_path": "./pretrainedmodel/yolov4.conv.137",
-                        "save_model_path": "./Project/memory_sticker_detection/iteration1/weights",
-                        "subdivision": 64.0,
-                        "subdivisions": 32,
-                        "test_dataset_path": "./Project/memory_sticker_detection/iteration1/dataset/test",
-                        "train_dataset_path": "./Project/memory_sticker_detection/iteration1/dataset/train",
-                        "val_dataset_path": "./Project/memory_sticker_detection/iteration1/dataset/val"
-                    }
-                }
-            }
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{
+                          "train_param": {
+                              "export_platform": "intel",
+                              "model_config": {
+                                  "arch": "yolov4",
+                                  "classes": 2,
+                                  "input_shape": [
+                                      256,
+                                      256,
+                                      3
+                                  ]
+                              },
+                              "platform": "intel",
+                              "train_config": {
+                                  "gpu": "0",
+                                  "batch": 64,
+                                  "datagenerator": {
+                                      "angle": 0,
+                                      "exposure": 1.5,
+                                      "hue": 0.1,
+                                      "mosaic": 0,
+                                      "random": 1,
+                                      "saturation": 1.5
+                                  },
+                                  "label_path": "./Project/memory_sticker_detection/iteration1/dataset/classes.txt",
+                                  "lr_config": {
+                                      "burn_in": 1000,
+                                      "policy": "steps",
+                                      "scales": [
+                                          0.1,
+                                          0.1
+                                      ]
+                                  },
+                                  "max_batches": 4000,
+                                  "optimizer": {
+                                      "decay": 0.0005,
+                                      "learning_rate": 0.0013,
+                                      "momentum": 0.9
+                                  },
+                                  "pretrained_model_path": "./pretrainedmodel/yolov4.conv.137",
+                                  "save_model_path": "./Project/memory_sticker_detection/iteration1/weights",
+                                  "subdivision": 64.0,
+                                  "subdivisions": 32,
+                                  "test_dataset_path": "./Project/memory_sticker_detection/iteration1/dataset/test",
+                                  "train_dataset_path": "./Project/memory_sticker_detection/iteration1/dataset/train",
+                                  "val_dataset_path": "./Project/memory_sticker_detection/iteration1/dataset/val"
+                              }
+                          }
+                        }
+              }
   '400':
     schema:
-      type: array
+      type: object
       description: Error message
       example:
-        [ 
-          "UUID:{uuid} does not exist.",
-          "The itertaion does not exist:[{prj_name}:{iteration}]",
-          "This model.json does not exist in [{iteration}] of Project:[{prj_name}]",
-          "This {iteration} does not exist in Project:{prj_name}"
-        ]
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

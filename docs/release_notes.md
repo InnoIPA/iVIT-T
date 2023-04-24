@@ -1,5 +1,16 @@
 # Release Notes
 
+## Release 1.1.1
+### New Features/Highlights
+- Added save color id in the database for the class of dataset
+- Unified format of response for web API
+
+### Release Notes
+### Web API
+- Added save color id in the database for the class of dataset
+- Unified format of response for web API
+
+---
 ## Release 1.1
 ### New Features/Highlights
 - Added new platform - Hailo

@@ -9,12 +9,16 @@ responses:
       type: string
       description: Successful operation
       example: 
-            {
-                "log":"log",
-                "curve":"curve",
-                "metrics":"metrics",
-                "pretrained":"pretrained",
-                "spend_time":"spend_time",
-                "remaining_time":"remaining_time",
-                "convert_log":"convert_log"
-            }
+              {
+                  "status": 200,
+                  "message":"Success",
+                  "data": {    
+                            "log":"log",
+                            "curve":"curve",
+                            "metrics":"metrics",
+                            "pretrained":"pretrained",
+                            "spend_time":"spend_time",
+                            "remaining_time":"remaining_time",
+                            "convert_log":"convert_log"
+                          }
+              }

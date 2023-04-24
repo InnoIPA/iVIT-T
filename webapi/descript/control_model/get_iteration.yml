@@ -13,12 +13,16 @@ parameters:
 responses:
   '200':
     schema:
-      type: string
+      type: object
       description: Successful operation
       example:
               {
-                  "folder_name": 
-                  ["iteration1",
-                  "iteration2",
-                  ]
+                "status":200,
+                "massage":"Success",
+                "data":{
+                          "folder_name": 
+                          ["iteration1",
+                          "iteration2",
+                          ]
+                        }
               }

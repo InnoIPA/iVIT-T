@@ -29,19 +29,21 @@ parameters:
 responses:
   '200':
     schema:
-      type: string
+      type: object
       description: Successful operation
-      example: "Save image:{image_name} and label:{class_name} in dataset of Project:{prj_name}"
-      
+      example: 
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{}
+              }      
   '400':
     schema:
-      type: array
+      type: object
       description: Error message
       example: 
-        [
-          "UUID:{uuid} does not exist.",
-          "The itertaion does not exist:[{prj_name}:{iteration}]",
-          "This image:[{image_name}] does not exist in Project:[{prj_name}:{iteration}]",   
-          "Can't connect to the database",
-          "..."
-        ]
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

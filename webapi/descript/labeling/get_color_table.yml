@@ -1,0 +1,22 @@
+tags:
+  - labeling
+summary: Get 1000 colors (BGR)
+description: Get 1000 colors (BGR)
+
+responses:
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example: 
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{
+                            "0": [
+                                145,
+                                235,
+                                180
+                            ],...
+                        }
+              }

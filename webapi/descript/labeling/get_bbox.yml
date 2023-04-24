@@ -1,7 +1,7 @@
 tags:
   - labeling
-summary: Get bounding boxes of image, bbox:[x0,y0,x1,y1]
-description: Get bounding boxes of image, bbox:[x0,y0,x1,y1]
+summary: Get bounding boxes of image, bbox:[x0,y0,x1,y1] for object_detection
+description: Get bounding boxes of image, bbox:[x0,y0,x1,y1] for object_detection
 
 parameters:
   - in: path
@@ -23,30 +23,38 @@ parameters:
 responses:
   '200':
     schema:
-      type: string
+      type: object
       description: Successful operation
       example:
-        {
-            "box_info": [
-                {
-                    "bbox": [
-                        624,
-                        374,
-                        797,
-                        1045
-                    ],
-                    "class_id": "1",
-                    "class_name": "dog"
-                },
-            ],
-            "img_shape": [
-                1500,
-                1500
-            ]
-        }
-      
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{
+                          "box_info": [
+                              {
+                                  "bbox": [
+                                      624,
+                                      374,
+                                      797,
+                                      1045
+                                  ],
+                                  "class_id": "1",
+                                  "class_name": "dog"
+                              },
+                          ],
+                          "img_shape": [
+                              1500,
+                              1500
+                          ]
+                      }
+              }
   '400':
     schema:
       type: string
       description: Error message
-      example: "This image:[{image_name}] does not exist in Project:[{prj_name}]"
+      example: 
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

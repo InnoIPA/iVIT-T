@@ -28,29 +28,31 @@ responses:
       type: object
       description: Successful operation
       example:
-        {
-            "eval_img": [
-                "./Project/sticker_detection/iteration1/dataset/eval/eval_0.jpg",
-                "./Project/sticker_detection/iteration1/dataset/eval/eval_1.jpg",
-                "./Project/sticker_detection/iteration1/dataset/eval/eval_2.jpg",
-                "./Project/sticker_detection/iteration1/dataset/eval/eval_3.jpg",
-                "./Project/sticker_detection/iteration1/dataset/eval/eval_4.jpg",
-                "./Project/sticker_detection/iteration1/dataset/eval/eval_5.jpg",
-                "./Project/sticker_detection/iteration1/dataset/eval/eval_6.jpg",
-                "./Project/sticker_detection/iteration1/dataset/eval/eval_7.jpg",
-                "./Project/sticker_detection/iteration1/dataset/eval/eval_8.jpg"
-            ]
-        }
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{
+                        "eval_img": [
+                            "./Project/sticker_detection/iteration1/dataset/eval/eval_0.jpg",
+                            "./Project/sticker_detection/iteration1/dataset/eval/eval_1.jpg",
+                            "./Project/sticker_detection/iteration1/dataset/eval/eval_2.jpg",
+                            "./Project/sticker_detection/iteration1/dataset/eval/eval_3.jpg",
+                            "./Project/sticker_detection/iteration1/dataset/eval/eval_4.jpg",
+                            "./Project/sticker_detection/iteration1/dataset/eval/eval_5.jpg",
+                            "./Project/sticker_detection/iteration1/dataset/eval/eval_6.jpg",
+                            "./Project/sticker_detection/iteration1/dataset/eval/eval_7.jpg",
+                            "./Project/sticker_detection/iteration1/dataset/eval/eval_8.jpg"
+                        ]
+                      }
+              }
         
   '400':
     schema:
-      type: array
+      type: object
       description: Error message
       example: 
-          [
-            "UUID:{uuid} does not exist.",
-            "The itertaion does not exist:[{prj_name}:{iteration}]",
-            "No upload files.",
-            "Upload file is over 10 images, image_name:[{ile.filename}]"
-          ]
-          
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

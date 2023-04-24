@@ -13,7 +13,11 @@ parameters:
 responses:
   '200':
     schema:
-      type: string
+      type: object
       description: Successful operation
       example: 
-        "True"
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{}
+              }

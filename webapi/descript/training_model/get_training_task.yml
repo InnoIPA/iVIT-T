@@ -10,79 +10,83 @@ responses:
       description: Successful operation
       example: 
               {
-                  "eb37d73e-0a04-4828-818f-381ee8dcb6e3": {
-                      "front_train": {
-                          "export_platform": "",
-                          "model": "yolov4-tiny",
-                          "batch_size": 8,
-                          "step": 6000,
-                          "input_shape": [
-                              320,
-                              448,
-                              3
-                          ],
-                          "spend_time": "",
-                          "training_method": "Quick Training",
-                          "gpu": [
-                              "NVIDIA GeForce RTX 3060:0"
-                          ],
-                          "effect_img_nums": 50
-                      },
-                      "model_param": {
-                          "platform": "nvidia",
-                          "export_platform": "",
-                          "model_config": {
-                              "arch": "yolov4-tiny",
-                              "classes": 3,
-                              "input_shape": [
-                                  320,
-                                  448,
-                                  3
-                              ]
-                          },
-                          "train_config": {
-                              "train_dataset_path": "./project/fruit_object_detection/iteration2/dataset/train",
-                              "val_dataset_path": "./project/fruit_object_detection/iteration2/dataset/val",
-                              "test_dataset_path": "./project/fruit_object_detection/iteration2/dataset/test",
-                              "label_path": "./project/fruit_object_detection/iteration2/dataset/classes.txt",
-                              "pretrained_model_path": "./pretrainedmodel/yolov4-tiny.conv.29",
-                              "save_model_path": "./project/fruit_object_detection/iteration2/weights",
-                              "optimizer": {
-                                  "learning_rate": 0.0013,
-                                  "decay": 0.0005,
-                                  "momentum": 0.9
-                              },
-                              "gpu": "0",
-                              "batch": 64,
-                              "subdivisions": 8,
-                              "max_batches": 6000,
-                              "datagenerator": {
-                                  "preprocess_mode": null,
-                                  "angle": 0,
-                                  "saturation": 1.5,
-                                  "exposure": 1.5,
-                                  "hue": 0.1,
-                                  "random": 1,
-                                  "mosaic": 0
-                              },
-                              "lr_config": {
-                                  "policy": "steps",
-                                  "burn_in": 1000,
-                                  "scales": [
-                                      0.1,
-                                      0.1
-                                  ]
-                              }
-                          },
-                          "eval_config": {
-                              "eval_dir_path": ""
-                          }
-                      },
-                      "remaining_time": null,
-                      "iteration": {
-                          "dir_name": "iteration2",
-                          "front_name": "iteration4"
-                      },
-                      "status": false
-                  }
+                "status": 200,
+                "message":"Success",
+                "data":{
+                            "eb37d73e-0a04-4828-818f-381ee8dcb6e3": {
+                                "front_train": {
+                                    "export_platform": "",
+                                    "model": "yolov4-tiny",
+                                    "batch_size": 8,
+                                    "step": 6000,
+                                    "input_shape": [
+                                        320,
+                                        448,
+                                        3
+                                    ],
+                                    "spend_time": "",
+                                    "training_method": "Quick Training",
+                                    "gpu": [
+                                        "NVIDIA GeForce RTX 3060:0"
+                                    ],
+                                    "effect_img_nums": 50
+                                },
+                                "model_param": {
+                                    "platform": "nvidia",
+                                    "export_platform": "",
+                                    "model_config": {
+                                        "arch": "yolov4-tiny",
+                                        "classes": 3,
+                                        "input_shape": [
+                                            320,
+                                            448,
+                                            3
+                                        ]
+                                    },
+                                    "train_config": {
+                                        "train_dataset_path": "./project/fruit_object_detection/iteration2/dataset/train",
+                                        "val_dataset_path": "./project/fruit_object_detection/iteration2/dataset/val",
+                                        "test_dataset_path": "./project/fruit_object_detection/iteration2/dataset/test",
+                                        "label_path": "./project/fruit_object_detection/iteration2/dataset/classes.txt",
+                                        "pretrained_model_path": "./pretrainedmodel/yolov4-tiny.conv.29",
+                                        "save_model_path": "./project/fruit_object_detection/iteration2/weights",
+                                        "optimizer": {
+                                            "learning_rate": 0.0013,
+                                            "decay": 0.0005,
+                                            "momentum": 0.9
+                                        },
+                                        "gpu": "0",
+                                        "batch": 64,
+                                        "subdivisions": 8,
+                                        "max_batches": 6000,
+                                        "datagenerator": {
+                                            "preprocess_mode": null,
+                                            "angle": 0,
+                                            "saturation": 1.5,
+                                            "exposure": 1.5,
+                                            "hue": 0.1,
+                                            "random": 1,
+                                            "mosaic": 0
+                                        },
+                                        "lr_config": {
+                                            "policy": "steps",
+                                            "burn_in": 1000,
+                                            "scales": [
+                                                0.1,
+                                                0.1
+                                            ]
+                                        }
+                                    },
+                                    "eval_config": {
+                                        "eval_dir_path": ""
+                                    }
+                                },
+                                "remaining_time": null,
+                                "iteration": {
+                                    "dir_name": "iteration2",
+                                    "front_name": "iteration4"
+                                },
+                                "status": false
+                            }
+                        }
               }
