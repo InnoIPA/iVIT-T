@@ -16,9 +16,8 @@ A library to training model of TensorFlow-Keras and Darknet. This library enable
 
 # See What's New
 - [Release Notes](docs/release_notes.md)
-- Added new platform - Hailo
-- Support convert to Hailo model
-- Supoort export model to iCAP
+- Added save color id in the database for the class of dataset
+- Unified format of response for web API
 
 # Getting Started
 
