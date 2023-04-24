@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, shutil
 from argparse import ArgumentParser, SUPPRESS
 # Append to API
 from pathlib import Path
@@ -31,12 +31,12 @@ def main(args):
     # Clear generate file
     remove_list = ["hailo_sdk.core.log", "hailo_sdk.client.log", 
                     "hailort.log", "acceleras.log", "allocator.log", 
-                        ".bias_correction", ".install_logs", ".stats_collection"]
+                    ".bias_correction", ".install_logs", ".stats_collection", "adaround"]
     for key in remove_list:
         if os.path.isdir(key):
-            os.rmdir(key)
+            shutil.rmtree(key)
         elif os.path.isfile(key):
-            os.remove(key)
+            os.remove(key)  
 
 if __name__ == '__main__':
     config_logger('./convert.log', 'a', "info")

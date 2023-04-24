@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify, send_from_directory
 from flasgger import swag_from
 from pathlib import Path
 from webapi import app
-from .common.utils import exists,read_json, success_msg, error_msg 
+from .common.utils import exists,read_json, success_msg, error_msg, get_target_addr
 from .common.config import PLATFORM_CFG, ROOT, YAML_MAIN_PATH, EXPORT_LIST
 from .common.export_tool import set_export_json, Convert_model, check_convert_exist, icap_upload_file, post_metadata
 from .common.inspection import Check
@@ -134,7 +134,19 @@ def share_api(uuid):
         zip_folder = export_path.split("export")[0]
         filename = prj_name+".zip"
         if exists(zip_folder+filename):
-            return success_msg("{}:{}/{}/{}/share".format(app.config["HOST"], request.environ['SERVER_PORT'], uuid, front_iteration))
+            # Port - Processing
+            target, http_port = request.environ['HTTP_HOST'].split(":")
+            server_port = request.environ['SERVER_PORT']
+            if http_port == server_port:
+                port = http_port
+            elif http_port != server_port:
+                port = http_port + "/ivit"
+            # IP - Processing
+            if target == "127.0.0.1" or target == "localhost":
+                target = app.config["HOST"]
+            http_ip = get_target_addr(target)
+            host = http_ip + ":" + port
+            return success_msg("{}/{}/{}/share".format(host, uuid, front_iteration))
         else:
             return error_msg("This {}.zip does not exist.".format(prj_name))
 

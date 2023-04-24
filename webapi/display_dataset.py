@@ -4,7 +4,7 @@ import logging, os, shutil
 from pathlib import Path
 from natsort import natsorted
 from webapi import app
-from .common.utils import success_msg, error_msg, exists
+from .common.utils import success_msg, error_msg, exists, get_classes_list
 from .common.config import ROOT, YAML_MAIN_PATH
 from .common.upload_tools import create_class_dir, Upload_DB
 from .common.display_tool import count_dataset, get_img_path_db, check_unlabeled_images
@@ -175,19 +175,29 @@ def delete_all_img(uuid):
         # Get type
         type = app.config["PROJECT_INFO"][uuid]['type']
         # Check folder does exist
-        ws_path = ROOT + '/' + prj_name + "/workspace"
+        main_path = os.path.join(ROOT, prj_name)
+        ws_path = os.path.join(main_path, "workspace")
         if os.path.isdir(ws_path):
+            temp_classes_path = os.path.join(main_path, "classes.txt")
+            # Catch classes.txt
+            shutil.move(os.path.join(ws_path, "classes.txt"), temp_classes_path)
             # Delete workspace
             shutil.rmtree(ws_path)
             # Create new folder
             create_class_dir("Unlabeled", prj_name, type)
+            # Create new class foler
+            if type == "classification":
+                classes_list = get_classes_list(temp_classes_path)
+                for cls in classes_list:
+                    create_class_dir(cls, prj_name, type)
+            # move classes.txt
+            shutil.move(temp_classes_path, os.path.join(ws_path, "classes.txt"))
             # Delete ws table in db
             command = delete_data_table_cmd("workspace", "project_uuid=\'{}\'".format(uuid))
             info_db = execute_db(command, True)
             if info_db is not None:
                 return error_msg(str(info_db[1]))
             # Remove covert images
-            main_path = ROOT + '/' + prj_name
             cover_list = [ main_path + "/" + name for name in os.listdir(main_path) if "cover" in name]
             if len(cover_list) > 0 and exists(cover_list[0]):
                 os.remove(cover_list[0])
@@ -233,5 +243,5 @@ def iter_class_num(uuid):
         num_info = count_dataset(uuid, prj_name, iteration, front=False)
         if "error" in num_info:
             return error_msg(str(num_info[1]))
-        logging.info("Get numbers of dataset:[{}] in project:[{}]".format(iteration, prj_name))
+        logging.info("Get numbers of dataset in project:[{}:{}]:{}".format(iteration, prj_name, num_info))
         return jsonify(num_info)

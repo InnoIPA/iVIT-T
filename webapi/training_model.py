@@ -71,10 +71,9 @@ def get_default_param(uuid):
         if not default["batch_size"] in batch_size:
             default["batch_size"] = min(batch_size)
         # Suggest input_shape calculation
-        if not (type == "object_detection" and platform == "xilinx"):
-            default = cal_input_shape(default, uuid)
-            if "error" in default:
-                return error_msg(str(default[1]))
+        default = cal_input_shape(default, uuid)
+        if "error" in default:
+            return error_msg(str(default[1]))
         return jsonify({"training_param":default})
 
 @app_train.route('/<uuid>/create_training_iter', methods=['POST']) 
@@ -96,12 +95,10 @@ def create_training_iter(uuid):
         prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
         # Get type
         model_type = app.config["PROJECT_INFO"][uuid]["type"]
-        # Get platform
-        platform = app.config["PROJECT_INFO"][uuid]["platform"]
         # --------------------------------------Fillin----------------------------------------------
         # Append to app.config["TRAINING_TASK"]
         app.config["TRAINING_TASK"].update({uuid:copy.deepcopy(app.config['TRAINING_CONFIG'])})
-        fill_in = Fillin(uuid, model_type, prj_name, platform)
+        fill_in = Fillin(uuid, model_type, prj_name)
         # Fill in app.config["TRAINING_TASK"][uuid]
         fill_in.fill_front_train(request.get_json())
         # Fill effect_img_nums
@@ -135,10 +132,7 @@ def create_training_iter(uuid):
             else:
                 del app.config["TRAINING_TASK"][uuid]
                 shutil.rmtree('{}/{}/{}'.format(ROOT,prj_name, iter_name), ignore_errors=True)
-                if "input_shape" in msg:
-                    return error_msg("The input shape is wrong.")
-                else:
-                    return error_msg(msg)
+                return error_msg("The input shape is wrong.")
                 
         elif type(stats) == list:
             return error_msg(str(stats[1]))

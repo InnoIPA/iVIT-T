@@ -44,14 +44,14 @@ def upload(uuid):
                         if not (filename.split(".")[-1] in ALLOWED_EXTENSIONS["image"]):
                             return error_msg("This type:[{}] of filename:[{}] ".format(filename.split(".")[-1], filename))
                         # Save image
-                        status = save_file(file, dir_path, filename)
+                        status, filename = save_file(file, dir_path, filename)
 
                     elif type == "object_detection":
                         # Skip other format exclude image format
                         if (not (filename.split(".")[-1] in ALLOWED_EXTENSIONS["label"])) and (not (filename.split(".")[-1] in ALLOWED_EXTENSIONS["image"])):
                             return error_msg("This type:[{}] of filename:[{}] ".format(filename.split(".")[-1], filename)) 
                         # Save image and annotation
-                        status = save_file(file, dir_path, filename)
+                        status, filename = save_file(file, dir_path, filename)
                         
                     # Remove file size is 0
                     if os.stat(dir_path+"/"+filename).st_size == 0:
@@ -62,12 +62,12 @@ def upload(uuid):
                     if status:
                         # Update db
                         updb = Upload_DB(uuid, prj_name, type, label, dir_path, filename)
-                        if filename != "classes.txt":
+                        if (filename == "classes.txt") or (filename == "classes_temp.txt"):
+                            compare_classes(dir_path)
+                        else:
                             info = updb.upload_fillin_ws_info()
                             if info is not None:
                                 return error_msg(str(info[1]))
-                        else:
-                            compare_classes(dir_path)
                         # Append to list
                         col_filename.append(filename)
                 else:
