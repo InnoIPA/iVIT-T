@@ -217,7 +217,7 @@ def iter_class_num(uuid):
     # Get value of front
     iteration = request.get_json()['iteration']
     # Check unlabeled images -> ??
-    if iteration== "workspace" and type == "object_detection":
+    if iteration== "workspace" or type == "object_detection":
         error_db = check_unlabeled_images(uuid, prj_name)
         if error_db:
             return error_msg(400, {}, str(error_db[1]))
