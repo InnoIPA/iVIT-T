@@ -19,7 +19,10 @@ parameters:
         "class_name":
           type: string
           example: cat
-
+        "color_id":
+          type: int
+          example: 0
+          
 responses:
   '200':
     schema:

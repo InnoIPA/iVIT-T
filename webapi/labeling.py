@@ -194,7 +194,7 @@ def get_bbox(uuid):
     image_path = request.get_json()['image_path']
     img_path = "." + image_path
     if exists(img_path):
-        bbox_info = yolo_txt_convert(img_path)
+        bbox_info = yolo_txt_convert(uuid, img_path)
         if "error" in bbox_info:
             return error_msg(400, {}, bbox_info[1], log=True)
         img_shape, box = bbox_info
@@ -258,7 +258,7 @@ def get_img_cls_nums(uuid, path):
                 return error_msg(400, {}, str(img_info[1]), log=True)
             return success_msg(200, img_info, "Success", "Get infomation of image classes:[{}:{}]".format(path, img_info))
         elif type == "object_detection":
-            img_info = obj_img_info(img_path, color_info_db)
+            img_info = obj_img_info(uuid, img_path, color_info_db)
             # Prevent error 
             if "error" in img_info:
                 return error_msg(400, {}, str(img_info[1]), log=True)
