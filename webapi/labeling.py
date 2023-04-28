@@ -37,7 +37,7 @@ def add_class(uuid):
                 pass
         # Add to classes.txt
         classes_path = ROOT + '/' + prj_name + "/workspace/classes.txt"
-        add_class_txt(classes_path, class_name)
+        add_class_txt(classes_path, str(class_name))
             
         return success_msg("Added new class:[{}] in Project:[{}]".format(class_name, prj_name))
 
