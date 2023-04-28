@@ -35,7 +35,7 @@ def add_class(uuid):
     color_id = int(request.get_json()['color_id'])
     # Add to classes.txt
     classes_path = ROOT + '/' + prj_name + "/workspace/classes.txt"
-    error_db = add_class_txt(uuid, classes_path, class_name, color_id)
+    error_db = add_class_txt(uuid, classes_path, str(class_name), color_id)
     if error_db:
         return error_msg(400, {}, str(error_db[1]))
     # Classification required create class folder
