@@ -30,7 +30,7 @@ def get_export_platform(uuid, arch):
     type = app.config["PROJECT_INFO"][uuid]["type"]
     if "classification" == type:
         if "xilinx" == platform:
-            return jsonify({"export_platform":platform_list})
+            return jsonify({"export_platform":[platform]})
         else:
             platform = [ val for val in platform_list if val != "xilinx"]
             return jsonify({"export_platform":platform})
@@ -44,7 +44,10 @@ def get_export_platform(uuid, arch):
                 platform = [ val for val in platform_list if val != "xilinx"]
                 return jsonify({"export_platform":platform})
         else:
-            return jsonify({"export_platform":platform_list})
+            if "leaky" in arch:
+                return jsonify({"export_platform":["xilinx", "hailo"]})
+            if "tiny" in arch:
+                return jsonify({"export_platform":["xilinx"]})
 
 @app_export.route('/<uuid>/start_converting', methods=['POST']) 
 @swag_from("{}/{}".format(YAML_PATH, "start_converting.yml"))

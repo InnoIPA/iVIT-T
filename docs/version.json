@@ -5,5 +5,7 @@
     "HOST": "",
     "PORT": 6530,
     "DEBUG": false,
-    "WORKER": 1
+    "WORKER": 1,
+    "ICAP_HOST":"10.204.16.115",
+    "ICAP_PORT":3000
 }
