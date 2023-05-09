@@ -169,7 +169,7 @@ do
         echo "----- Building image of hailo -----"
 		echo -e "${NC}"
 
-        cd ./convert/hailo
+        cd /workspace/convert/hailo
 		FILEID="1IFoof3TjeN2o7yBSZDhYR_GsMy_mC53V"
 		STORREFILE="hailo_sw_suite_2023-01.zip"
 		google_download $FILEID $STORREFILE
