@@ -7,24 +7,24 @@
 # --------------------------------------------------------
 # Sub function
 function print_magic(){
-	info=$1
-	magic=$2
-	echo ""
-	if [[ $magic = true ]];then
-		echo -e $info | boxes -d dog -s 80x10
-	else
-		echo -e $info
-	fi
-	echo ""
+    info=$1
+    magic=$2
+    echo ""
+    if [[ $magic = true ]];then
+        echo -e $info | boxes -d dog -s 80x10
+    else
+        echo -e $info
+    fi
+    echo ""
 }
 
 function google_download(){
-	wget --load-cookies /tmp/cookies.txt \
-	"https://docs.google.com/uc?export=download&confirm=$(wget \
-	--quiet --save-cookies /tmp/cookies.txt --keep-session-cookies \
-	--no-check-certificate 'https://docs.google.com/uc?export=download&id='$1'' \
-	-O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/1n/p')&id=$1" \
-	-O "$2" && rm -rf /tmp/cookies.txt
+    wget --load-cookies /tmp/cookies.txt \
+    "https://docs.google.com/uc?export=download&confirm=$(wget \
+    --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies \
+    --no-check-certificate 'https://docs.google.com/uc?export=download&id='$1'' \
+    -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/1n/p')&id=$1" \
+    -O "$2" && rm -rf /tmp/cookies.txt
 }
 
 # ---------------------------------------------------------
@@ -44,38 +44,38 @@ NC='\033[0m';
 # ---------------------------------------------------------
 # help
 function help(){
-	echo "-----------------------------------------------------------------------"
-	echo "Build the iVIT-T environment."
-	echo
-	echo "Syntax: scriptTemplate [-p|m|h]"
-	echo "options:"
-	echo "p		Select any platform.(item: [0:nvidia, 1:intel, 2:xilinx, 3:hailo]) ex: -p '1,2' "
+    echo "-----------------------------------------------------------------------"
+    echo "Build the iVIT-T environment."
+    echo
+    echo "Syntax: scriptTemplate [-p|m|h]"
+    echo "options:"
+    echo "p		Select any platform.(item: [0:nvidia, 1:intel, 2:xilinx, 3:hailo]) ex: -p '1,2' "
     echo "m		Print information with magic"
-	echo "h		help."
-	echo "-----------------------------------------------------------------------"
+    echo "h		help."
+    echo "-----------------------------------------------------------------------"
 }
 
 while getopts "p:mh" option; do
-	case $option in
-		p )
-			platform=$OPTARG
-			;;
+    case $option in
+        p )
+            platform=$OPTARG
+            ;;
         m )
-			magic=true
-			;;
-		h )
-			help
-			exit
-			;;
-		\? )
-			help
-			exit
-			;;
-		* )
-			help
-			exit
-			;;
-	esac
+            magic=true
+            ;;
+        h )
+            help
+            exit
+            ;;
+        \? )
+            help
+            exit
+            ;;
+        * )
+            help
+            exit
+            ;;
+    esac
 done
 
 # ---------------------------------------------------------
@@ -134,54 +134,54 @@ echo -e "${NC}"
 for i in ${arr_index[@]}
 do
     if [[ ${i} == *"0"* ]]; then
-		echo -e "${GREEN}"
+        echo -e "${GREEN}"
         echo "----- Building image of nvidia -----"
-		echo -e "${NC}"
+        echo -e "${NC}"
     fi
     if [[ ${i} == *"1"* ]]; then
-		echo -e "${BLUE}"
+        echo -e "${BLUE}"
         echo "----- Building image of intel -----"
-		echo -e "${NC}"
-		docker build -t intel-convert -f ./convert/intel/intel.Dockerfile ./convert --no-cache
+        echo -e "${NC}"
+        docker build -t intel-convert -f ./convert/intel/intel.Dockerfile ./convert --no-cache
     fi
     if [[ ${i} == *"2"* ]]; then
-		echo -e "${RED}"
+        echo -e "${RED}"
         echo "----- Building image of xilinx -----"
-		echo -e "${NC}"
-		
+        echo -e "${NC}"
+        
         cd ./convert/xilinx
         git clone --recurse-submodules --branch 2.5 https://github.com/Xilinx/Vitis-AI 
-		docker pull xilinx/vitis-ai-cpu:2.5.0
-		# download convert folder
-		cd ./Vitis-AI
-		echo "----- Download conver folder of xilinx -----"
-		FILEID="1yzYhz6T2u2GNCoqVjRcwaHDJ1_QoTBQk"
-		STORREFILE="vitis-ai-utility.zip"
-		google_download $FILEID $STORREFILE
-		unzip $STORREFILE
-		rm $STORREFILE
-		cp ./vitis-ai-utility/vitis-ai-start.sh ./vitis-ai-start.sh
-		cp ./vitis-ai-utility/docker_run.sh ./docker_run.sh
-		cd /workspace
+        docker pull xilinx/vitis-ai-cpu:2.5.0
+        # download convert folder
+        cd ./Vitis-AI
+        echo "----- Download conver folder of xilinx -----"
+        FILEID="1yzYhz6T2u2GNCoqVjRcwaHDJ1_QoTBQk"
+        STORREFILE="vitis-ai-utility.zip"
+        google_download $FILEID $STORREFILE
+        unzip $STORREFILE
+        rm $STORREFILE
+        cp ./vitis-ai-utility/vitis-ai-start.sh ./vitis-ai-start.sh
+        cp ./vitis-ai-utility/docker_run.sh ./docker_run.sh
+        cd /workspace
     fi
     if [[ ${i} == *"3"* ]]; then
-		echo -e "${CYAN}"
+        echo -e "${CYAN}"
         echo "----- Building image of hailo -----"
-		echo -e "${NC}"
+        echo -e "${NC}"
 
         cd /workspace/convert/hailo
-		FILEID="1IFoof3TjeN2o7yBSZDhYR_GsMy_mC53V"
-		STORREFILE="hailo_sw_suite_2023-01.zip"
-		google_download $FILEID $STORREFILE
-		unzip $STORREFILE
-		rm $STORREFILE
-		# Download hailo docker/convert package
-		echo "----- Download conver folder of hailo -----"
-		FILEID="1UvoBn8eEP91goi9-wg3bS90vFRuaUgIv"
-		STORREFILE="pytorch-YOLO.zip"
-		google_download $FILEID $STORREFILE
-		unzip $STORREFILE
-		rm $STORREFILE
+        FILEID="1IFoof3TjeN2o7yBSZDhYR_GsMy_mC53V"
+        STORREFILE="hailo_sw_suite_2023-01.zip"
+        google_download $FILEID $STORREFILE
+        unzip $STORREFILE
+        rm $STORREFILE
+        # Download hailo docker/convert package
+        echo "----- Download conver folder of hailo -----"
+        FILEID="1UvoBn8eEP91goi9-wg3bS90vFRuaUgIv"
+        STORREFILE="pytorch-YOLO.zip"
+        google_download $FILEID $STORREFILE
+        unzip $STORREFILE
+        rm $STORREFILE
     fi
 done
 
