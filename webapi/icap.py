@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flasgger import swag_from
-from .common.utils import handle_exception, success_msg, error_msg
-from .common.config import YAML_MAIN_PATH
+from .common.utils import handle_exception, success_msg, error_msg, write_json, read_json
+from .common.config import YAML_MAIN_PATH, VERSION_PATH
 from .common.thingsboard import init_for_icap, get_tb_info, KEY_TB_DEVICE_ID, KEY_DEVICE_TYPE, TB, TB_PORT, register_mqtt_event
 from webapi import app
 import logging
@@ -70,7 +70,14 @@ def modify_addr():
         TB: ip,
         TB_PORT: port 
     })
-        
+
+    # Reading default config
+    env_config = read_json(VERSION_PATH)
+    # Writing config
+    env_config["ICAP_HOST"] = app.config[TB]
+    env_config["ICAP_PORT"] = app.config[TB_PORT]
+    write_json(VERSION_PATH, env_config)
+            
     try:
         if(init_for_icap()):
             register_mqtt_event()
