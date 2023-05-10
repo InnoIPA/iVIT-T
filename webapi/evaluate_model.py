@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from .common.utils import error_msg, exists, success_msg, regular_expression
 from .common.config import ALLOWED_EXTENSIONS, ROOT, YAML_MAIN_PATH, EVAL_VAL
 from .common.inspection import Check
-from .common.upload_tools import Upload_DB
+from .common.upload_tool import Upload_DB
 from .common.evaluate_tool import Evaluate, threshold_process
 from .common.labeling_tool import save_bbox
 chk = Check()

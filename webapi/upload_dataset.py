@@ -4,7 +4,7 @@ import logging, os, shutil
 from webapi import app
 from .common.utils import success_msg, error_msg
 from .common.config import ALLOWED_EXTENSIONS, YAML_MAIN_PATH
-from .common.upload_tools import create_class_dir, filename_processing, save_file, Upload_DB, compare_classes
+from .common.upload_tool import create_class_dir, filename_processing, save_file, Upload_DB, compare_classes
 app_ud_dt = Blueprint( 'upload_dataset', __name__)
 # Define API Docs path and Blue Print
 YAML_PATH       = YAML_MAIN_PATH + "/upload_dataset"

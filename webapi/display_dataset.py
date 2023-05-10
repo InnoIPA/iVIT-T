@@ -6,7 +6,7 @@ from natsort import natsorted
 from webapi import app
 from .common.utils import success_msg, error_msg, exists, get_classes_list
 from .common.config import ROOT, YAML_MAIN_PATH
-from .common.upload_tools import create_class_dir, Upload_DB
+from .common.upload_tool import create_class_dir, Upload_DB
 from .common.display_tool import count_dataset, get_img_path_db, check_unlabeled_images
 from .common.database import delete_data_table_cmd, execute_db, update_data_table_cmd
 from .common.inspection import Check

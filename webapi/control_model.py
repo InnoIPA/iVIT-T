@@ -3,7 +3,7 @@ from flasgger import swag_from
 import os, shutil, json
 from webapi import app
 from .common.utils import exists, read_json, success_msg, error_msg
-from .common.model_tools import model_info_db, del_model_db
+from .common.model_tool import model_info_db, del_model_db
 from .common.config import ROOT, YAML_MAIN_PATH
 from .common.inspection import Check
 chk = Check()
