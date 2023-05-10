@@ -7,15 +7,15 @@
 # --------------------------------------------------------
 # Sub function
 function print_magic(){
-    info=$1
-    magic=$2
-    echo ""
-    if [[ $magic = true ]];then
-        echo -e $info | boxes -d dog -s 80x10
-    else
-        echo -e $info
-    fi
-    echo ""
+	info=$1
+	magic=$2
+	echo ""
+	if [[ $magic = true ]];then
+		echo -e $info | boxes -d dog -s 80x10
+	else
+		echo -e $info
+	fi
+	echo ""
 }
 
 # ---------------------------------------------------------
@@ -38,7 +38,7 @@ function ivit_word(){
   [  |   \ \ / /     | |      | |   |______|   | |     
    | |    \ ' /     _| |_    _| |_            _| |_    
   [___]    \_/     |_____|  |_____|          |_____|   
-    
+	
   ====================================================
   "
   echo -e "${NC}"
@@ -63,48 +63,48 @@ WEBKEY=false
 # ---------------------------------------------------------
 # help
 function help(){
-    echo "-----------------------------------------------------------------------"
-    echo "Run the iVIT-T environment."
-    echo
-    echo "Syntax: scriptTemplate [-g|p|sh]"
-    echo "options:"
-    echo "g		select the target gpu."
-    echo "p		run container with Web API, setup the web api port number."
-    echo "s		Server mode for non vision user"
+	echo "-----------------------------------------------------------------------"
+	echo "Run the iVIT-T environment."
+	echo
+	echo "Syntax: scriptTemplate [-g|p|sh]"
+	echo "options:"
+	echo "g		select the target gpu."
+	echo "p		run container with Web API, setup the web api port number."
+	echo "s		Server mode for non vision user"
     echo "m		Print information with magic"
-    echo "h		help."
-    echo "-----------------------------------------------------------------------"
+	echo "h		help."
+	echo "-----------------------------------------------------------------------"
 }
 while getopts "g:p:srmh" option; do
-    case $option in
-        g )
-            GPU=$OPTARG
-            ;;
-        p )
-            PORT=$OPTARG
-            ;;
-        s )
-            SERVER=true
-            ;;
-        r )
-            RELEASE=true
-            ;;
+	case $option in
+		g )
+			GPU=$OPTARG
+			;;
+		p )
+			PORT=$OPTARG
+			;;
+		s )
+			SERVER=true
+			;;
+		r )
+			RELEASE=true
+			;;
         m )
-            MAGIC=true
-            ;;
-        h )
-            help
-            exit
-            ;;
-        \? )
-            help
-            exit
-            ;;
-        * )
-            help
-            exit
-            ;;
-    esac
+			MAGIC=true
+			;;
+		h )
+			help
+			exit
+			;;
+		\? )
+			help
+			exit
+			;;
+		* )
+			help
+			exit
+			;;
+	esac
 done
 
 # ---------------------------------------------------------
@@ -136,12 +136,12 @@ CONTAINER_NAME="${BASE_NAME}"
 # ---------------------------------------------------------
 # SERVER or DESKTOP MODE
 if [ ${SERVER} ];then
-    MODE="DESKTOP"
-    SET_VERSION="-v /tmp/.x11-unix:/tmp/.x11-unix:rw -e DISPLAY=unix${DISPLAY}"
-    # let display could connect by every device
-    xhost + > /dev/null 2>&1
+	MODE="DESKTOP"
+	SET_VERSION="-v /tmp/.x11-unix:/tmp/.x11-unix:rw -e DISPLAY=unix${DISPLAY}"
+	# let display could connect by every device
+	xhost + > /dev/null 2>&1
 else
-    MODE="SERVER"
+	MODE="SERVER"
 fi
 
 # ---------------------------------------------------------
@@ -151,9 +151,9 @@ MOUNT_GPU="${MOUNT_GPU} device=${GPU}"
 # ---------------------------------------------------------
 # If port is available, run the WEB API
 if [[ -n ${PORT} ]];then 
-    # COMMAND="python3 ${WEB_API} --host 0.0.0.0 --port ${port} --af ${framework}"
-    COMMAND="source ${WEB_API} -p ${PORT}"
-    WEBKEY=true
+	# COMMAND="python3 ${WEB_API} --host 0.0.0.0 --port ${port} --af ${framework}"
+	COMMAND="source ${WEB_API} -p ${PORT}"
+	WEBKEY=true
 fi
 
 # ---------------------------------------------------------
@@ -171,29 +171,29 @@ print_magic "${TITLE}" "${MAGIC}"
 # ---------------------------------------------------------
 # Bulid darknet & check status
 if [ "${RELEASE}" = true ];then
-    DARKNET=""
-    RUNCODE="-dt"
-    BASHCODE="bash"
+	DARKNET=""
+	RUNCODE="-dt"
+	BASHCODE="bash"
 else
-    DARKNET="chmod +x ./objectdetection/yolo/darknet/darknetrun.sh && ./objectdetection/yolo/darknet/darknetrun.sh"
-    DLPRETRAINED="python3 pretrainedmodel/pretrained_download.py -all"
-    RUNCODE="-it"
-    BASHCODE="bash -c \"${DARKNET} && ${DLPRETRAINED} && ${COMMAND} \" "
-    
-    if [ "${WEBKEY}" = true ];then 
-        # Running webui
-        echo -e "${YELLOW}"
-        echo "----- Running WebUI -----"
-        echo -e "${NC}"
+	DARKNET="chmod +x ./objectdetection/yolo/darknet/darknetrun.sh && ./objectdetection/yolo/darknet/darknetrun.sh"
+	DLPRETRAINED="python3 pretrainedmodel/pretrained_download.py -all"
+	RUNCODE="-it"
+	BASHCODE="bash -c \"${DARKNET} && ${DLPRETRAINED} && ${COMMAND} \" "
+	
+	if [ "${WEBKEY}" = true ];then 
+		# Running webui
+		echo -e "${YELLOW}"
+		echo "----- Running WebUI -----"
+		echo -e "${NC}"
 
-        sudo ./webui/run_web.sh -p ${PORT}
-        # Running Database
-        echo -e "${YELLOW}"
-        echo "----- Running database -----"
-        echo -e "${NC}"
+		sudo ./webui/run_web.sh -p ${PORT}
+		# Running Database
+		echo -e "${YELLOW}"
+		echo "----- Running database -----"
+		echo -e "${NC}"
 
-        sudo ./webapi/pgdb/run_db.sh -p 6535 -s ivit_admin -d ivit -u ivit
-    fi
+		sudo ./webapi/pgdb/run_db.sh -p 6535 -s ivit_admin -d ivit -u ivit
+	fi
 fi
 
 # ---------------------------------------------------------
@@ -222,15 +222,15 @@ bash -c "${DOCKER_CMD}"
 
 # ---------------------------------------------------------
 if [ ${RELEASE} = false ];then
-    echo -e "${YELLOW}"
-    echo "----- Close container -----"
-    echo -e "${NC}"
-    # docker stop ${CONTAINER_NAME}
-    docker stop ${CONTAINER_NAME}-postgres
-    docker rm ${CONTAINER_NAME}-postgres
+	echo -e "${YELLOW}"
+	echo "----- Close container -----"
+	echo -e "${NC}"
+	# docker stop ${CONTAINER_NAME}
+	docker stop ${CONTAINER_NAME}-postgres
+	docker rm ${CONTAINER_NAME}-postgres
 fi
 
 if [ ${WEBKEY} = true ];then
-    # docker stop ${CONTAINER_NAME}
-    docker stop ${CONTAINER_NAME}-webui
+	# docker stop ${CONTAINER_NAME}
+	docker stop ${CONTAINER_NAME}-webui
 fi
