@@ -170,7 +170,9 @@ def edit_img_class(uuid):
         # Append a new class in classes.txt
         classes_path = ROOT + '/' + prj_name + "/workspace/classes.txt"
         if exists(classes_path):
-            write_txt(classes_path, class_name)
+            classes_list = get_classes_list(classes_path)
+            if not (class_name in classes_list):
+                write_txt(classes_path, class_name)
         else:
             return error_msg(400, {}, "This classes.txt does not exist in the Project:[{}]".format(classes_path), log=True)                
     # Move file and chagned database
