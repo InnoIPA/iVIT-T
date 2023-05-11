@@ -79,7 +79,8 @@ def modify_addr():
     write_json(VERSION_PATH, env_config)
             
     try:
-        if(init_for_icap()):
+        init_for_icap()
+        if(app.config["ICAP_STATUS"]):
             register_mqtt_event()
             return success_msg(200, get_tb_info(), "Success")
         else:
