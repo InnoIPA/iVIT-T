@@ -23,7 +23,7 @@ A library to training model of TensorFlow-Keras and Darknet. This library enable
 # Getting Started
 
 ### Pre-requirements
-Install **nvidia-driver-525**(gpu, cuda-12.0.1), **nvidia-docker** and **docker** before installing the docker container.
+Install **nvidia-driver-510**(**cuda-11.6**), **nvidia-docker** and **docker** before installing the docker container.
 
 - [Tutorial-nvidia-driver](https://docs.nvidia.com/datacenter/tesla/tesla-installation-notes/index.html)
 
