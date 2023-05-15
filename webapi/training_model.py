@@ -145,6 +145,9 @@ def create_training_iter(uuid):
     error_db = pdata.append_database()
     if error_db:
         return error_msg(400, {}, str(error_db[1]))
+    error_db = pdata.training_color_id_database()
+    if error_db:
+        return error_msg(400, {}, str(error_db[1]))
 
     # Create new model.json
     model_param_path = prj_path + '/' + iter_name + '/' + model_json

@@ -110,9 +110,9 @@ def curve_history(uuid):
                     graph.update({str(key+1):dict(line)})
             return success_msg(200, graph, "Success", "Get curve history of the Project:[{}:{}]".format(prj_name, front_iteration))
         else:
-            return error_msg("This graph.txt does not exist in iteration of the Project:[{}:{}]".format(prj_name, front_iteration))
+            return error_msg(400, {}, "This graph.txt does not exist in iteration of the Project:[{}:{}]".format(prj_name, front_iteration))
     else:
-        return error_msg("This iteration does not exist in the Project:[{}:{}]".format(prj_name, front_iteration))
+        return error_msg(400, {}, "This iteration does not exist in the Project:[{}:{}]".format(prj_name, front_iteration))
         
 @app_cl_model.route('/<uuid>/metrics_history', methods=['POST']) 
 @swag_from("{}/{}".format(YAML_PATH, "metrics_history.yml"))
@@ -138,9 +138,9 @@ def metrics_history(uuid):
             metrics = read_json(metrics_path)
             return success_msg(200, metrics, "Success", "Get metrics history in iteration of the Project:[{}:{}]".format(prj_name, front_iteration))
         else:
-            return error_msg("This metrics.json does not exist in iteration of the Project:[{}:{}]".format(prj_name, front_iteration))
+            return error_msg(400, {}, "This metrics.json does not exist in iteration of the Project:[{}:{}]".format(prj_name, front_iteration))
     else:
-        return error_msg("This iteration does not exist in the Project:[{}:{}]".format(prj_name, front_iteration))
+        return error_msg(400, {}, "This iteration does not exist in the Project:[{}:{}]".format(prj_name, front_iteration))
 
 @app_cl_model.route('/<uuid>/get_model_json', methods=['POST']) 
 @swag_from("{}/{}".format(YAML_PATH, "get_model_json.yml"))
