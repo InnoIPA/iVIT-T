@@ -30,6 +30,13 @@ Install **nvidia-driver-510**(**cuda-11.6**), **nvidia-docker** and **docker** b
 
 - [Tutorial-nvidia-docker](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
 
+- **Add docker to sudo group** 
+    - [Tutourial](https://docs.docker.com/engine/install/linux-postinstall/)
+    ``` 
+    sudo groupadd docker
+    sudo usermod -aG docker $USER
+    ```
+
 ##  Run container
 
 ### Build convert docker images and database container
