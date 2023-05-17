@@ -162,14 +162,15 @@ do
         rm $STORREFILE
         cp ./vitis-ai-utility/vitis-ai-start.sh ./vitis-ai-start.sh
         cp ./vitis-ai-utility/docker_run.sh ./docker_run.sh
-        cd /workspace
+        cd ..
+        cd ..
     fi
     if [[ ${i} == *"3"* ]]; then
         echo -e "${CYAN}"
         echo "----- Building image of hailo -----"
         echo -e "${NC}"
 
-        cd /workspace/convert/hailo
+        cd ./hailo
         FILEID="1IFoof3TjeN2o7yBSZDhYR_GsMy_mC53V"
         STORREFILE="hailo_sw_suite_2023-01.zip"
         google_download $FILEID $STORREFILE
