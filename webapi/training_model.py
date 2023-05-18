@@ -135,7 +135,7 @@ def create_training_iter(uuid):
         else:
             del app.config["TRAINING_TASK"][uuid]
             shutil.rmtree('{}/{}/{}'.format(ROOT,prj_name, iter_name), ignore_errors=True)
-            return error_msg("The input shape is wrong.")
+            return error_msg(400, {}, "The input shape is wrong.")
     # -----------------------------------------Data-------------------------------------------
     # Update mapping iteration
     chk.update_mapping_name(prj_path, uuid)

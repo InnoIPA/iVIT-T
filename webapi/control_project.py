@@ -111,15 +111,15 @@ def rename_project(uuid):
         return error_msg("UUID:{} does not exist.".format(uuid))
     # Check key of front
     if not "new_name" in request.get_json().keys():
-        return error_msg("KEY:new_name does not exist.")
+        return error_msg(400, {}, "KEY:new_name does not exist.")
     # Get project name
     prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
     # Get type
     type = app.config["PROJECT_INFO"][uuid]["type"]
     # Get value of front
     new_name = request.get_json()['new_name']
-    if special_words(new_name) :
-        return error_msg(400, {}, "The project_name include special characters:[{}]".format(new_name), log=True)
+    if special_words(new_name) or not new_name:
+        return error_msg(400, {}, "The project_name include special characters or None:[{}]".format(new_name), log=True)
     # Regular expression
     new_name = regular_expression(new_name)
     # Change app.config["PROJECT_INFO"][uuid][”project_name”] 
@@ -139,7 +139,7 @@ def rename_project(uuid):
     value = "project_name=\'{}\', show_image_path=\'{}\'".format(new_name, show_image_path)
     error_db = update_data_table_cmd("project", value, "project_uuid=\'{}\'".format(uuid))
     if error_db:
-        return error_msg(str(error_db[1]))
+        return error_msg(400, {}, str(error_db[1]))
     # Change project name in all iteration documents
     iter_name = [ os.path.join(new_main_path, name) for name in os.listdir(new_main_path) if name != "workspace" and os.path.isdir(os.path.join(new_main_path, name))]
     if len(iter_name) > 0:

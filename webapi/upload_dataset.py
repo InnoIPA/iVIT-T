@@ -62,11 +62,11 @@ def upload(uuid):
                     if (filename == "classes.txt") or (filename == "classes_temp.txt"):
                         error_db = compare_classes(dir_path, uuid)
                         if error_db:
-                            return error_msg(str(error_db[1]))
+                            return error_msg(400, {}, str(error_db[1]))
                     else:
                         error_db = updb.upload_fillin_ws_info()
                         if error_db:
-                            return error_msg(str(error_db[1]))
+                            return error_msg(400, {}, str(error_db[1]))
 
                     # Append to list
                     collect_filename.append(filename)
