@@ -229,7 +229,7 @@ def update_bbox(uuid):
         # Save in db
         error_db = obj_savebbox_db(image_name, cls_idx, uuid)
         if error_db:
-            return error_msg(str(error_db[1]))
+            return error_msg(400, {}, str(error_db[1]))
         return success_msg(200, {}, "Success", "Update box in image of Project:[{}:{}:{}]".format(prj_name, image_name, box_info))
     else:
         return error_msg(400, {}, "This image does not exist in Project:[{}:{}]".format(prj_name, image_name), log=True)
@@ -248,7 +248,7 @@ def get_img_cls_nums(uuid, path):
     color_info_db = get_all_color_info_db(uuid, path)
     # Prevent error 
     if "error" in color_info_db:
-        return error_msg(str(color_info_db[1]))
+        return error_msg(400, {}, str(color_info_db[1]))
     # combination path
     img_path = "./" + path
     # Return class and num
