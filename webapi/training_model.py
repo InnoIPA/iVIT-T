@@ -41,8 +41,10 @@ def get_batch_size(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
         return error_msg("UUID:{} does not exist.".format(uuid))
+    # Get type
+    type = app.config["PROJECT_INFO"][uuid]["type"]
     # Check batch_size of the optimization 
-    batch_size = cal_batch_size(uuid)
+    batch_size = cal_batch_size(uuid, type)
     return jsonify({"batch_size": batch_size})
 
 @app_train.route('/<uuid>/get_default_param', methods=['POST']) 
@@ -67,7 +69,7 @@ def get_default_param(uuid):
         # Get default param
         default = copy.deepcopy(METHOD_OF_TRAINING[type][platform][training_method])
         # Check batch_size of the optimization 
-        batch_size = cal_batch_size(uuid)
+        batch_size = cal_batch_size(uuid, type)
         if not default["batch_size"] in batch_size:
             default["batch_size"] = min(batch_size)
         # Suggest input_shape calculation
