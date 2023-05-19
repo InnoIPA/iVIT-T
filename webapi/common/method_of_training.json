@@ -35,7 +35,7 @@
             "Quick Training":{
                 "model": "yolov4-tiny",
                 "batch_size": 8,
-                "step": 6000,
+                "step": 2000,
                 "input_shape": [320,320,3]},
 
             "Advanced Training":{
@@ -50,7 +50,7 @@
             "Quick Training":{
                 "model": "yolov3-tiny",
                 "batch_size": 8,
-                "step": 6000,
+                "step": 2000,
                 "input_shape": [320,320,3]},
 
             "Advanced Training":{
@@ -65,7 +65,7 @@
             "Quick Training":{
                 "model": "yolov4-tiny",
                 "batch_size": 8,
-                "step": 6000,
+                "step": 2000,
                 "input_shape": [320,320,3]},
 
             "Advanced Training":{
