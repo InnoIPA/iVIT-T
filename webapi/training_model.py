@@ -40,8 +40,10 @@ def get_batch_size(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
         return error_msg(400, {}, "UUID:{} does not exist.".format(uuid), log=True)
+    # Get type
+    type = app.config["PROJECT_INFO"][uuid]["type"]
     # Check batch_size of the optimization 
-    batch_size = cal_batch_size(uuid)
+    batch_size = cal_batch_size(uuid, type)
     if "error" in batch_size:
         return error_msg(400, {}, str(batch_size[1]), log=True)
     return success_msg(200, {"batch_size": batch_size}, "Success")
@@ -67,7 +69,7 @@ def get_default_param(uuid):
     # Get default param
     default = copy.deepcopy(METHOD_OF_TRAINING[type][platform][training_method])
     # Check batch_size of the optimization 
-    batch_size = cal_batch_size(uuid)
+    batch_size = cal_batch_size(uuid, type)
     if "error" in batch_size:
         return error_msg(400, {}, str(batch_size[1]), log=True)
     if not default["batch_size"] in batch_size:
