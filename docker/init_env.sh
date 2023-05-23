@@ -176,6 +176,7 @@ do
         google_download $FILEID $STORREFILE
         unzip $STORREFILE
         rm $STORREFILE
+        docker load -i hailo_sw_suite_2023-01.tar
         # Download hailo docker/convert package
         echo "----- Download conver folder of hailo -----"
         FILEID="1UvoBn8eEP91goi9-wg3bS90vFRuaUgIv"
