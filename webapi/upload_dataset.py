@@ -4,7 +4,7 @@ import logging, os, shutil
 from webapi import app
 from .common.utils import success_msg, error_msg
 from .common.config import ALLOWED_EXTENSIONS, YAML_MAIN_PATH
-from .common.upload_tool import create_class_dir, filename_processing, save_file, Upload_DB, compare_classes
+from .common.upload_tool import create_class_dir, filename_processing, save_file, Upload_DB, compare_classes, add_class_filename
 app_ud_dt = Blueprint( 'upload_dataset', __name__)
 # Define API Docs path and Blue Print
 YAML_PATH       = YAML_MAIN_PATH + "/upload_dataset"
@@ -39,6 +39,7 @@ def upload(uuid):
                 filename = filename_processing(file)
                 # Save file
                 if type == "classification":
+                    filename = add_class_filename(str(key), str(filename))
                     # Skip other format exclude image format
                     if not (filename.split(".")[-1] in ALLOWED_EXTENSIONS["image"]):
                         return error_msg(400, {}, "This type of filename is not allowed:[{}:{}]".format(filename, filename.split(".")[-1]), log=True)
