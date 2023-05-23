@@ -35,6 +35,7 @@ Install **nvidia-driver-510**(**cuda-11.6**), **nvidia-docker** and **docker** b
     ``` 
     sudo groupadd docker
     sudo usermod -aG docker $USER
+    sudo chmod 777 /var/run/docker.sock
     ```
 
 ##  Run container
