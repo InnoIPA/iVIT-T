@@ -226,8 +226,10 @@ if [ ${RELEASE} = false ];then
     echo -e "${NC}"
 
     docker stop ${CONTAINER_NAME}-postgres
+    # docker rm ${CONTAINER_NAME}-postgres
 fi
 
 if [ ${WEBKEY} = true ];then
+
     docker stop ${CONTAINER_NAME}-webui
 fi
