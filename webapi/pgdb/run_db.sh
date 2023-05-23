@@ -137,7 +137,7 @@ if [ $? -eq 0 ] ;then
 else
 # ---------------------------------------------------------
 	# Run container
-	DOCKER_CMD="docker run -dt \
+	DOCKER_CMD="docker run -dt --rm \
 	--name ${CONTAINER_NAME} \
 	-p ${PORT}:5432 \
 	-v `pwd`${OUTSIDE_DBFOLDER}:${DEFAULT_DBFOLDER} \

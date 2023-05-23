@@ -224,12 +224,10 @@ if [ ${RELEASE} = false ];then
     echo -e "${YELLOW}"
     echo "----- Close container -----"
     echo -e "${NC}"
-    # docker stop ${CONTAINER_NAME}
+
     docker stop ${CONTAINER_NAME}-postgres
-    docker rm ${CONTAINER_NAME}-postgres
 fi
 
 if [ ${WEBKEY} = true ];then
-    # docker stop ${CONTAINER_NAME}
     docker stop ${CONTAINER_NAME}-webui
 fi
