@@ -149,7 +149,7 @@ do
         BASE_NAME="intel-convert"
         TAG_VER="latest"
         IMAGE_NAME="${USER}/${BASE_NAME}:${TAG_VER}"
-        docker pull IMAGE_NAME
+        docker pull ${IMAGE_NAME}
     fi
     if [[ ${i} == *"2"* ]]; then
         echo -e "${RED}"
