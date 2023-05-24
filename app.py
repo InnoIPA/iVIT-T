@@ -22,7 +22,6 @@ def main(args):
     init_db()
     init_color_table_db()
     # Fill in db from sample
-    logging.info("Initial sample project...")
     init_sample_to_db()
     # Update Version
     update_version_function()
