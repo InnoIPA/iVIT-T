@@ -146,7 +146,8 @@ else
 	-e POSTGRES_PASSWORD=${PASSWORD} \
 	-e POSTGRES_INITDB_ARGS='--data-checksums' \
 	-e POSTGRES_DB=${DBNAME} \
-	${DOCKER_IMAGE}:${TAG_VER}"
+	${DOCKER_IMAGE}:${TAG_VER} \
+	-c max_connections=1000"
 
 # ---------------------------------------------------------
 	echo -e "${BLUE}"
