@@ -135,18 +135,25 @@ for i in ${arr_index[@]}
 do
     if [[ ${i} == *"0"* ]]; then
         echo -e "${GREEN}"
-        echo "----- Building image of nvidia -----"
+        echo "----- Pull image of nvidia -----"
         echo -e "${NC}"
     fi
     if [[ ${i} == *"1"* ]]; then
         echo -e "${BLUE}"
-        echo "----- Building image of intel -----"
+        echo "----- Pull image of intel -----"
         echo -e "${NC}"
-        docker build -t intel-convert -f ./convert/intel/intel.Dockerfile ./convert --no-cache
+        # --------------------------------------------------------
+        # Parse information from configuration
+        CONF="./docs/version.json"
+        USER=$(cat ${CONF} | jq -r '.USER')
+        BASE_NAME="intel-convert"
+        TAG_VER="latest"
+        IMAGE_NAME="${USER}/${BASE_NAME}:${TAG_VER}"
+        docker pull IMAGE_NAME
     fi
     if [[ ${i} == *"2"* ]]; then
         echo -e "${RED}"
-        echo "----- Building image of xilinx -----"
+        echo "----- Pull image of xilinx -----"
         echo -e "${NC}"
         
         cd ./convert/xilinx
@@ -167,7 +174,7 @@ do
     fi
     if [[ ${i} == *"3"* ]]; then
         echo -e "${CYAN}"
-        echo "----- Building image of hailo -----"
+        echo "----- Pull image of hailo -----"
         echo -e "${NC}"
 
         cd ./hailo
