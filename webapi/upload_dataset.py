@@ -61,9 +61,10 @@ def upload(uuid):
                     # Update db
                     updb = Upload_DB(uuid, prj_name, type, label, dir_path, filename)
                     if (filename == "classes.txt") or (filename == "classes_temp.txt"):
-                        error_db = compare_classes(dir_path, uuid)
-                        if error_db:
-                            return error_msg(400, {}, str(error_db[1]))
+                        # error_db = compare_classes(dir_path, uuid)
+                        # if error_db:
+                        #     return error_msg(400, {}, str(error_db[1]))
+                        pass
                     else:
                         error_db = updb.upload_fillin_ws_info()
                         if error_db:

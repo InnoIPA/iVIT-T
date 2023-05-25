@@ -6,7 +6,7 @@ from natsort import natsorted
 from webapi import app
 from .common.utils import success_msg, error_msg, exists, get_classes_list
 from .common.config import ROOT, YAML_MAIN_PATH
-from .common.upload_tool import create_class_dir, Upload_DB
+from .common.upload_tool import create_class_dir, Upload_DB, compare_classes
 from .common.display_tool import count_dataset, get_img_path_db, check_unlabeled_images
 from .common.database import delete_data_table_cmd, execute_db, update_data_table_cmd
 from .common.inspection import Check
@@ -218,6 +218,12 @@ def iter_class_num(uuid):
     iteration = request.get_json()['iteration']
     # Check unlabeled images -> ??
     if iteration== "workspace" or type == "object_detection":
+        # Same classes.txt processing
+        dir_path = os.path.join(ROOT,  prj_name, iteration)
+        error_db = compare_classes(dir_path, uuid)
+        if error_db:
+            return error_msg(400, {}, str(error_db[1]))
+        # Check Unlabeled images
         error_db = check_unlabeled_images(uuid, prj_name)
         if error_db:
             return error_msg(400, {}, str(error_db[1]))
