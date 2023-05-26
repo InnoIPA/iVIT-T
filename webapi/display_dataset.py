@@ -229,11 +229,11 @@ def iter_class_num(uuid):
         # Get type
         type = app.config["PROJECT_INFO"][uuid]['type']
         # Check unlabeled images
+        logging.warning("Get API of iter_class_num :[iteration:{}, type:{}]".format(iteration, type))
         if iteration== "workspace":
-            if type == "object_detection":
-                info_db = check_unlabeled_images(uuid, prj_name, iteration)
-                if "error" in info_db:
-                    return error_msg(str(info_db[1]))
+            info_db = check_unlabeled_images(uuid, prj_name, iteration)
+            if "error" in info_db:
+                return error_msg(str(info_db[1]))
         else:
             # Mapping iteration
             iteration = chk.mapping_iteration(uuid, prj_name, iteration, front=True)
