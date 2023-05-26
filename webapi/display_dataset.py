@@ -217,7 +217,8 @@ def iter_class_num(uuid):
     # Get value of front
     iteration = request.get_json()['iteration']
     # Check unlabeled images -> ??
-    if iteration== "workspace" or type == "object_detection":
+    logging.warning("Get API of iter_class_num :[iteration:{}, type:{}]".format(iteration, type))
+    if iteration== "workspace":
         # Same classes.txt processing
         dir_path = os.path.join(ROOT,  prj_name, iteration)
         error_db = compare_classes(dir_path, uuid)
