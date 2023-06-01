@@ -112,9 +112,11 @@ def rename_class(uuid):
         # Read orignal file
         class_text = get_classes_list(classes_path)
         # Change class string
-        if class_name in class_text:
+        if (class_name in class_text) and (not new_name in class_text):
             idx = class_text.index(class_name)
             class_text[idx] = new_name
+        elif new_name in class_text:
+            return error_msg(400, {}, "This class exists in classes.txt of the Project, Can't add to the classes list:[{}:{}]".format(prj_name, new_name), log=True)
         else:
             return error_msg(400, {}, "This class does not exist in classes.txt of the Project:[{}:{}]".format(prj_name, class_name), log=True)
         # Remove orignal file
