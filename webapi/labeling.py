@@ -7,6 +7,7 @@ from .common.config import ROOT, YAML_MAIN_PATH, COLOR_TABLE_PATH
 from .common.labeling_tool import yolo_txt_convert, save_bbox, del_class_txt, add_class_txt, \
                                     del_class_db, cls_change_classes, obj_savebbox_db, rename_cls_class, \
                                     get_all_color_info_db, cls_img_info, obj_img_info
+from .common.init_tool import get_project_info
 app_labeling = Blueprint( 'labeling', __name__)
 # Define API Docs path and Blue Print
 YAML_PATH       = YAML_MAIN_PATH + "/labeling"
@@ -179,6 +180,11 @@ def edit_img_class(uuid):
     error_db = cls_change_classes(uuid, prj_name, class_name, images_info)
     if error_db:
         return error_msg(400, {}, str(error_db[1]))
+    # Update project dataset numbers
+    error_db = get_project_info(uuid)
+    # Error
+    if error_db:
+        return error_msg(400, {}, str(error_db[1]))
     return success_msg(200, {}, "Success", "Change images class in the Project:[{}:{} -> {}]".format(prj_name, images_info, class_name))
 
 @app_labeling.route('/<uuid>/get_bbox', methods=['POST']) 
@@ -228,6 +234,11 @@ def update_bbox(uuid):
         cls_idx = save_bbox(img_path, box_info)
         # Save in db
         error_db = obj_savebbox_db(image_name, cls_idx, uuid)
+        if error_db:
+            return error_msg(400, {}, str(error_db[1]))
+        # Update project dataset numbers
+        error_db = get_project_info(uuid)
+        # Error
         if error_db:
             return error_msg(400, {}, str(error_db[1]))
         return success_msg(200, {}, "Success", "Update box in image of Project:[{}:{}:{}]".format(prj_name, image_name, box_info))

@@ -10,6 +10,8 @@ from .common.upload_tool import create_class_dir, Upload_DB, compare_classes
 from .common.display_tool import count_dataset, get_img_path_db, check_unlabeled_images
 from .common.database import delete_data_table_cmd, execute_db, update_data_table_cmd
 from .common.inspection import Check
+from .common.init_tool import get_project_info
+
 app_dy_dt = Blueprint( 'display_dataset', __name__)
 # Define API Docs path and Blue Print
 YAML_PATH       = YAML_MAIN_PATH + "/display_dataset"
@@ -153,6 +155,11 @@ def delete_img(uuid):
                     os.remove(txt_path)
         else:
             return error_msg(400, {}, "This class does not exist in the Project:[{}:{}]".format(prj_name, key), log=True)
+    # Update project dataset numbers
+    error_db = get_project_info(uuid)
+    # Error
+    if error_db:
+        return error_msg(400, {}, str(error_db[1]))
     return success_msg(200, {}, "Success", "Deleted images in project:[{}:{}]".format(prj_name, image_info_list))
 
 @app_dy_dt.route('/<uuid>/delete_all_img', methods=['DELETE']) 
@@ -195,6 +202,11 @@ def delete_all_img(uuid):
         values = "effect_img_nums=0, unlabeled_img_nums=0, show_image_path=\'\'"
         select = "project_uuid=\'{}\'".format(uuid)
         error_db = update_data_table_cmd("project", values, select)
+        if error_db:
+            return error_msg(400, {}, str(error_db[1]))
+        # Update project dataset numbers
+        error_db = get_project_info(uuid)
+        # Error
         if error_db:
             return error_msg(400, {}, str(error_db[1]))
         return success_msg(200, {}, "Success", "Deleted all images in Project:[{}]".format(prj_name))
