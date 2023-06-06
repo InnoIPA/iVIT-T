@@ -105,7 +105,7 @@ def evaluate(uuid):
     eval.thread_eval(uuid, type, command)
     result = eval.cmd_q.get()
     if "Error" in result.keys():
-        return error_msg(400, result["Error"], "Out of memory", log=True)
+        return error_msg(400, result, "Out of memory", log=True)
     EVAL_VAL[uuid] = result
     # Threshold
     log_dict = threshold_process(uuid, threshold)
