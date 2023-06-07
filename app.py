@@ -6,7 +6,7 @@ from webapi import app, socketio, \
                     app_aug, app_cl_model, app_train, app_export, app_eval, app_icap
 from webapi.common import init_db, init_sample_to_db, init_color_table_db, \
                             init_for_icap, register_mqtt_event, get_target_addr, \
-                            update_version_function
+                            update_version_function, read_json, write_json
 from webapi.common.config import *
 
 def build_argparser():
@@ -48,9 +48,16 @@ def main(args):
     logging.info("Initial iCAP register...")
     init_for_icap()
     register_mqtt_event()
+
+    # Setting version.json
+    config = read_json(VERSION_PATH)
+    config["HOST"] = "0.0.0.0"
+    config["PORT"] = int(args.port)
+    write_json(VERSION_PATH, config)
+
     # Running webapi sever
     logging.info("Running webapi server...")
-    socketio.run(app, host = "0.0.0.0", port=args.port, debug=False)
+    socketio.run(app, host = config["HOST"], port=config["PORT"], debug=False)
 
 if __name__ == '__main__':
     # Create log
