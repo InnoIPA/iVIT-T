@@ -5,8 +5,8 @@ mount_gpu="--gpus=all"
 workspace="/workspace"
 main_container="ivit-t"
 mode=false
-docker_image="intel-convert"
-docker_name=${docker_image}
+docker_image="willqiuinnodisk/intel-convert"
+docker_name="intel-convert"
 # ---------------------------------------------------------
 # help
 function help(){
