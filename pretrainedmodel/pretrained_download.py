@@ -43,7 +43,7 @@ def yolo_pretrained(arch):
     GDRIVE_URL = "https://drive.google.com/uc?export=download&id="
 
     if 'yolov4-tiny' in arch:
-        url = '{}1SPJtVPqtwKVEjo5hBGM4B9ClJLv6OcBO'.format(GDRIVE_URL)
+        url = '{}1sFXs_yL9s52M6---qPhdHY0FVfCi_i6e'.format(GDRIVE_URL)
         if not (os.path.exists(PATH + '/yolov4-tiny.conv.29')):
             gdown.download(url, PATH + '/yolov4-tiny.conv.29')  
         else:
@@ -51,21 +51,21 @@ def yolo_pretrained(arch):
 
     else:
         if arch == 'yolov3':
-            url = '{}1JYKlw2N7E0toGsaDZnrqAlIIAjwU_aem'.format(GDRIVE_URL)
+            url = '{}17qLQ4BCDj61P4RD2zqBU90D3ndqBrE_a'.format(GDRIVE_URL)
             if not (os.path.exists(PATH + '/' +YOLOFILE[0])):
                 gdown.download(url, PATH + '/' +YOLOFILE[0])
             else:
                 print("This model has existed:[ {} ]".format(arch))
 
         elif arch == 'yolov3-tiny':
-            url = '{}1N3aVDgvgt13ZNjps-tr_9UvT88uEf7GA'.format(GDRIVE_URL)
+            url = '{}1HJSXmnAqywUHFiMBfQjE5PhFHXvHAkmb'.format(GDRIVE_URL)
             if not (os.path.exists(PATH + '/' +YOLOFILE[1])):
                 gdown.download(url, PATH + '/' +YOLOFILE[1]) 
             else:
                 print("This model has existed:[ {} ]".format(arch))
 
         elif 'yolov4' in arch:
-            url = '{}18OmCm91sVzS3ijf3apkGPa1lncRxsndn{}'.format(GDRIVE_URL, "&confirm=t")
+            url = '{}1p3DgT43gxdcYSI76xU8YFSYalOiYGW6d{}'.format(GDRIVE_URL, "&confirm=t")
             if not (os.path.exists(PATH + '/' +YOLOFILE[2])):
                 gdown.download(url, PATH + '/' +YOLOFILE[2]) 
             else:
