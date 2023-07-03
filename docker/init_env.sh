@@ -162,7 +162,7 @@ do
         # download convert folder
         cd ./Vitis-AI
         echo "----- Download conver folder of xilinx -----"
-        FILEID="1yzYhz6T2u2GNCoqVjRcwaHDJ1_QoTBQk"
+        FILEID="1-fS8J0nC9uKXXjjhxkemYmkspm-oAEpo"
         STORREFILE="vitis-ai-utility.zip"
         google_download $FILEID $STORREFILE
         unzip $STORREFILE
@@ -178,7 +178,7 @@ do
         echo -e "${NC}"
 
         cd ./hailo
-        FILEID="1IFoof3TjeN2o7yBSZDhYR_GsMy_mC53V"
+        FILEID="1OdwvP1Rq4WzNWKalI9XNCFNnZG-mh2yA"
         STORREFILE="hailo_sw_suite_2023-01.zip"
         google_download $FILEID $STORREFILE
         unzip $STORREFILE
@@ -186,7 +186,7 @@ do
         docker load -i hailo_sw_suite_2023-01.tar
         # Download hailo docker/convert package
         echo "----- Download conver folder of hailo -----"
-        FILEID="1UvoBn8eEP91goi9-wg3bS90vFRuaUgIv"
+        FILEID="1MYqlzWnLj_DXs1btr8xR8TZgeqIl6Qw6"
         STORREFILE="pytorch-YOLO.zip"
         google_download $FILEID $STORREFILE
         unzip $STORREFILE
