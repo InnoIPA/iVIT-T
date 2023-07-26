@@ -1,4 +1,7 @@
 # Release Notes
+## Release 1.1.2
+### Bug fix 
+- After adding new label at upload, it will crash.
 
 ## Release 1.1.1
 ### New Features/Highlights
