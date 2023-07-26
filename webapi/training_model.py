@@ -248,4 +248,4 @@ def prj_training_status():
 @app_train.route('/socket_listen_list', methods=['GET'])
 @swag_from("{}/{}".format(YAML_PATH, "socket_listen_list.yml"))
 def socket_listen_list():
-    return jsonify(200, SOCKET_LISTENERS, "Success", "Get socket_listen_list")
+    return success_msg(200, SOCKET_LISTENERS, "Success", "Get socket_listen_list")
