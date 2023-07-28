@@ -8,7 +8,7 @@ from .common.labeling_tool import yolo_txt_convert, save_bbox, del_class_txt, ad
                                     del_class_db, cls_change_classes, obj_savebbox_db, rename_cls_class, \
                                     get_all_color_info_db, cls_img_info, obj_img_info
 from .common.init_tool import get_project_info
-from .common.database import Get_info_cmd
+from .common.database import Get_info_cmd,execute_db
 app_labeling = Blueprint( 'labeling', __name__)
 # Define API Docs path and Blue Print
 YAML_PATH       = YAML_MAIN_PATH + "/labeling"
@@ -181,13 +181,22 @@ def edit_img_class(uuid):
                 # Get color
                 content = "project_uuid ='"+str(uuid)+"'"
                 max_label_id = Get_info_cmd("color_hex","color_id",content)
+                
                 content = ""
                 _content="color_hex !='"
                 for idx, color in enumerate(max_label_id):
                     content=content+_content+color[0]+"'"
                     if idx+1 != len(max_label_id):
                         content=content+" and "
-                get_all_color =  Get_info_cmd("color_id","color_table", content)
+                if len(max_label_id)==0:
+                    content = ""
+                    commands =  """
+                                SELECT {} FROM {}
+                                """.format("color_id","color_table")
+                    get_all_color = execute_db(commands, False)
+                    
+                else:
+                    get_all_color =  Get_info_cmd("color_id","color_table", content)
                 color_id = get_all_color[0][0]
                 # Add to classes.txt
                 error_db = add_class_txt(uuid, classes_path, str(class_name), color_id)
