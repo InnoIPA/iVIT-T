@@ -1,7 +1,7 @@
 {
     "USER":"innodiskorg",
     "PROJECT": "ivit-t",
-    "VERSION": "v1.1.2",
+    "VERSION": "v1.1.3",
     "HOST": "",
     "PORT": 6530,
     "DEBUG": false,
