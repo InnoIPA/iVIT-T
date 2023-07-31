@@ -1,4 +1,8 @@
 # Release Notes
+## Release 1.1.3
+### Bug fix 
+-When the project don't add any label , and then adding new label at upload , it will crash.
+
 ## Release 1.1.2
 ### Bug fix 
 - After adding new label at upload, it will crash.
