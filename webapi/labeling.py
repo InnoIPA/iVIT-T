@@ -8,7 +8,7 @@ from .common.labeling_tool import yolo_txt_convert, save_bbox, del_class_txt, ad
                                     del_class_db, cls_change_classes, obj_savebbox_db, rename_cls_class, \
                                     get_all_color_info_db, cls_img_info, obj_img_info
 from .common.init_tool import get_project_info
-from .common.database import Get_info_cmd,execute_db
+from .common.database import Get_info_cmd , execute_db
 app_labeling = Blueprint( 'labeling', __name__)
 # Define API Docs path and Blue Print
 YAML_PATH       = YAML_MAIN_PATH + "/labeling"
@@ -202,7 +202,7 @@ def edit_img_class(uuid):
                 error_db = add_class_txt(uuid, classes_path, str(class_name), color_id)
 
                 if error_db:
-                    return error_msg(400, {}, str(error_db[1]))   
+                    return error_msg(400, {}, str(error_db[1]))    
                 
         else:
             return error_msg(400, {}, "This classes.txt does not exist in the Project:[{}]".format(classes_path), log=True)  
