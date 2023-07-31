@@ -9,7 +9,7 @@
 
             "Advanced Training":{
                 "model": "resnet_50",
-                "batch_size": 4,
+                "batch_size": 1,
                 "step": 50,
                 "input_shape": [608,608,3]
             }
@@ -24,7 +24,7 @@
 
             "Advanced Training":{
                 "model": "resnet_50",
-                "batch_size": 4,
+                "batch_size": 1,
                 "step": 50,
                 "input_shape": [608,608,3]
             }
@@ -40,7 +40,7 @@
 
             "Advanced Training":{
                 "model": "yolov4",
-                "batch_size": 2,
+                "batch_size": 1,
                 "step": 10000,
                 "input_shape": [608,608,3]
             }
@@ -55,7 +55,7 @@
 
             "Advanced Training":{
                 "model": "yolov4-leaky",
-                "batch_size": 2,
+                "batch_size": 1,
                 "step": 10000,
                 "input_shape": [608,608,3]
             }
@@ -70,7 +70,7 @@
 
             "Advanced Training":{
                 "model": "yolov4-leaky",
-                "batch_size": 2,
+                "batch_size": 1,
                 "step": 10000,
                 "input_shape": [608,608,3]
             }
