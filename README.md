@@ -34,7 +34,7 @@ NOTE : In case of the use of another hardware, the correct functionality can not
 | `OS`          |   Ubuntu 20.04.4
 
 
-### Software Recommendations 
+### Software Requirements 
  
 Install **nvidia-driver-510**(**cuda-11.6**), **nvidia-docker** and **docker** before installing the docker container.
 
