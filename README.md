@@ -7,7 +7,7 @@
 A library to training model of TensorFlow-Keras and Darknet. This library enables the training of the model of classification, object detection.
 * [See What's New](#see-whats-new)
 * [Hardware Recommendations](#hardware-recommendations)
-* [Software Recommendations](#pre-requirements)
+* [Software Requirements](#software-requirements)
 * [Build convert docker images and database container](#build-convert-docker-images-and-database-container)
 * [CLI mode](#cli-mode)
 * [Web API mode](#web-api-mode)
