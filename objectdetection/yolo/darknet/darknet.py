@@ -125,18 +125,23 @@ def draw_boxes(detections, image_ori, image_resized, colors):
     for idx, (label, confidence, bbox) in enumerate(detections):
         # Tuple convert list
         detections[idx] = list(detections[idx])
-        left, top, right, bottom = bbox2points(bbox)
-        #resize to orignal size
-        left   = int(float(left   * x_rate))
-        top    = int(float(top    * y_rate))
-        right  = int(float(right  * x_rate))
-        bottom = int(float(bottom * y_rate))
-        # Orignal rate
-        detections[idx][2] = [left, top, right, bottom]
-        cv2.rectangle(image_ori, (left, top), (right, bottom), colors[label], 1)
-        cv2.putText(image_ori, "{} [{:.2f}]".format(label, float(confidence)),
-                    (left, top - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                    colors[label], 2)
+        try:
+            left, top, right, bottom = bbox2points(bbox)
+            #resize to orignal size
+            left   = int(float(left   * x_rate))
+            top    = int(float(top    * y_rate))
+            right  = int(float(right  * x_rate))
+            bottom = int(float(bottom * y_rate))
+            # Orignal rate
+            detections[idx][2] = [left, top, right, bottom]
+            # print("image_ori",image_ori,'\n',"(left, top),", (left, top),'\n', "(right, bottom),",(right, bottom),'\n', "colors[label]",colors[label],'\n')
+            cv2.rectangle(image_ori, (left, top), (right, bottom), colors[label], 1)
+            cv2.putText(image_ori, "{} [{:.2f}]".format(label, float(confidence)),
+                        (left, top - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                        colors[label], 2)
+        except:
+            pass
+
     return image_ori, detections
 
 
