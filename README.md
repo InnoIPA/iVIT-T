@@ -6,8 +6,7 @@
 
 A library to training model of TensorFlow-Keras and Darknet. This library enables the training of the model of classification, object detection.
 * [See What's New](#see-whats-new)
-* [Hardware Recommendations](#hardware-recommendations)
-* [Software Requirements](#software-requirements)
+* [Pre-requirements](#pre-requirements)
 * [Build convert docker images and database container](#build-convert-docker-images-and-database-container)
 * [CLI mode](#cli-mode)
 * [Web API mode](#web-api-mode)
@@ -22,20 +21,7 @@ A library to training model of TensorFlow-Keras and Darknet. This library enable
 
 # Getting Started
 
-### Hardware Recommendations 
-NOTE : In case of the use of another hardware, the correct functionality can not be guaranteed.
-
-| Item          |   Information
-| ---           |   --- 
-| `CPU`         |   Intel® 12th Gen Core™i7/i5 processors.
-| `GPU`         |   NVIDIA RTX A2000, A4500
-| `RAM`         |   32GB
-| `Storage`     |   1T
-| `OS`          |   Ubuntu 20.04.4
-
-
-### Software Requirements 
- 
+### Pre-requirements
 Install **nvidia-driver-510**(**cuda-11.6**), **nvidia-docker** and **docker** before installing the docker container.
 
 - [Tutorial-nvidia-driver](https://docs.nvidia.com/datacenter/tesla/tesla-installation-notes/index.html)

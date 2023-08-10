@@ -1,12 +1,12 @@
 {
-    "USER": "innodiskorg",
+    "USER":"innodiskorg",
     "PROJECT": "ivit-t",
     "VERSION": "v1.1.4",
-    "HOST": "0.0.0.0",
+    "HOST": "",
     "PORT": 6530,
     "DEBUG": false,
     "WORKER": 1,
-    "ICAP_HOST": "10.204.16.115",
-    "ICAP_PORT": 3000,
-    "ICAP_DEVICE_NAME": ""
+    "ICAP_HOST":"10.204.16.115",
+    "ICAP_PORT":3000,
+    "ICAP_DEVICE_NAME":""
 }
