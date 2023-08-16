@@ -58,7 +58,17 @@ WORKSPACE="/workspace"
 CONF="./docs/version.json"
 RELEASE=false
 WEBKEY=false
+FILE=$(realpath "$0")
 
+ROOT=$(dirname "${FILE}")
+chmod 777 ${ROOT}/disclaimer.sh && ${ROOT}/disclaimer.sh
+
+
+if [ $? -eq 1 ];then
+
+    exit 0
+
+fi
 # ---------------------------------------------------------
 # help
 function help(){
