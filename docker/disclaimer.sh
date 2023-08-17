@@ -12,7 +12,7 @@ lines_per_page=$(tput lines)
 
 # cal total page
 total_lines=$(echo "$article_content" | wc -l)
-total_pages=$((total_lines / lines_per_page ))
+total_pages=$((total_lines / lines_per_page +1 ))
 
 # init current page
 current_page=1
