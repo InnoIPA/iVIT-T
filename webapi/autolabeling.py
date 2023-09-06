@@ -1,0 +1,376 @@
+from flask import Blueprint, request, jsonify
+from flasgger import swag_from
+from webapi import app
+from .common.utils import error_msg, success_msg
+from .common.config import ROOT, YAML_MAIN_PATH, EVAL_VAL,AUTOLABEL_VAL,MICRO_SERVICE
+from .common.inspection import Check
+from .common.evaluate_tool import Evaluate, threshold_process, temp_label_data_db 
+from .common.database import delete_data_table_cmd , get_unlabeled_img_path_cmd ,get_project_info_cmd , get_img_serial_db
+from .common.gpu_memory import cal_gpu_memory
+
+import time,os,requests,json,socket ,copy
+from multiprocessing import Process ,Queue
+from ivit.micro_service_tool.micro_service_fastapi import app_run
+
+chk = Check()
+
+app_auto_labeling = Blueprint( 'autolabeling', __name__)
+# Define API Docs path and Blue Print
+YAML_PATH       = YAML_MAIN_PATH + "/autolabeling"
+
+def _assign_port():
+    """
+        Get number of free port (start from 6531).
+    Returns:
+        int: number of free port.
+    """
+    port=6531
+    while(True):
+        if _check_port(port):
+            return port
+        else:
+            port+=1
+   
+def _check_port(port:int):
+    """
+    To check port status.
+    Args:
+        port(int):
+    Returns:
+        status(bool):True:status of port is free ; falsestatus of port is not free .
+    """
+    
+    s = socket.socket()
+    try:
+        s.connect(("localhost", port))
+        return False
+    except:
+        return True
+    finally:
+        s.close()
+
+@app_auto_labeling.route('/<uuid>/autolabeling', methods=['POST'])
+@swag_from("{}/{}".format(YAML_PATH, "load_model.yml"))
+def load_model(uuid):
+    #init parameter
+    iter = request.get_json()['iteration']
+    prj_name = get_project_info_cmd("project_name","project","project_uuid='{}'".format(uuid))[0][0]
+    task_type = get_project_info_cmd("project_type","project","project_uuid='{}'".format(uuid))[0][0]
+    threshold=0.7
+    _comunication_q=Queue(maxsize=5)
+    #check the project wether already run autolabel or not 
+    try:
+        if MICRO_SERVICE[uuid]["process"]:
+            return success_msg(200, {} , "Success", "Model is exist!:[{}:{}]".format(prj_name, MICRO_SERVICE[uuid]["iteration"]))
+    except:
+        pass
+
+
+    # check gpu wether is enough or not
+    gpu=cal_gpu_memory()
+    free_gpu_memory = gpu.now()
+    if free_gpu_memory < 2: 
+        return error_msg(400, {}, "GPU Memory is not enough to do autolabeling!")
+
+    #check this project have best model
+    try:
+        dir_iteration = chk.mapping_iteration(uuid, prj_name, iter, front=True)
+    except:
+        return error_msg(400, {}, str(dir_iteration[1]), log=True)
+
+    #try load model
+
+    #get path of model json 
+    if task_type == "object_detection":
+        dictionary = ROOT + '/' +prj_name+'/'+ dir_iteration + '/'+ "yolo" + '.json'
+    else:
+        dictionary = ROOT + '/' +prj_name+'/'+ dir_iteration + '/'+ task_type + '.json'
+
+    #get free port
+    port=_assign_port()
+    try:
+        start_time=time.time()
+        micro_server = Process(target=app_run,args=(task_type,dictionary,port,_comunication_q,))
+        micro_server.start()
+        while(True):
+            status=_comunication_q.get()
+            if status=="success":
+                break
+            elif status=="failed":
+                return error_msg(400, {}, "load model error!")
+        # time.sleep(10)
+        print('\n',"load model time: ",(time.time()-start_time),'\n')
+        MICRO_SERVICE.update({
+            uuid:{
+                "process":micro_server,
+                "iteration":[iter,dir_iteration],
+                "threshold":threshold,
+                "create_time":time.time(),
+                "port":port
+                }
+                })
+    except Exception as e:
+        return error_msg(400, {}, "load model error! {}".format(e))
+    
+    
+    return success_msg(200, {} , "Success", "Success load model:[{}:{}]".format(prj_name, iter))
+
+@app_auto_labeling.route('/<uuid>/autolabeling', methods=['GET'])
+@swag_from("{}/{}".format(YAML_PATH, "get_autolabel_parameter.yml"))
+def get_autolabel_parameter(uuid):
+    
+    if not MICRO_SERVICE.__contains__(uuid):
+        return error_msg(400, {}, "project {} not load model yet.".format(uuid))
+    info={
+        "iteration":MICRO_SERVICE[uuid]['iteration'][0],
+        "threshold":MICRO_SERVICE[uuid]['threshold']
+
+    }
+    return success_msg(200, info , "Success", "Get autolabel info,threshold={},iteration={}".format(MICRO_SERVICE[uuid]['iteration'][0],\
+                                                                                                    MICRO_SERVICE[uuid]['threshold']))
+
+@app_auto_labeling.route('/<uuid>/autolabeling', methods=['PUT'])
+@swag_from("{}/{}".format(YAML_PATH, "modify_autolabel_parameter.yml"))
+def modify_autolabel_parameter(uuid):
+    if not MICRO_SERVICE.__contains__(uuid):
+        return error_msg(400, {}, "project {} not load model yet.".format(uuid))
+    #init parameter
+    iter = request.get_json()['iteration']
+    threshold = request.get_json()['threshold']
+    prj_name = get_project_info_cmd("project_name","project","project_uuid='{}'".format(uuid))[0][0]
+    task_type = get_project_info_cmd("project_type","project","project_uuid='{}'".format(uuid))[0][0]
+    _comunication_q=Queue(maxsize=5)
+
+    old_iter = MICRO_SERVICE[uuid]['iteration']
+    old_thres = MICRO_SERVICE[uuid]['threshold']
+    #check this project have this iteration
+    try:
+        dir_iteration = chk.mapping_iteration(uuid, prj_name, iter, front=True)
+    except:
+        return error_msg(400, {}, "{} Not exist!".format(iter), log=True)
+    
+    #if change iter will load new model 
+    print(old_iter,iter," now",'\n')
+    if old_iter[0]!=iter:
+        #reload model
+        #release
+        try:
+            MICRO_SERVICE[uuid]["process"].terminate()
+            MICRO_SERVICE[uuid]["process"].join()
+            del MICRO_SERVICE[uuid]
+        except:
+            return error_msg(400, {},"Release autolabeling model error!")
+        # check gpu wether is enough or not
+        gpu=cal_gpu_memory()
+        free_gpu_memory = gpu.now()
+        if free_gpu_memory < 2: 
+            return error_msg(400, {}, "GPU Memory is not enough to do autolabeling!")
+
+        #try load model
+        #get path of model json 
+        if task_type == "object_detection":
+            dictionary = ROOT + '/' +prj_name+'/'+ dir_iteration + '/'+ "yolo" + '.json'
+        else:
+            dictionary = ROOT + '/' +prj_name+'/'+ dir_iteration + '/'+ task_type + '.json'
+
+        #get free port
+        port=_assign_port()
+        try:
+            start_time=time.time()
+            micro_server = Process(target=app_run,args=(task_type,dictionary,port,_comunication_q,))
+            micro_server.start()
+            while(_comunication_q.get()=="success"):
+                break
+            # time.sleep(10)
+            print('\n',"load model time: ",(time.time()-start_time),'\n')
+            MICRO_SERVICE.update({
+                uuid:{
+                    "process":micro_server,
+                    "iteration":[iter,dir_iteration],
+                    "threshold":threshold,
+                    "create_time":time.time(),
+                    "port":port
+                    }
+                    })
+        except Exception as e:
+            return error_msg(400, {}, "load model error! {}".format(e))
+        
+    else:
+        MICRO_SERVICE[uuid]['threshold']=threshold
+
+    return success_msg(200, {} , "Success", "Change iter: {} to {} , threshold: {} to {}.".format(old_iter[0],MICRO_SERVICE[uuid]['iteration'][0]\
+                                                                                                  ,old_thres,MICRO_SERVICE[uuid]['threshold']))
+
+@app_auto_labeling.route('/<uuid>/autolabeling/infer', methods=['POST'])
+@swag_from("{}/{}".format(YAML_PATH, "autolabeling_infer.yml"))
+def autolabeling_infer(uuid):
+    #parameter init
+    if not MICRO_SERVICE.__contains__(uuid):
+        return error_msg(400, {}, "project {} not load model yet.".format(uuid))
+    port=MICRO_SERVICE[uuid]["port"]
+    auto_label_url = 'http://localhost:'+str(port)+'/upload_auto_label'
+    payload ={}
+    threshold=0.7
+    img_path=""
+    # judge img exist or not
+    prj_name = get_project_info_cmd("project_name","project","project_uuid='{}'".format(uuid))[0][0]
+    img_name = request.get_json()['img_name']
+    info_db = get_img_serial_db(uuid, img_name)
+    
+
+    if "error" in info_db:
+        return error_msg(400, {}, info_db)
+    elif info_db[0] == None:
+        msg = "This image is labeled or does not exist in the Project:[{}:{}]".format(prj_name, img_name)
+        return error_msg(400, {}, msg)
+    _img=get_project_info_cmd("img_path","workspace","project_uuid='{}' and img_serial='{}'".format(uuid,info_db[0][0]))[0][0]
+    img_path = img_path+ROOT+"/"+prj_name+"/"+"workspace"+"/"+_img
+
+    # print("img item root:{} , pro:{} , img_path:{} , _img:{}".format(ROOT,prj_name,img_path,_img))
+    #judge unlabeled_data wether have value or not
+    # try:
+    _temp_unlabeled_data =get_project_info_cmd("*","unlabeled_data","img_serial='{}' and project_uuid='{}'".format(info_db[0][0],uuid))
+    if not len(_temp_unlabeled_data)==0:
+        return success_msg(200, {} , "Success", "{} already finish autolabeling".format(img_name))
+    # except:
+    #     pass
+    
+    
+    
+    temp_dict = {}
+    payload.update({'img_path':img_path})
+
+    # payload2 = json.dumps(payload)
+
+    x = requests.post(auto_label_url,json=payload)
+
+    if x.status_code == 200:
+        # print("sucessfully fetched the data! data info = {} .".format(x.json()))
+        
+        
+        temp_dict.update({img_name:x.json()[0]})
+
+        EVAL_VAL[uuid] = temp_dict
+        
+        log_dict = threshold_process(uuid, prj_name, threshold)
+        error_db = temp_label_data_db(uuid, prj_name, log_dict)
+        if error_db:
+            return error_msg(400, {}, error_db[1])
+        
+    else:
+
+        return error_msg(400, {}, " File: {} , Do autolabeling error! status = {}".format(img_name,x.status_code))
+    # write pridect info to db
+
+    return success_msg(200, {} , "Success", "Auto labeling for unlabeled images in the Project:[{}:{}]".format(prj_name, img_name))
+
+@app_auto_labeling.route('/<uuid>/autolabeling', methods=['DELETE'])
+@swag_from("{}/{}".format(YAML_PATH, "release_model.yml"))
+def release_model(uuid):
+    if not MICRO_SERVICE.__contains__(uuid):
+        return error_msg(400, {}, "project {} not load model yet.".format(uuid))
+    
+
+    try:
+        MICRO_SERVICE[uuid]["process"].terminate()
+        MICRO_SERVICE[uuid]["process"].join()
+        del MICRO_SERVICE[uuid]
+    except:
+        return error_msg(400, {},"Release autolabeling model error!")
+    
+
+    # Get project name
+    prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
+    error_db = delete_data_table_cmd("unlabeled_data", "project_uuid=\'{}\'".format(uuid))
+    if error_db:
+        return error_msg(400, {}, str(error_db[1]))
+
+    return success_msg(200, {} , "Success", "Release autolabeling model!")
+
+
+@app_auto_labeling.route('/<uuid>/clear_autolabeling', methods=['GET'])
+@swag_from("{}/{}".format(YAML_PATH, "clear_autolabeling.yml"))
+def clear_autolabeling(uuid):
+    # Check uuid is/isnot in app.config["PROJECT_INFO"]
+    if not ( uuid in app.config["PROJECT_INFO"].keys()):
+        return error_msg(400, {}, "UUID:{} does not exist.".format(uuid), log=True)
+    # Get project name
+    prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
+    # Clear
+    error_db = delete_data_table_cmd("unlabeled_data", "project_uuid=\'{}\'".format(uuid))
+    if error_db:
+        return error_msg(400, {}, str(error_db[1]))
+    return success_msg(200, {}, "Success", "Clear temp data of autolabeling in the Project:[{}]".format(prj_name))
+
+# @app_auto_labeling.route('/<uuid>/autolabeling', methods=['POST'])
+# @swag_from("{}/{}".format(YAML_PATH, "autolabeling.yml"))
+# def autolabeling(uuid):
+#     #check gpu wether is enough or not
+#     gpu=cal_gpu_memory()
+#     free_gpu_memory = gpu.now()
+#     if free_gpu_memory < 2: 
+#         return error_msg(400, {}, "GPU Memory is not enough to do autolabeling!")
+#     eval = Evaluate()
+#     # Check uuid is/isnot in app.config["PROJECT_INFO"]
+#     if not ( uuid in app.config["PROJECT_INFO"].keys()):
+#         return error_msg(400, {}, "UUID:{} does not exist.".format(uuid), log=True)
+#     # Check key of front
+#     if not "iteration" in request.get_json().keys():
+#         return error_msg(400, {}, "KEY:iteration does not exist.", log=True)
+#     if not "img_key" in request.get_json().keys():
+#         return error_msg(400, {}, "KEY:img_key does not exist.", log=True)
+#     # Get project name
+#     prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
+#     # Get type
+#     type = app.config["PROJECT_INFO"][uuid]["type"]
+#     # Get value of front
+#     front_iteration = request.get_json()['iteration']
+#     img_key = request.get_json()['img_key']
+#     # Mapping iteration
+#     dir_iteration = chk.mapping_iteration(uuid, prj_name, front_iteration, front=True)
+#     if "error" in dir_iteration:
+#         return error_msg(400, {}, str(dir_iteration[1]), log=True)
+#     # Get model.json
+#     if type == "object_detection":
+#         model = "yolo"
+#     elif type == "classification":
+#         model = type
+
+#     #get project name
+#     project_name = get_project_info_cmd("project_name","project","project_uuid ='{}'".format(uuid))
+    
+#     #combine img path
+#     root_path = "./project/"+project_name[0][0]+"/workspace"
+
+#     #get path of unlabeled img  from table where not do autolabeling
+#     raw_img_path = get_unlabeled_img_path_cmd(uuid)
+
+#     #deal raw data example:[('/a.jpg',), ('/cover.jpg',), ('/8.jpg',), ('/4.jpg',), ('/12.jpg',), ('/13.jpg',)]
+#     if len(raw_img_path)>1:
+#         for id ,val in enumerate(raw_img_path):
+            
+#             AUTOLABEL_VAL.append(root_path+val[0])
+#     else:
+#         return success_msg(200, {}, "Success", "Clear temp data of autolabeling in the Project:[{}]".format(prj_name))
+#     img_key ="custom"
+    
+#     # Setting evaluate.json
+#     msg = eval.set_eval_json(prj_name, dir_iteration, model, autokey=True, img_key=img_key)
+#     if msg:
+#         return error_msg(400, {}, "{}:[{}:{}]".format(msg, prj_name, front_iteration))
+#     # Evaluate
+#     command = "python3 adapter.py -c {} --eval --autolabel_upload".format(ROOT + '/' +prj_name+'/'+ dir_iteration + '/'+ model + '.json')
+#     # Run command
+#     eval.thread_eval(uuid, type, command)
+#     result = eval.cmd_q.get()
+#     if "Error" in result.keys():
+#         return error_msg(400, result["Error"], "Out of memory", log=True)
+#     EVAL_VAL[uuid] = result
+#     # Threshold / Rearrange
+#     threshold = 0
+#     log_dict = threshold_process(uuid, prj_name, threshold)
+#     # Save database
+#     error_db = temp_label_data_db(uuid, prj_name, log_dict)
+#     if error_db:
+#         return error_msg(400, {}, error_db[1])
+#     return success_msg(200, {}, "Success", "Auto labeling for unlabeled images in the Project:[{}:{}]".format(prj_name, img_key))

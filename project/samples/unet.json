@@ -1,0 +1,77 @@
+{
+    "platform": "nvidia",
+    "export_platform": "nvidia",
+    "model_config": {
+        "arch": "resnet_18",
+        "classes": 2,
+        "input_shape": [
+            224,
+            224,
+            3
+        ]
+    },
+    "train_config": {
+        "train_dataset_path": "./project/car_sky/iteration1/dataset/train",
+        "val_dataset_path": "./project/car_sky/iteration1/dataset/val",
+        "test_dataset_path": "./project/car_sky/iteration1/dataset/test",
+        "label_path": "./project/car_sky/iteration1/dataset/classes.txt",
+        "save_model_path": "./project/car_sky/iteration1/weights",
+        "optimizer": {
+            "adam": {
+                "lr": 0.01,
+                "decay": 0.0,
+                "momentum": 0.9,
+                "epsilon":1e-07,
+                "nesterov": false
+            }
+        },
+        "gpu": "0",
+        "batch": 8,
+        "epochs": 20,
+        "workers": 16,
+        "datagenerator": {
+            "preprocess_mode": "int8",
+            "h_transform_prob": 0.5,
+            "v_transform_prob":0,
+            "shift_limit": 0.1,
+            "scale_limit": 0.5,
+            "rotate_limit": 0,
+            "pad_always_apply":true,
+            "pad_prob":1,
+            "randomcrop_always_apply":true,
+            "randomcrop_prob":1,
+            "gaussiannoise_always_apply":false,
+            "gaussiannoise_prob":0.2,
+            "perspective_always_apply":false,
+            "perspective_prob":0.5,
+            "clahe_always_apply":false,
+            "clahe_prob":1,
+            "brightness_always_apply":false,
+            "brightness_prob":1,
+            "gamma_always_apply":false,
+            "gamma_prob":1,
+            "sharpen_always_apply":false,
+            "sharpen_prob":1,
+            "blur_always_apply":false,
+            "blur_prob":1,
+            "motion_blur_always_apply":false,
+            "motion_blur_prob":1,
+            "contrast_always_apply":false,
+            "contrast_prob":1,
+            "hsv_always_apply":false,
+            "hsv_prob":1
+        },
+        "lr_config": {
+            "step": {
+                "learning_rate": 0.006,
+                "step_size": 10,
+                "gamma": 0.1
+            }
+        }
+    },
+    "eval_config": {
+        "eval_dir_path": "./project/car_sky/iteration1/dataset/eval",
+        "auto_key": false,
+        "autolabeling_path": ""
+    }
+}

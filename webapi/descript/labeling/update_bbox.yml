@@ -1,7 +1,7 @@
 tags:
   - labeling
 summary: Update bounding boxes of image, bbox:[x0,y0,x1,y1] for object_detection
-description: Update bounding boxes of image, bbox:[x0,y0,x1,y1] for object_detection
+description: Update bounding boxes of image, bbox:[x0,y0,x1,y1] for object_detection. This "autokey" is an open autolabeling function.
 
 parameters:
   - in: path
@@ -19,6 +19,9 @@ parameters:
         "image_name":
           type: string
           example: 100.jpg
+        # "autokey":
+        #   type: boolean
+        #   example: False
         "box_info":
           type: array
           example: 

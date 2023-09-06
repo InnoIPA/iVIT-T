@@ -45,6 +45,8 @@
     },
     
     "eval_config":{
-        "eval_dir_path":""
+        "eval_dir_path":"",
+        "auto_key":false,
+        "autolabeling_path":""
     }
 }

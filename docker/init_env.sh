@@ -149,14 +149,14 @@ do
         BASE_NAME="intel-convert"
         TAG_VER="latest"
         IMAGE_NAME="${USER}/${BASE_NAME}:${TAG_VER}"
-        docker pull ${IMAGE_NAME}
+        docker pull IMAGE_NAME
     fi
     if [[ ${i} == *"2"* ]]; then
         echo -e "${RED}"
         echo "----- Pull image of xilinx -----"
         echo -e "${NC}"
         
-        cd ./convert/xilinx
+        cd ./ivit/convert/xilinx
         git clone --recurse-submodules --branch 2.5 https://github.com/Xilinx/Vitis-AI 
         docker pull xilinx/vitis-ai-cpu:2.5.0
         # download convert folder

@@ -2,11 +2,11 @@
 
 ## Prepare datasets 
 
-- [Tutorial](./Dataset.md)
+- [Tutorial](Dataset.md)
 
 ## Download pre-trained model
 
-- [Tutorial](./pretrainedmodel/README.md)
+- [Tutorial](../pretrainedmodel/README.md)
 <br>
 
 ## Training
@@ -59,7 +59,7 @@ If you want to change hyperparameters, you should be changed the content of **".
 
 ### RUN
 ``` shell
-python3 train.py -c model.json
+python3 adapter.py -c model.json --train
 ```
 The -c is the path of model.json.</br>
 > Example: `./project/dog_cat_classification/iteration1/classfication.json`
@@ -69,7 +69,7 @@ The -c is the path of model.json.</br>
 ### RUN
 
 ```shell
-python3 get_metrics.py -c model.json
+python3 adapter.py -c model.json --metrics
 ```
 
 The -c is path of training model.json.
@@ -92,7 +92,7 @@ Open to **"./project/project_folder/model.json"**. Change value of **eval_dir_pa
 
 ### RUN
 ``` shell
-python3 evaluate.py -c model.json
+python3 adapter.py -c model.json --eval
 ```
 The -c is the path of model.json.</br>
 > Example: `./project/dog_cat_classification/iteration1/classfication.json`
@@ -112,7 +112,7 @@ Open to **"./project/project_folder/model.json"**. Change value of **export_plat
 
 ### RUN
 ``` shell
-python3 convert.py -c model.json
+python3 adapter.py -c model.json --convert
 ```
 The -c is the path of model.json.</br>
 > Example: `./project/dog_cat_classification/iteration1/classfication.json`

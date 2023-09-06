@@ -4,7 +4,7 @@ import logging, os, shutil, random, string
 from webapi import app
 from werkzeug.utils import secure_filename
 from .common.utils import error_msg, exists, success_msg, regular_expression
-from .common.config import ALLOWED_EXTENSIONS, ROOT, YAML_MAIN_PATH, EVAL_VAL
+from .common.config import ALLOWED_EXTENSIONS, ROOT, YAML_MAIN_PATH, EVAL_VAL,MICRO_SERVICE
 from .common.inspection import Check
 from .common.upload_tool import Upload_DB
 from .common.evaluate_tool import Evaluate, threshold_process
@@ -100,28 +100,43 @@ def evaluate(uuid):
     if msg:
         return error_msg(400, {},  "{}:[{}:{}]".format(msg, prj_name, front_iteration))
     # Evaluate
-    command = "python3 evaluate.py -c {}".format(ROOT + '/' +prj_name+'/'+ dir_iteration + '/'+ model + '.json')
+    command = "python3 adapter.py -c {} --eval".format(ROOT + '/' +prj_name+'/'+ dir_iteration + '/'+ model + '.json')
     # Run command
     eval.thread_eval(uuid, type, command)
     result = eval.cmd_q.get()
     if "Error" in result.keys():
         return error_msg(400, result, "Out of memory", log=True)
     EVAL_VAL[uuid] = result
-    # Threshold
-    log_dict = threshold_process(uuid, threshold)
+    # Threshold / Rearrange
+    log_dict = threshold_process(uuid, prj_name, threshold)
     return success_msg(200, {"detections":log_dict}, "Success")
 
-@app_eval.route('/<uuid>/eval_thresh', methods=['POST'])
-@swag_from("{}/{}".format(YAML_PATH, "eval_thresh.yml")) 
-def eval_thresh(uuid):
+@app_eval.route('/<uuid>/threshold', methods=['POST'])
+@swag_from("{}/{}".format(YAML_PATH, "threshold.yml")) 
+def threshold(uuid):
     # Check uuid is/isnot in app.config["PROJECT_INFO"]
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
         return error_msg(400, {}, "UUID:{} does not exist.".format(uuid), log=True)
-    if not "threshold" in request.get_json().keys():
-        return error_msg(400, {}, "KEY:threshold does not exist.", log=True)  
-    threshold = request.get_json()['threshold']
-    # Threshold
-    log_dict = threshold_process(uuid, threshold)
+    # if not "autokey" in request.get_json().keys():
+    #     return error_msg(400, {}, "KEY:autokey does not exist.", log=True)  
+    if not "img_name" in request.get_json().keys():
+        return error_msg(400, {}, "KEY:img_name does not exist.", log=True)  
+    # if not "threshold" in request.get_json().keys():
+    #     return error_msg(400, {}, "KEY:threshold does not exist.", log=True)  
+    # Get project name
+    prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
+    # Get value of front
+    # threshold = request.get_json()['threshold']
+    
+    try:
+
+        threshold = MICRO_SERVICE[uuid]['threshold']
+    except:
+        threshold = 0.7
+    img_name = request.get_json()['img_name']
+    # autokey = request.get_json()['autokey']
+    # Threshold / Rearrange
+    log_dict = threshold_process(uuid, prj_name, threshold,True, img_name=img_name)
     return success_msg(200, {"detections":log_dict}, "Success")
     
 @app_eval.route('/<uuid>/recheck_bbox', methods=['POST']) 

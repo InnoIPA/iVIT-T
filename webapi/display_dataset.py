@@ -8,7 +8,7 @@ from .common.utils import success_msg, error_msg, exists, get_classes_list
 from .common.config import ROOT, YAML_MAIN_PATH
 from .common.upload_tool import create_class_dir, Upload_DB, compare_classes
 from .common.display_tool import count_dataset, get_img_path_db, check_unlabeled_images
-from .common.database import delete_data_table_cmd, execute_db, update_data_table_cmd
+from .common.database import delete_data_table_cmd, update_data_table_cmd
 from .common.inspection import Check
 from .common.init_tool import get_project_info
 
@@ -146,6 +146,7 @@ def delete_img(uuid):
                     # Prevent error 
                     if error_db:
                         return error_msg(400, {}, str(error_db[1]))
+                    # Clear unlabeled data base -> follow primary key delete
                 else:
                     logging.error("This image does not exist in workspace:[{}]".format(label + '/' + name))
                 # Object_detection remove txt
@@ -204,6 +205,10 @@ def delete_all_img(uuid):
         error_db = update_data_table_cmd("project", values, select)
         if error_db:
             return error_msg(400, {}, str(error_db[1]))
+        # Clear unlabeled data base -> follow primary key delete
+        error_db = delete_data_table_cmd("unlabeled_data", "project_uuid=\'{}\'".format(uuid))
+        if error_db:
+            return error_msg(400, {}, str(error_db[1]))
         # Update project dataset numbers
         error_db = get_project_info(uuid)
         # Error
@@ -232,7 +237,7 @@ def iter_class_num(uuid):
     logging.warning("Get API of iter_class_num :[iteration:{}, type:{}]".format(iteration, type))
     if iteration== "workspace":
         # Same classes.txt processing
-        dir_path = os.path.join(ROOT,  prj_name, iteration)
+        dir_path = os.path.join(ROOT, prj_name, iteration)
         error_db = compare_classes(dir_path, uuid)
         if error_db:
             return error_msg(400, {}, str(error_db[1]))

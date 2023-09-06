@@ -22,7 +22,7 @@ parameters:
         "color_id":
           type: int
           example: 0
-          
+
 responses:
   '200':
     schema:

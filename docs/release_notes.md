@@ -1,15 +1,20 @@
 # Release Notes
+## Release 1.2
+### New Features/Highlights
+- Added autolabeling.
+- Image format that supports tif.
+
 ## Release 1.1.4
 ### Bug fix 
--When finish training , the page will not be re-directed.
+- When finish training , the page will not be re-directed.
 
 ## Release 1.1.3
 ### Bug fix 
--When the project don't add any label , and then adding new label at upload , it will crash.
+- When the project don't add any label , and then adding new label at upload , it will crash.
 
 ## Release 1.1.2
 ### Bug fix 
-- After adding new label at upload, it will crash.
+-  After adding new label at upload, it will crash.
 
 ## Release 1.1.1
 ### New Features/Highlights

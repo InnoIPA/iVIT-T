@@ -124,20 +124,6 @@ def create_training_iter(uuid):
         del app.config["TRAINING_TASK"][uuid]
         shutil.rmtree('{}/{}/{}'.format(ROOT,prj_name, iter_name), ignore_errors=True)
         return error_msg(400, {}, "Class is not over 15 images:[{}]".format(msg), log=True)
-    # -----------------------------------------Fillin-------------------------------------------
-    # For loop param use app.config["TRAINING_TASK"][uuid][”model_param”]
-    stats = fill_in.fill_model_cfg()
-    pre_trained = True
-    # Pre-trained model does not exist.
-    if "error" in stats:
-        return error_msg(400, {}, str(stats[1]))
-    if not stats[0]:
-        if stats[1] == "arch":
-            pre_trained = False
-        else:
-            del app.config["TRAINING_TASK"][uuid]
-            shutil.rmtree('{}/{}/{}'.format(ROOT,prj_name, iter_name), ignore_errors=True)
-            return error_msg(400, {}, "The input shape is wrong.")
     # -----------------------------------------Data-------------------------------------------
     # Update mapping iteration
     chk.update_mapping_name(prj_path, uuid)
@@ -151,6 +137,16 @@ def create_training_iter(uuid):
     if error_db:
         return error_msg(400, {}, str(error_db[1]))
 
+    # -----------------------------------------Fillin-------------------------------------------
+    # For loop param use app.config["TRAINING_TASK"][uuid][”model_param”]
+    stats = fill_in.fill_model_cfg()
+    pre_trained = True
+    # Pre-trained model does not exist.
+    if "error" in stats:
+        del app.config["TRAINING_TASK"][uuid]
+        return error_msg(400, {}, str(stats[1]))
+    if not stats[0]:
+        pre_trained = False
     # Create new model.json
     model_param_path = prj_path + '/' + iter_name + '/' + model_json
     write_json(model_param_path, app.config["TRAINING_TASK"][uuid]['model_param'])
@@ -180,7 +176,7 @@ def start_training(uuid):
     elif type == "classification":
         model = type
     # Run command
-    command = 'python3 train.py -c {}'.format(ROOT + '/' +prj_name+'/'+ iter_name + '/'+ model + '.json')
+    command = 'python3 adapter.py -c {} --train'.format(ROOT + '/' +prj_name+'/'+ iter_name + '/'+ model + '.json')
     # Start training
     if not app.config["TRAINING_TASK"][uuid]['status']:
         # Recorded start_time

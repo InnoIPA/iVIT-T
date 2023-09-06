@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify, send_from_directory
 from flasgger import swag_from
 from pathlib import Path
 from webapi import app
-from .common.utils import exists,read_json, success_msg, error_msg, get_target_addr
+from .common.utils import exists,read_json, success_msg, error_msg, get_target_addr  
 from .common.config import PLATFORM_CFG, ROOT, YAML_MAIN_PATH, EXPORT_LIST
 from .common.export_tool import set_export_json, Convert_model, check_convert_exist, icap_upload_file, post_metadata
 from .common.inspection import Check
@@ -82,7 +82,7 @@ def start_converting(uuid):
         # Setting model.json
         set_export_json(model, prj_name, dir_iteration, export_platform)
         # Run command
-        command = 'python3 convert.py -c {}'.format(ROOT + '/' +prj_name+'/'+ dir_iteration + '/'+ model + '.json')
+        command = 'python3 adapter.py -c {} --convert'.format(ROOT + '/' +prj_name+'/'+ dir_iteration + '/'+ model + '.json')
         # Covert model
         ct_model.thread_convert(command)
         return success_msg(200, {}, "Success", "Start to convert the model to a/an [{}] model.".format(export_platform))
@@ -102,12 +102,19 @@ def stop_converting(uuid):
     prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
     # Check is running thread
     if len(EXPORT_LIST) > 0:
-        # Get iteration name
-        iter_name = EXPORT_LIST[0][uuid]["iteration"]
-        # Stop converting
-        EXPORT_LIST[0][uuid]['stop'].set()
-        os.kill(int(EXPORT_LIST[0][uuid]['PID']), SIGKILL)
-        return success_msg(200, {}, "Success", "Stop converting in iteration of the Project:[{}:{}]".format(prj_name, iter_name))
+        # Port - Processing
+        target, http_port = request.environ['HTTP_HOST'].split(":")
+        server_port = request.environ['SERVER_PORT']
+        if http_port == server_port:
+            port = http_port
+        elif http_port != server_port:
+            port = http_port + "/ivit"
+        # IP - Processing
+        if target == "127.0.0.1" or target == "localhost":
+            target = app.config["HOST"]
+        http_ip = get_target_addr(target)
+        host = http_ip + ":" + port
+        return success_msg(200, {"url":"{}/{}/{}/share".format(host, uuid, front_iteration)}, "Success")
     else:
         return error_msg(400, {}, "Threading does not exist in iteration of the Project:[{}:{}]".format(prj_name, iter_name), log=True)
 
@@ -131,19 +138,7 @@ def share_api(uuid):
     # Setting path
     zip_file = ROOT + '/' + prj_name + "/" + dir_iteration + "/" + prj_name + ".zip"
     if exists(zip_file):
-        # Port - Processing
-        target, http_port = request.environ['HTTP_HOST'].split(":")
-        server_port = request.environ['SERVER_PORT']
-        if http_port == server_port:
-            port = http_port
-        elif http_port != server_port:
-            port = http_port + "/ivit"
-        # IP - Processing
-        if target == "127.0.0.1" or target == "localhost":
-            target = app.config["HOST"]
-        http_ip = get_target_addr(target)
-        host = http_ip + ":" + port
-        return success_msg(200, {"url":"{}/{}/{}/share".format(host, uuid, front_iteration)}, "Success")
+        return success_msg(200, {"url":"{}:{}/{}/{}/share".format(app.config["HOST"], request.environ['SERVER_PORT'], uuid, front_iteration)}, "Success")
     else:
         return error_msg(400, {}, "This {}.zip does not exist in iteration of the Project:[{}:{}]".format(prj_name, prj_name, front_iteration), log=True)
 

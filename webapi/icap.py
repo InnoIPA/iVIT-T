@@ -77,7 +77,7 @@ def modify_addr():
     env_config["ICAP_HOST"] = app.config[TB]
     env_config["ICAP_PORT"] = app.config[TB_PORT]
     write_json(VERSION_PATH, env_config)
-            
+                  
     try:
         init_for_icap()
         if(app.config["ICAP_STATUS"]):

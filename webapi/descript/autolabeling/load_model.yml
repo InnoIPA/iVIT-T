@@ -1,0 +1,46 @@
+tags:
+  - autolabeling
+summary: Load model and do once autolabeling.
+description: Load model and do once autolabeling.
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+      
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "iteration":
+          type: string
+          example: iteration1
+        "threshold":
+          type: float
+          example: 0.8
+
+responses:
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example: 
+                {  
+                    "status": 200,
+                    "message":"Success",
+                    "data":{}
+                }
+  '400':
+    schema:
+      type: object
+      description: Error message
+      example: 
+                {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+                }

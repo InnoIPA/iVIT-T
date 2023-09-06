@@ -1,0 +1,37 @@
+tags:
+  - Export prject
+summary: Export prject
+description: Export prject
+
+parameters:
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "uuid":
+          type: str
+          example: 5bdd2807-8e8f-4e3d-8e10-6f71d80c17e3
+
+responses:
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example: 
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{}
+              }
+  '400':
+    schema:
+      type: object
+      description: Error message
+      example:
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

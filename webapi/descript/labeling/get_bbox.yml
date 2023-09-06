@@ -1,7 +1,7 @@
 tags:
   - labeling
 summary: Get bounding boxes of image, bbox:[x0,y0,x1,y1] for object_detection
-description: Get bounding boxes of image, bbox:[x0,y0,x1,y1] for object_detection
+description: Get bounding boxes of image, bbox:[x0,y0,x1,y1] for object_detection.
 
 parameters:
   - in: path
@@ -38,7 +38,7 @@ responses:
                                       797,
                                       1045
                                   ],
-                                  "class_id": 1,
+                                  "class_id": "1",
                                   "class_name": "dog",
                                   "color_id": 1, 
                                   "color_hex": "#3fb6f2"

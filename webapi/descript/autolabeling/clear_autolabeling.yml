@@ -1,0 +1,33 @@
+tags:
+  - evaluate_model
+summary: Clear temp data of autolabeling for unlabeled images 
+description: Clear temp data of autolabeling for unlabeled images 
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+responses:
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example: 
+                {  
+                    "status": 200,
+                    "message":"Success",
+                    "data":{}
+                }
+  '400':
+    schema:
+      type: object
+      description: Error message
+      example: 
+                {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+                }

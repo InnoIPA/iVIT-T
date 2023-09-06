@@ -1,0 +1,33 @@
+tags:
+  - Import project
+summary: Import project
+description: Import project
+
+parameters:
+  - in: formData
+    name: custom_name
+    required: true
+    type: file
+    description: The file to upload. 
+
+responses:
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example: 
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{}
+              }
+  '400':
+    schema:
+      type: object
+      description: Error message
+      example:
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

@@ -40,7 +40,7 @@ CONTAINER_NAME="ivit-t-postgres"
 DEFAULT_DBFOLDER="/var/lib/postgresql/data"
 OUTSIDE_DBFOLDER="/webapi/pgdb"
 DOCKER_IMAGE="postgres"
-TAG_VER="15"
+TAG_VER="latest"
 
 # ---------------------------------------------------------
 # help

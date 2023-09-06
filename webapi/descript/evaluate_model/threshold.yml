@@ -1,0 +1,65 @@
+tags:
+  - evaluate_model
+summary: Use threshold to get evaluating the result
+description: Use threshold to get evaluating the result. This "autokey" is an open autolabeling function.
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "threshold":
+          type: float
+          example: 0.5
+        "img_name":
+          type: str
+          example: "eval_0.jpg"
+        # "autokey":
+        #   type: boolean
+        #   example: False
+
+responses:
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: 
+                {  
+                    "status": 200,
+                    "message":"Success",
+                    "data":{
+                            "detections": {
+                                "eval_0.jpg": [
+                                    {
+                                        "class": "dog",
+                                        "index": 1,
+                                        "confidence": 0.938
+                                    },
+                                    {
+                                        "class": "cat",
+                                        "index": 0,
+                                        "confidence": 0.062
+                                    }
+                                ]
+                            }
+                        }
+                }
+
+  '400':
+    schema:
+      type: object
+      description: Error message
+      example: 
+                {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+                }

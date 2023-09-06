@@ -7,8 +7,9 @@ from .common.config import ROOT, YAML_MAIN_PATH, COLOR_TABLE_PATH
 from .common.labeling_tool import yolo_txt_convert, save_bbox, del_class_txt, add_class_txt, \
                                     del_class_db, cls_change_classes, obj_savebbox_db, rename_cls_class, \
                                     get_all_color_info_db, cls_img_info, obj_img_info
+from .common.evaluate_tool import recheck_autolabeling_db
 from .common.init_tool import get_project_info
-from .common.database import Get_info_cmd , execute_db
+
 app_labeling = Blueprint( 'labeling', __name__)
 # Define API Docs path and Blue Print
 YAML_PATH       = YAML_MAIN_PATH + "/labeling"
@@ -152,6 +153,8 @@ def edit_img_class(uuid):
         return error_msg(400, {}, "KEY:images_info does not exist.", log=True)
     elif not "class_name" in request.get_json().keys():
         return error_msg(400, {}, "KEY:class_name does not exist.", log=True)
+    # elif not "autokey" in request.get_json().keys():
+    #     return error_msg(400, {}, "KEY:autokey does not exist.", log=True)
     # Get project name
     prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
     # Get type
@@ -161,12 +164,12 @@ def edit_img_class(uuid):
     # Get value of front 
     images_info = request.get_json()['images_info']
     class_name = request.get_json()['class_name'] 
+    # autokey = request.get_json()['autokey']
     # Regular expression
-    class_name = regular_expression(class_name)          
+    class_name = regular_expression(class_name)
     # class_name == "Unlabeled"
     if class_name== "Unlabeled":
         class_name = ""
-    
     # If the folder does not exist, then create a new folder and append a new class in classes.txt
     dir_path = ROOT + '/' + prj_name + "/workspace/" + class_name
     if not os.path.isdir(dir_path):
@@ -177,37 +180,17 @@ def edit_img_class(uuid):
         if exists(classes_path):
             classes_list = get_classes_list(classes_path)
             if not (class_name in classes_list):
-                
-                # Get color
-                content = "project_uuid ='"+str(uuid)+"'"
-                max_label_id = Get_info_cmd("color_hex","color_id",content)
-                
-                content = ""
-                _content="color_hex !='"
-                for idx, color in enumerate(max_label_id):
-                    content=content+_content+color[0]+"'"
-                    if idx+1 != len(max_label_id):
-                        content=content+" and "
-                if len(max_label_id)==0:
-                    content = ""
-                    commands =  """
-                                SELECT {} FROM {}
-                                """.format("color_id","color_table")
-                    get_all_color = execute_db(commands, False)
-                    
-                else:
-                    get_all_color =  Get_info_cmd("color_id","color_table", content)
-                color_id = get_all_color[0][0]
-                # Add to classes.txt
-                error_db = add_class_txt(uuid, classes_path, str(class_name), color_id)
-
-                if error_db:
-                    return error_msg(400, {}, str(error_db[1]))    
-                
+                write_txt(classes_path, class_name)
         else:
-            return error_msg(400, {}, "This classes.txt does not exist in the Project:[{}]".format(classes_path), log=True)  
-    
+            return error_msg(400, {}, "This classes.txt does not exist in the Project:[{}]".format(classes_path), log=True)                
 
+    # Autolabeling clear
+    # if autokey:
+    #     image_name = images_info['Unlabeled'][-1]
+    #     error_db = recheck_autolabeling_db(uuid, prj_name, image_name)
+    #     if error_db:
+    #         return error_msg(400, {}, str(error_db[1]))
+                       
     # Move file and chagned database
     error_db = cls_change_classes(uuid, prj_name, class_name, images_info)
     if error_db:
@@ -254,16 +237,26 @@ def update_bbox(uuid):
         return error_msg(400, {}, "KEY:image_name does not exist.", log=True)
     elif not "box_info" in request.get_json().keys(): 
         return error_msg(400, {}, "KEY:box_info does not exist.", log=True)
+    # elif not "autokey" in request.get_json().keys():
+    #     return error_msg(400, {}, "KEY:autokey does not exist.", log=True)
     # Get project name
     prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
     # Get value of front
     image_name = request.get_json()['image_name']
     box_info = request.get_json()['box_info']
+    # autokey = request.get_json()['autokey']
     # Save new bbox
     img_path = ROOT + '/' + prj_name + "/workspace/" + image_name
     if exists(img_path):
         # Save in txt
         cls_idx = save_bbox(img_path, box_info)
+
+        # Autolabeling clear
+        # if autokey:
+        #     error_db = recheck_autolabeling_db(uuid, prj_name, image_name)
+        #     if error_db:
+        #         return error_msg(400, {}, str(error_db[1]))
+            
         # Save in db
         error_db = obj_savebbox_db(image_name, cls_idx, uuid)
         if error_db:
@@ -272,7 +265,7 @@ def update_bbox(uuid):
         error_db = get_project_info(uuid)
         # Error
         if error_db:
-            return error_msg(400, {}, str(error_db[1]))
+            return error_msg(400, {}, str(error_db[1]))        
         return success_msg(200, {}, "Success", "Update box in image of Project:[{}:{}:{}]".format(prj_name, image_name, box_info))
     else:
         return error_msg(400, {}, "This image does not exist in Project:[{}:{}]".format(prj_name, image_name), log=True)

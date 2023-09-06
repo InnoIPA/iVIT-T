@@ -17,10 +17,11 @@
         "save_model_path":"/workspace/Classification/callback/model",
         "optimizer":{
             "sgd": {
-            "lr": 0.01,
-            "decay": 0.0,
-            "momentum": 0.9,
-            "nesterov": false
+                    "lr": 0.01,
+                    "decay": 0.0,
+                    "momentum": 0.9,
+                    "epsilon":1e-07,
+                    "nesterov": false
             }
         },
 
@@ -57,6 +58,8 @@
     },
 
     "eval_config":{
-        "eval_dir_path":""
+        "eval_dir_path":"",
+        "auto_key":false,
+        "autolabeling_path":""
     }
 }

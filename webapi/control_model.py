@@ -175,10 +175,10 @@ def get_model_json(uuid):
             train_param = read_json(train_param_path)
             model_param.update({"train_param":train_param})
         else:
-            return error_msg(400, {}, "This model.json does not exist in iteration of the Project:[{}:{}]".format(prj_name, front_iteration))
+            return error_msg("This model.json does not exist in iteration of the Project:[{}:{}]".format(prj_name, front_iteration))
         return success_msg(200, model_param, "Success", "Get training parameter in iteration of the Project:[{}:{}]".format(prj_name, front_iteration))
     else:
-        return error_msg(400, {},"This iteration does not exist in the Project:[{}:{}]".format(prj_name, front_iteration))
+        return error_msg("This iteration does not exist in the Project:[{}:{}]".format(prj_name, front_iteration))
 
 @app_cl_model.route('/<uuid>/check_best_model', methods=['POST']) 
 @swag_from("{}/{}".format(YAML_PATH, "check_best_model.yml"))
@@ -217,6 +217,6 @@ def check_best_model(uuid):
             else:
                 return success_msg(200, {"Exist":True}, "Success", "This best model dose exist in iteration of the Project:[{}:{}]".format(prj_name, front_iteration))
         else:
-            return error_msg(400, {}, "This model.json does not exist in iteration of the Project:[{}:{}]".format(prj_name, front_iteration))
+            return error_msg("This model.json does not exist in iteration of the Project:[{}:{}]".format(prj_name, front_iteration))
     else:
-        return error_msg(400, {}, "This iteration does not exist in the Project:[{}:{}]".format(prj_name, front_iteration))
+        return error_msg("This iteration does not exist in the Project:[{}:{}]".format(prj_name, front_iteration))

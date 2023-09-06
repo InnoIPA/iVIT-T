@@ -16,8 +16,9 @@ A library to training model of TensorFlow-Keras and Darknet. This library enable
 
 # See What's New
 - [Release Notes](docs/release_notes.md)
-- Added save color id in the database for the class of dataset
-- Unified format of response for web API
+- Added new platform - Hailo
+- Support convert to Hailo model
+- Supoort export model to iCAP
 
 # Getting Started
 
@@ -37,7 +38,7 @@ Install **nvidia-driver-510**(**cuda-11.6**), **nvidia-docker** and **docker** b
     sudo usermod -aG docker $USER
     sudo chmod 777 /var/run/docker.sock
     ```
-
+    
 ##  Run container
 
 ### Build convert docker images and database container
@@ -69,11 +70,9 @@ In the "run.sh", this "-p" is the port number, you can setting haven't used the 
 - [Tutorial](./webapi/ReadME.md)
 
 ## Web UI
-If you want to use the UI version, click url:
+If you want to use the UI version, you can follow this Tutorial:
 
-- http://localhost:6538/ 
-
-- Port: 6538 -> "WEB_PORT" from ./webui/web_version.json
+- [Tutorial](https://github.com/InnoIPA/ivit-t-web)
 
 ## The format of dataset 
 - Image format: .jpg/.jpeg/.png/.bmp/.JPG/.JPEG/.PNG/.BMP
@@ -155,3 +154,15 @@ Folder
     - https://www.pexels.com/
 - Sample images from roboflow
     - https://universe.roboflow.com/
+- Segmentation models
+    - https://github.com/qubvel/segmentation_models
+    ```
+    @misc{Yakubovskiy:2019,
+        Author = {Pavel Iakubovskii},
+        Title = {Segmentation Models},
+        Year = {2019},
+        Publisher = {GitHub},
+        Journal = {GitHub repository},
+        Howpublished = {\url{https://github.com/qubvel/segmentation_models}}
+        }
+    ```

@@ -1,7 +1,7 @@
 tags:
   - labeling
 summary: Change class of image for classification
-description: Change class of image for classification
+description: Change class of image for classification, Change the unlabeled image to the class:key = "Unlabeled". This "autokey" is an open autolabeling function.
 
 parameters:
   - in: path
@@ -20,6 +20,9 @@ parameters:
           type: object
           example: 
             {"Unlabeled":["1.jpg","2.jpg"]}
+        # "autokey":
+        #   type: boolean
+        #   example: False
         "class_name":
           type: string
           example: cat

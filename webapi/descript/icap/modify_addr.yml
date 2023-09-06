@@ -1,7 +1,7 @@
 tags:
   - icap
-summary: Check IP/PORT of iCAP 
-description: Check IP/PORT of iCAP 
+summary: Modify IP/PORT of iCAP 
+description: Modify IP/PORT of iCAP 
 
 responses:
   '200':
