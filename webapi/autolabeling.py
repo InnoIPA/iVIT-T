@@ -5,13 +5,14 @@ from .common.utils import error_msg, success_msg
 from .common.config import ROOT, YAML_MAIN_PATH, EVAL_VAL,AUTOLABEL_VAL,MICRO_SERVICE
 from .common.inspection import Check
 from .common.evaluate_tool import Evaluate, threshold_process, temp_label_data_db 
-from .common.database import delete_data_table_cmd , get_unlabeled_img_path_cmd ,get_project_info_cmd , get_img_serial_db
+from .common.database import delete_data_table_cmd , get_unlabeled_img_path_cmd ,get_project_info_cmd , get_img_serial_db,Get_info_cmd
 from .common.gpu_memory import cal_gpu_memory
 
 import time,os,requests,json,socket ,copy
 from multiprocessing import Process ,Queue
+import subprocess
 from ivit.micro_service_tool.micro_service_fastapi import app_run
-
+from .common.labeling_tool import get_all_color_info_db,get_classes_list
 chk = Check()
 
 app_auto_labeling = Blueprint( 'autolabeling', __name__)
@@ -57,20 +58,17 @@ def load_model(uuid):
     prj_name = get_project_info_cmd("project_name","project","project_uuid='{}'".format(uuid))[0][0]
     task_type = get_project_info_cmd("project_type","project","project_uuid='{}'".format(uuid))[0][0]
     threshold=0.7
-    _comunication_q=Queue(maxsize=5)
+    start=time.time()
+    get_load_model_status=False
+    # _comunication_q=queue.Queue()
     #check the project wether already run autolabel or not 
     try:
+        
         if MICRO_SERVICE[uuid]["process"]:
             return success_msg(200, {} , "Success", "Model is exist!:[{}:{}]".format(prj_name, MICRO_SERVICE[uuid]["iteration"]))
     except:
         pass
-
-
-    # check gpu wether is enough or not
-    gpu=cal_gpu_memory()
-    free_gpu_memory = gpu.now()
-    if free_gpu_memory < 2: 
-        return error_msg(400, {}, "GPU Memory is not enough to do autolabeling!")
+    
 
     #check this project have best model
     try:
@@ -78,6 +76,25 @@ def load_model(uuid):
     except:
         return error_msg(400, {}, str(dir_iteration[1]), log=True)
 
+
+    if not (uuid in MICRO_SERVICE.keys()):
+        MICRO_SERVICE.update({
+            uuid:{
+                "iteration":[iter,dir_iteration],
+                "threshold":threshold,
+            }
+
+        })
+    # check gpu wether is enough or not
+    gpu=cal_gpu_memory()
+    free_gpu_memory = gpu.now()
+    if free_gpu_memory < 2: 
+        return error_msg(400, {}, "GPU Memory is not enough to do autolabeling!")
+
+    
+
+
+    
     #try load model
 
     #get path of model json 
@@ -90,14 +107,23 @@ def load_model(uuid):
     port=_assign_port()
     try:
         start_time=time.time()
-        micro_server = Process(target=app_run,args=(task_type,dictionary,port,_comunication_q,))
-        micro_server.start()
-        while(True):
-            status=_comunication_q.get()
-            if status=="success":
-                break
-            elif status=="failed":
-                return error_msg(400, {}, "load model error!")
+        command = "python3 ./ivit/micro_service_tool/micro_service_fastapi.py \
+                                          -t {}\
+                                          -d {}\
+                                          -p {}\
+                                          ".format(task_type,dictionary,port)
+        
+        micro_server = subprocess.Popen(command.split(), stdout=subprocess.PIPE, text=True)
+
+        while(get_load_model_status==False):
+            # z=""
+            for line in micro_server.stdout:
+                if "success" in line.strip():
+                    get_load_model_status=True
+                    break
+                elif "failed" in line.strip():
+                    return error_msg(400, {}, "load model error!")        
+            
         # time.sleep(10)
         print('\n',"load model time: ",(time.time()-start_time),'\n')
         MICRO_SERVICE.update({
@@ -139,8 +165,8 @@ def modify_autolabel_parameter(uuid):
     threshold = request.get_json()['threshold']
     prj_name = get_project_info_cmd("project_name","project","project_uuid='{}'".format(uuid))[0][0]
     task_type = get_project_info_cmd("project_type","project","project_uuid='{}'".format(uuid))[0][0]
-    _comunication_q=Queue(maxsize=5)
-
+    # _comunication_q=Queue(maxsize=5)
+    get_load_model_status=False
     old_iter = MICRO_SERVICE[uuid]['iteration']
     old_thres = MICRO_SERVICE[uuid]['threshold']
     #check this project have this iteration
@@ -155,11 +181,20 @@ def modify_autolabel_parameter(uuid):
         #reload model
         #release
         try:
-            MICRO_SERVICE[uuid]["process"].terminate()
-            MICRO_SERVICE[uuid]["process"].join()
+            MICRO_SERVICE[uuid]["process"].kill()
+            MICRO_SERVICE[uuid]["process"].wait()
             del MICRO_SERVICE[uuid]
         except:
             return error_msg(400, {},"Release autolabeling model error!")
+        
+        if not (uuid in MICRO_SERVICE.keys()):
+            MICRO_SERVICE.update({
+                uuid:{
+                    "iteration":[iter,dir_iteration],
+                    "threshold":threshold,
+                }
+
+            })
         # check gpu wether is enough or not
         gpu=cal_gpu_memory()
         free_gpu_memory = gpu.now()
@@ -177,10 +212,25 @@ def modify_autolabel_parameter(uuid):
         port=_assign_port()
         try:
             start_time=time.time()
-            micro_server = Process(target=app_run,args=(task_type,dictionary,port,_comunication_q,))
-            micro_server.start()
-            while(_comunication_q.get()=="success"):
-                break
+            command = "python3 ./ivit/micro_service_tool/micro_service_fastapi.py \
+                                          -t {}\
+                                          -d {}\
+                                          -p {}\
+                                          ".format(task_type,dictionary,port)
+            micro_server = subprocess.Popen(command.split(), stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+            
+            micro_server = subprocess.Popen(command.split(), stdout=subprocess.PIPE, text=True)
+
+            while(get_load_model_status==False):
+                # z=""
+                for line in micro_server.stdout:
+                    if "success" in line.strip():
+                        get_load_model_status=True
+                        break
+                    elif "failed" in line.strip():
+                        return error_msg(400, {}, "load model error!")   
+            # while(_comunication_q.get()=="success"):
+            #     break
             # time.sleep(10)
             print('\n',"load model time: ",(time.time()-start_time),'\n')
             MICRO_SERVICE.update({
@@ -272,11 +322,11 @@ def release_model(uuid):
     
 
     try:
-        MICRO_SERVICE[uuid]["process"].terminate()
-        MICRO_SERVICE[uuid]["process"].join()
+        MICRO_SERVICE[uuid]["process"].kill()
+        MICRO_SERVICE[uuid]["process"].wait()
         del MICRO_SERVICE[uuid]
-    except:
-        return error_msg(400, {},"Release autolabeling model error!")
+    except Exception as e:
+        return error_msg(400, {},"Release autolabeling model error! {}".format(e))
     
 
     # Get project name
@@ -301,6 +351,44 @@ def clear_autolabeling(uuid):
     if error_db:
         return error_msg(400, {}, str(error_db[1]))
     return success_msg(200, {}, "Success", "Clear temp data of autolabeling in the Project:[{}]".format(prj_name))
+
+
+@app_auto_labeling.route('/<uuid>/favorite_label', methods=['GET'])
+@swag_from("{}/{}".format(YAML_PATH, "favorite_label.yml"))
+def favorite_label(uuid):
+    #init parameter 
+    prj_name = get_project_info_cmd("project_name","project","project_uuid='{}'".format(uuid))[0][0]
+    class_txt=os.path.join("./project",prj_name,"workspace","classes.txt")
+    color_info_db = get_all_color_info_db(uuid,"workspace")
+    class_name = get_classes_list(class_txt)
+    try:
+        favorite_label = Get_info_cmd("favorite_label","project","project_uuid='{}'".format(uuid))[0][0]
+    except Exception as e:
+        return error_msg(400, {}, "Get favorite label from db error ! {}".format(e))
+    
+    try:
+        favorite_label=list(favorite_label)
+    except:
+        favorite_label=[]
+    _temp_json={}
+    #refact
+    for idx in range(len(favorite_label)):
+        label_id=favorite_label[len(favorite_label)-(idx+1)]
+        # print("class_name:{} \n".format(class_name))
+        # print("color_info_db:{} \n".format(color_info_db))
+        # print(label_id)
+        _temp_json.update({
+            (idx+1):{
+                "class_id":label_id,
+                "class_name":class_name[label_id],
+                "class_color":color_info_db[label_id][2]
+            }
+
+        })
+
+    # print(_temp_json)
+
+    return success_msg(200, _temp_json, "Success", "Get favorite label in the Project:[{}]".format(uuid))
 
 # @app_auto_labeling.route('/<uuid>/autolabeling', methods=['POST'])
 # @swag_from("{}/{}".format(YAML_PATH, "autolabeling.yml"))

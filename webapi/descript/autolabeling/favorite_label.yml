@@ -1,7 +1,7 @@
 tags:
   - autolabeling
-summary: Clear temp data of autolabeling for unlabeled images 
-description: Clear temp data of autolabeling for unlabeled images 
+summary: Get order of favorite label.
+description: Get order of favorite label. 
 
 parameters:
   - in: path

@@ -1,0 +1,25 @@
+tags:
+  - control_project
+summary: Get autolabel status.
+description: Get autolabel status.
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+
+responses:
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example: 
+              {
+                  "status": 200,
+                  "message": "Success",
+                  "data": {
+                            "autolabel_status": False
+                          }
+              }

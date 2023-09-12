@@ -73,8 +73,8 @@ def filename_processing(file:str,is_import:bool):
             if idx==len(filename.split(".")[0].split("_"))-2:
                 return filename , filename_without_Extension
             filename_without_Extension=filename_without_Extension+"_"
-    else:     
-        return filename
+         
+    return filename
 
 def add_class_filename(class_key:str, filename:str):
     if class_key != "Unlabeled":

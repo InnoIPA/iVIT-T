@@ -164,6 +164,26 @@ def rename_project(uuid):
 
     return success_msg(200, request.get_json(), "Success", "Renamed project:{} from {}".format(new_name, prj_name))
 
+@app_cl_pj.route('/<uuid>/autolabel_status', methods=['GET']) 
+@swag_from("{}/{}".format(YAML_PATH, "autolabel_status_get.yml"))
+def autolabel_status_get(uuid):
+    if not ( uuid in app.config["PROJECT_INFO"].keys()):
+        return error_msg(400, {}, "UUID:{} does not exist.".format(uuid))
+    try:
+        auto_status = app.config["PROJECT_INFO"][uuid]["on_autolabeling"]
+    except:
+        auto_status=False
+        app.config["PROJECT_INFO"][uuid].update({"on_autolabeling":auto_status})
+    return success_msg(200, {"autolabel_status":auto_status}, "Success", "Get project:{},autolabeling status:{} ".format(uuid,auto_status))
+
+@app_cl_pj.route('/<uuid>/autolabel_status', methods=['POST']) 
+@swag_from("{}/{}".format(YAML_PATH, "autolabel_status_post.yml"))
+def autolabel_status_post(uuid):
+    if not ( uuid in app.config["PROJECT_INFO"].keys()):
+        return error_msg(400, {}, "UUID:{} does not exist.".format(uuid))
+    app.config["PROJECT_INFO"][uuid]["on_autolabeling"] = not app.config["PROJECT_INFO"][uuid]["on_autolabeling"]
+    return success_msg(200, {}, "Success", "Change project:{},autolabeling status:{} ".format(uuid, app.config["PROJECT_INFO"][uuid]["on_autolabeling"]))
+
 @app_cl_pj.route('/export', methods=['POST']) 
 @swag_from("{}/{}".format(YAML_PATH, "export.yml"))
 def export_project():

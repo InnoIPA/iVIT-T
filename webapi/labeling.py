@@ -6,7 +6,7 @@ from .common.utils import exists, read_json, success_msg, error_msg, write_txt, 
 from .common.config import ROOT, YAML_MAIN_PATH, COLOR_TABLE_PATH
 from .common.labeling_tool import yolo_txt_convert, save_bbox, del_class_txt, add_class_txt, \
                                     del_class_db, cls_change_classes, obj_savebbox_db, rename_cls_class, \
-                                    get_all_color_info_db, cls_img_info, obj_img_info
+                                    get_all_color_info_db, cls_img_info, obj_img_info ,sort_favorite_label
 from .common.evaluate_tool import recheck_autolabeling_db
 from .common.init_tool import get_project_info
 
@@ -251,6 +251,9 @@ def update_bbox(uuid):
         # Save in txt
         cls_idx = save_bbox(img_path, box_info)
 
+        sort_favorite_label(uuid,cls_idx[-1])
+
+        # print("last_label {} \n ".format(cls_idx[-1]))
         # Autolabeling clear
         # if autokey:
         #     error_db = recheck_autolabeling_db(uuid, prj_name, image_name)
