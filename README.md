@@ -8,7 +8,6 @@ A library to training model of TensorFlow-Keras and Darknet. This library enable
 * [See What's New](#see-whats-new)
 * [Pre-requirements](#pre-requirements)
 * [Build convert docker images and database container](#build-convert-docker-images-and-database-container)
-* [CLI mode](#cli-mode)
 * [Web API mode](#web-api-mode)
 * [Web UI](#web-ui)
 * [The format of dataset](#the-format-of-dataset)
@@ -23,7 +22,7 @@ A library to training model of TensorFlow-Keras and Darknet. This library enable
 # Getting Started
 
 ### Pre-requirements
-Install **nvidia-driver-510**(**cuda-11.6**), **nvidia-docker** and **docker** before installing the docker container.
+Install **nvidia-driver(510+)**, **nvidia-docker** and **docker** before installing the docker container.
 
 - [Tutorial-nvidia-driver](https://docs.nvidia.com/datacenter/tesla/tesla-installation-notes/index.html)
 
@@ -50,14 +49,6 @@ In the "init_env.sh", this "-p" is the model finally deployed platform:
 ```
 0: Nvidia, 1: Intel, 2: Xilinx, 3: Hailo
 ```
-
-### CLI mode
-
-```shell
-sudo ./docker/run.sh
-```
-
-- [Tutorial](docs/CLI.md)
 
 ### Web API mode
 
