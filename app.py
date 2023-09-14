@@ -16,6 +16,16 @@ def build_argparser():
     args.add_argument('-port', '--port', required=True, help = "Input port number")
     return parser
 
+def box_web_url(ip,port):
+    web_url = '|    WEBSITE --> http://{}:{}    |'.format(ip, port)
+    leng = len(web_url)
+    logging.info('-'*leng)
+    logging.info('|'+' '*(leng-2)+'|')
+    logging.info(web_url)
+    logging.info('|'+' '*(leng-2)+'|')
+    logging.info('-'*leng)
+
+
 def main(args):
     # Create initial table in db
     logging.info("Initial database...")
@@ -57,6 +67,7 @@ def main(args):
 
     # Running webapi sever
     logging.info("Running webapi server...")
+    box_web_url("127.0.0.1",6538)
     socketio.run(app, host = config["HOST"], port=config["PORT"], debug=False)
 
 if __name__ == '__main__':
