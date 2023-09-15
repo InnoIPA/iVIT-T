@@ -6,7 +6,8 @@
 
 A library to training model of TensorFlow-Keras and Darknet. This library enables the training of the model of classification, object detection.
 * [See What's New](#see-whats-new)
-* [Pre-requirements](#pre-requirements)
+* [Hardware Recommendations](#hardware-recommendations)
+* [Software Requirements](#software-requirements)
 * [Build convert docker images and database container](#build-convert-docker-images-and-database-container)
 * [Web API mode](#web-api-mode)
 * [Web UI](#web-ui)
@@ -15,14 +16,26 @@ A library to training model of TensorFlow-Keras and Darknet. This library enable
 
 # See What's New
 - [Release Notes](docs/release_notes.md)
-- Added new platform - Hailo
-- Support convert to Hailo model
-- Supoort export model to iCAP
+- Added save color id in the database for the class of dataset
+- Unified format of response for web API
 
 # Getting Started
 
-### Pre-requirements
-Install **nvidia-driver(510+)**, **nvidia-docker** and **docker** before installing the docker container.
+### Hardware Recommendations 
+NOTE : In case of the use of another hardware, the correct functionality can not be guaranteed.
+
+| Item          |   Information
+| ---           |   --- 
+| `CPU`         |   Intel® 12th Gen Core™i7/i5 processors.
+| `GPU`         |   NVIDIA RTX A2000, A4500
+| `RAM`         |   32GB
+| `Storage`     |   1T
+| `OS`          |   Ubuntu 20.04.4
+
+
+### Software Requirements 
+ 
+Install **nvidia-driver(510+)**, **docker** and **nvidia-docker** before installing the docker container.
 
 - [Tutorial-nvidia-driver](https://docs.nvidia.com/datacenter/tesla/tesla-installation-notes/index.html)
 
@@ -37,7 +50,7 @@ Install **nvidia-driver(510+)**, **nvidia-docker** and **docker** before install
     sudo usermod -aG docker $USER
     sudo chmod 777 /var/run/docker.sock
     ```
-    
+
 ##  Run container
 
 ### Build convert docker images and database container
@@ -61,9 +74,11 @@ In the "run.sh", this "-p" is the port number, you can setting haven't used the 
 - [Tutorial](./webapi/ReadME.md)
 
 ## Web UI
-If you want to use the UI version, you can follow this Tutorial:
+If you want to use the UI version, click url:
 
-- [Tutorial](https://github.com/InnoIPA/ivit-t-web)
+- http://localhost:6538/ 
+
+- Port: 6538 -> "WEB_PORT" from ./webui/web_version.json
 
 ## The format of dataset 
 - Image format: .jpg/.jpeg/.png/.bmp/.JPG/.JPEG/.PNG/.BMP
@@ -145,15 +160,3 @@ Folder
     - https://www.pexels.com/
 - Sample images from roboflow
     - https://universe.roboflow.com/
-- Segmentation models
-    - https://github.com/qubvel/segmentation_models
-    ```
-    @misc{Yakubovskiy:2019,
-        Author = {Pavel Iakubovskii},
-        Title = {Segmentation Models},
-        Year = {2019},
-        Publisher = {GitHub},
-        Journal = {GitHub repository},
-        Howpublished = {\url{https://github.com/qubvel/segmentation_models}}
-        }
-    ```
