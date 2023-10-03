@@ -459,4 +459,4 @@ def class_change_color(uuid):
     change_class_color_command="update color_id set  color_id='{}' , color_hex='{}' where \
         project_uuid='{}' and iteration='workspace' and cls_idx='{}';".format(color_id,color_hex,uuid,str(cls_idx))
     get_color_id_info=execute_db(change_class_color_command,True)
-    return success_msg(200, "Change color success", "Success")
+    return success_msg(200,{},"Success", "Change color success")
