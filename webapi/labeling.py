@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flasgger import swag_from
+import json
 import logging, os, shutil
 from webapi import app
 from .common.utils import exists, read_json, success_msg, error_msg, write_txt, regular_expression, get_classes_list
@@ -9,6 +10,7 @@ from .common.labeling_tool import yolo_txt_convert, save_bbox, del_class_txt, ad
                                     get_all_color_info_db, cls_img_info, obj_img_info ,sort_favorite_label
 from .common.evaluate_tool import recheck_autolabeling_db
 from .common.init_tool import get_project_info
+from .common.database import execute_db , insert_table_cmd
 
 app_labeling = Blueprint( 'labeling', __name__)
 # Define API Docs path and Blue Print
@@ -26,6 +28,10 @@ def add_class(uuid):
     # Check key of front
     if not "color_id" in request.get_json().keys():
         return error_msg(400, {}, "KEY:color_id does not exist.", log=True)
+    
+    if not "color_hex" in request.get_json().keys():
+        return error_msg(400, {}, "KEY:color_hex does not exist.", log=True)
+    
     # Get project name
     prj_name = app.config["PROJECT_INFO"][uuid]["project_name"] 
     # Get type
@@ -35,9 +41,49 @@ def add_class(uuid):
     # Regular expression
     class_name = regular_expression(class_name)
     # Get color
-    color_id = int(request.get_json()['color_id'])
+    try:
+        color_id = int(request.get_json()['color_id'])
+
+        
+    except:
+        pass
+    #Get color_hex
+    color_hex = request.get_json()['color_hex']
     # Add to classes.txt
     classes_path = ROOT + '/' + prj_name + "/workspace/classes.txt"
+
+    if color_hex!="":
+        #if use color_hex
+       
+        #step1 : Judge color_hex whether exist in color_table or not.
+        color_hex_exist_command="SELECT EXISTS (select * from color_table where color_hex = '{}') AS table_exists;".format(color_hex)
+        color_hex_exist_info_db = execute_db(color_hex_exist_command,False)[0][0] # [(False,)]
+        color_hex_exist_info_db=bool(color_hex_exist_info_db)
+        
+        if not color_hex_exist_info_db:
+            #step1 : Get total count from color_table
+            get_color_total_command="SELECT COUNT(*) from color_table;"
+            get_color_total_db = execute_db(get_color_total_command,False)[0][0] #[(1000,)] 
+
+            #step2 : Add new color_hex with color_id to color_table
+            new_color_id=int(get_color_total_db)
+            key="color_id,color_hex,note"
+            value="{},{},{}".format(str(new_color_id) , "'{}'".format(color_hex) , "''")
+            insert_table_cmd("color_table",key,value)
+            color_id=new_color_id
+
+            #step3 modify color_json
+        
+            with open(COLOR_TABLE_PATH, 'r') as json_file:
+                data = json.load(json_file)
+            data[str(new_color_id)] = color_hex
+            with open(COLOR_TABLE_PATH, 'w') as json_file:
+                json.dump(data, json_file, indent=4)
+            
+        else:
+            get_color_id_command="SELECT color_id from color_table where color_hex='{}';".format(color_hex)
+            get_color_id_info=execute_db(get_color_id_command,False)[0][0]
+            color_id=int(get_color_id_info)
     error_db = add_class_txt(uuid, classes_path, str(class_name), color_id)
     if error_db:
         return error_msg(400, {}, str(error_db[1]))
@@ -172,13 +218,24 @@ def edit_img_class(uuid):
         class_name = ""
     # If the folder does not exist, then create a new folder and append a new class in classes.txt
     dir_path = ROOT + '/' + prj_name + "/workspace/" + class_name
+    classes_path = ROOT + '/' + prj_name + "/workspace/classes.txt"
+    with open(classes_path, 'r') as f:
+   
+        for cls_id,label in enumerate(f.readlines()):                          
+            label = label.strip()    
+            if  label==class_name:
+
+                sort_favorite_label(uuid,cls_id)
+                break
+    
     if not os.path.isdir(dir_path):
         logging.warn("Create new folder in the Project:[{}:{}]".format(prj_name, class_name))
         os.makedirs(dir_path, exist_ok=True, mode=0o777)
         # Append a new class in classes.txt
-        classes_path = ROOT + '/' + prj_name + "/workspace/classes.txt"
+        
         if exists(classes_path):
             classes_list = get_classes_list(classes_path)
+            
             if not (class_name in classes_list):
                 write_txt(classes_path, class_name)
         else:
@@ -236,7 +293,7 @@ def update_bbox(uuid):
     if not "image_name" in request.get_json().keys():
         return error_msg(400, {}, "KEY:image_name does not exist.", log=True)
     elif not "box_info" in request.get_json().keys(): 
-        return error_msg(400, {}, "KEY:box_info does not exist.", log=True)
+        return error_msg(400, {}, "KEY:. does not exist.", log=True)
     # elif not "autokey" in request.get_json().keys():
     #     return error_msg(400, {}, "KEY:autokey does not exist.", log=True)
     # Get project name
@@ -250,8 +307,9 @@ def update_bbox(uuid):
     if exists(img_path):
         # Save in txt
         cls_idx = save_bbox(img_path, box_info)
-
-        sort_favorite_label(uuid,cls_idx[-1])
+        
+        if len(box_info)!=0:
+            sort_favorite_label(uuid,cls_idx[-1])
 
         # print("last_label {} \n ".format(cls_idx[-1]))
         # Autolabeling clear
@@ -312,3 +370,93 @@ def get_img_cls_nums(uuid, path):
 def get_color_table():
     color_table = read_json(COLOR_TABLE_PATH)
     return success_msg(200, color_table, "Success")
+
+@app_labeling.route('/<uuid>/class_change_color',methods=['POST'])
+@swag_from("{}/{}".format(YAML_PATH, "class_change_color.yml")) 
+def class_change_color(uuid):
+    # Check uuid is/isnot in app.config["PROJECT_INFO"]
+    if not ( uuid in app.config["PROJECT_INFO"].keys()):
+        return error_msg(400, {}, "UUID:{} does not exist.".format(uuid), log=True)
+    # Check key of front
+    if not "class_name" in request.get_json().keys():
+        return error_msg(400, {}, "KEY:class_name does not exist.", log=True)
+    # Check key of front
+    if not "color_id" in request.get_json().keys():
+        return error_msg(400, {}, "KEY:color_id does not exist.", log=True)
+    
+    if not "color_hex" in request.get_json().keys():
+        return error_msg(400, {}, "KEY:color_hex does not exist.", log=True)
+    
+    # Get project name
+    prj_name = app.config["PROJECT_INFO"][uuid]["project_name"] 
+    # Get type
+    type = app.config["PROJECT_INFO"][uuid]['type']
+    # Get value of front
+    class_name = request.get_json()['class_name']
+    # Regular expression
+    class_name = regular_expression(class_name)
+
+    #Judge class wether exist or not
+    classes_path = ROOT + '/' + prj_name + "/workspace/classes.txt"
+    
+    cls_idx=int
+    with open(classes_path, 'r') as f:
+        # print("herer!!!!!!!!!!")
+        # if class_name not in f.readlines():
+        #     error_msg(400, {},"{} not exist in project".format(class_name) , log=True)
+        for cls_id,label in enumerate(f.readlines()):                          
+            label = label.strip()    
+            if  label==class_name:
+                
+                cls_idx=cls_id
+                break
+        
+    # Get color
+    try:
+        color_id = int(request.get_json()['color_id'])
+        get_color_hex_command="select color_hex from color_table where color_id='{}';".format(color_id)
+        color_hex=execute_db(get_color_hex_command,False)[0][0]
+    except:
+        pass
+    
+    #if use color_hex
+    if request.get_json()['color_hex']!="":
+        
+        #Get color_hex
+        color_hex = request.get_json()['color_hex']
+        #step1 : Judge color_hex whether exist in color_table or not.
+        color_hex_exist_command="SELECT EXISTS (select * from color_table where color_hex = '{}') AS table_exists;".format(color_hex)
+        color_hex_exist_info_db = execute_db(color_hex_exist_command,False)[0][0] # [(False,)]
+        color_hex_exist_info_db=bool(color_hex_exist_info_db)
+        
+        if not color_hex_exist_info_db:
+            #step1 : Get total count from color_table
+            get_color_total_command="SELECT COUNT(*) from color_table;"
+            get_color_total_db = execute_db(get_color_total_command,False)[0][0] #[(1000,)] 
+
+            #step2 : Add new color_hex with color_id to color_table
+            new_color_id=int(get_color_total_db)
+            key="color_id,color_hex,note"
+            value="{},{},{}".format(str(new_color_id) , "'{}'".format(color_hex) , "''")
+            insert_table_cmd("color_table",key,value)
+            color_id=new_color_id
+
+            #step3 modify color_json
+        
+            with open(COLOR_TABLE_PATH, 'r') as json_file:
+                data = json.load(json_file)
+            data[str(new_color_id)] = color_hex
+            with open(COLOR_TABLE_PATH, 'w') as json_file:
+                json.dump(data, json_file, indent=4)
+            
+        else:
+            get_color_id_command="SELECT color_id from color_table where color_hex='{}';".format(color_hex)
+            get_color_id_info=execute_db(get_color_id_command,False)[0][0]
+            color_id=int(get_color_id_info)
+
+    #update color
+
+    change_class_color_command="update color_id set  color_id='{}' , color_hex='{}' where \
+        project_uuid='{}' and iteration='workspace' and cls_idx='{}';".format(color_id,color_hex,uuid,str(cls_idx))
+    get_color_id_info=execute_db(change_class_color_command,True)
+    return success_msg(200, "Change color success", "Success")
