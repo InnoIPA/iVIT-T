@@ -343,9 +343,31 @@ def del_class_db(uuid:str, type:str, prj_name:str, orignal_cls:list, class_name:
     command =   """
                 SELECT filename,cls_idx FROM workspace WHERE project_uuid=\'{}\' AND cls_idx::jsonb @> '[{}]'::jsonb
                 """.format(uuid, idx)
+    
     info_db = execute_db(command, False)
     if "error" in info_db:
         return info_db
+    
+    #del cls from favorite_label 
+
+    #get favorite label from db
+    favorite_label = Get_info_cmd("favorite_label","project","project_uuid='{}'".format(uuid))[0][0]
+    
+    #change turple to list
+    try:
+        favorite_label=list(favorite_label)
+    except:
+        favorite_label=[]
+        
+    if idx in favorite_label:
+        favorite_label.remove(idx)
+        #insert db
+        values = "favorite_label='{}'".format(favorite_label)
+        select = "project_uuid='{}'".format(uuid)
+        # print("DB insert  : {} \n".format(favorite_label))
+        update_data_table_cmd("project",values,select)
+        
+    
     # Forloop for change every value
     update_list = []
     for data in info_db:
