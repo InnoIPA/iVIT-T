@@ -296,12 +296,26 @@ def update_bbox(uuid):
         return error_msg(400, {}, "KEY:. does not exist.", log=True)
     # elif not "autokey" in request.get_json().keys():
     #     return error_msg(400, {}, "KEY:autokey does not exist.", log=True)
+
+    elif not "confirm" in request.get_json().keys():
+        return error_msg(400, {}, "KEY:confirm does not exist.", log=True)
+
+    
+
     # Get project name
     prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
     # Get value of front
     image_name = request.get_json()['image_name']
     box_info = request.get_json()['box_info']
     # autokey = request.get_json()['autokey']
+    confirm = request.get_json()['confirm']
+
+    if confirm:
+        #change confirm status 
+        change_confirm_status_command = "update workspace set confirm='false' where project_uuid='{}'\
+              and img_path='{}';".format(uuid,"/"+image_name)
+        execute_db(change_confirm_status_command,True)
+        
     # Save new bbox
     img_path = ROOT + '/' + prj_name + "/workspace/" + image_name
     if exists(img_path):
