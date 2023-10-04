@@ -1,7 +1,7 @@
 tags:
   - autolabeling
-summary: Load model and do once autolabeling.
-description: Load model and do once autolabeling.
+summary: Get image confirm status. 
+description: Get image confirm status. 
 
 parameters:
   - in: path
@@ -9,20 +9,17 @@ parameters:
     required: true
     schema:
       type: string
-      
+
   - in: body
     name: data
     required: true
     schema:
       type: object
       properties:
-        "iteration":
+        "image_name":
           type: string
-          example: iteration1
-        "threshold":
-          type: float
-          example: 0.7
-
+          example: 100.jpg
+          
 responses:
   '200':
     schema:
