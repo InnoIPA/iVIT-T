@@ -5,7 +5,7 @@ from .common.utils import error_msg, success_msg
 from .common.config import ROOT, YAML_MAIN_PATH, EVAL_VAL,AUTOLABEL_VAL,MICRO_SERVICE
 from .common.inspection import Check
 from .common.evaluate_tool import Evaluate, threshold_process, temp_label_data_db 
-from .common.database import delete_data_table_cmd , get_unlabeled_img_path_cmd ,get_project_info_cmd , get_img_serial_db,Get_info_cmd
+from .common.database import delete_data_table_cmd , get_unlabeled_img_path_cmd ,get_project_info_cmd , get_img_serial_db,Get_info_cmd,execute_db
 from .common.gpu_memory import cal_gpu_memory
 
 import time,os,requests,json,socket ,copy
@@ -57,7 +57,10 @@ def load_model(uuid):
     iter = request.get_json()['iteration']
     prj_name = get_project_info_cmd("project_name","project","project_uuid='{}'".format(uuid))[0][0]
     task_type = get_project_info_cmd("project_type","project","project_uuid='{}'".format(uuid))[0][0]
-    threshold=0.7
+    try:
+        threshold=MICRO_SERVICE[uuid]["threshold"]
+    except:
+        threshold=0.7
     start=time.time()
     get_load_model_status=False
     # _comunication_q=queue.Queue()
@@ -72,9 +75,14 @@ def load_model(uuid):
 
     #check this project have best model
     try:
-        dir_iteration = chk.mapping_iteration(uuid, prj_name, iter, front=True)
+        iter=MICRO_SERVICE[uuid]["iteration"][0]
+        dir_iteration=MICRO_SERVICE[uuid]["iteration"][1]
+        
     except:
-        return error_msg(400, {}, str(dir_iteration[1]), log=True)
+        try:
+            dir_iteration = chk.mapping_iteration(uuid, prj_name, iter, front=True)
+        except:
+            return error_msg(400, {}, str(dir_iteration[1]), log=True)
 
 
     if not (uuid in MICRO_SERVICE.keys()):
@@ -170,6 +178,8 @@ def modify_autolabel_parameter(uuid):
     old_iter = MICRO_SERVICE[uuid]['iteration']
     old_thres = MICRO_SERVICE[uuid]['threshold']
     #check this project have this iteration
+
+
     try:
         dir_iteration = chk.mapping_iteration(uuid, prj_name, iter, front=True)
     except:
@@ -183,7 +193,7 @@ def modify_autolabel_parameter(uuid):
         try:
             MICRO_SERVICE[uuid]["process"].kill()
             MICRO_SERVICE[uuid]["process"].wait()
-            del MICRO_SERVICE[uuid]
+            del MICRO_SERVICE[uuid]["process"]
         except:
             return error_msg(400, {},"Release autolabeling model error!")
         
@@ -247,6 +257,11 @@ def modify_autolabel_parameter(uuid):
         
     else:
         MICRO_SERVICE[uuid]['threshold']=threshold
+
+    #change all confirm status
+                
+    change_confirm_status_command = "update workspace set confirm='false' where project_uuid='{}';".format(uuid)
+    execute_db(change_confirm_status_command,True)
 
     return success_msg(200, {} , "Success", "Change iter: {} to {} , threshold: {} to {}.".format(old_iter[0],MICRO_SERVICE[uuid]['iteration'][0]\
                                                                                                   ,old_thres,MICRO_SERVICE[uuid]['threshold']))
@@ -324,7 +339,11 @@ def release_model(uuid):
     try:
         MICRO_SERVICE[uuid]["process"].kill()
         MICRO_SERVICE[uuid]["process"].wait()
-        del MICRO_SERVICE[uuid]
+        del MICRO_SERVICE[uuid]["process"]
+        print("******************************************",'\n')
+        print(MICRO_SERVICE[uuid],'\n')
+        print("******************************************",'\n')
+        
     except Exception as e:
         return error_msg(400, {},"Release autolabeling model error! {}".format(e))
     
@@ -389,7 +408,15 @@ def favorite_label(uuid):
     # print(_temp_json)
 
     return success_msg(200, _temp_json, "Success", "Get favorite label in the Project:[{}]".format(uuid))
+@app_auto_labeling.route('/<uuid>/confirm_status', methods=['POST'])
+@swag_from("{}/{}".format(YAML_PATH, "confirm_status.yml"))
+def confirm_status(uuid):
+    image_name = request.get_json()['image_name']
+    get_confirm_status_command="select confirm from workspace where project_uuid='{}' \
+        and  img_path='{}';".format(uuid,"/"+image_name)
+    get_confirm_status_info=execute_db(get_confirm_status_command,False)[0][0]
 
+    return success_msg(200, {image_name:get_confirm_status_info}, "Success", "Get {} confirm status {} in the Project:[{}]".format(image_name,get_confirm_status_info,uuid))
 # @app_auto_labeling.route('/<uuid>/autolabeling', methods=['POST'])
 # @swag_from("{}/{}".format(YAML_PATH, "autolabeling.yml"))
 # def autolabeling(uuid):
