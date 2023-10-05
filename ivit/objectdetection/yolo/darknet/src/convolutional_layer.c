@@ -330,8 +330,7 @@ void cudnn_convolutional_setup(layer *l, int cudnn_preference, size_t workspace_
     }
 
     if (!found_conv_algorithm) {
-        fprintf(stderr, " Error: cuDNN isn't found FWD algo for convolution.\n");
-        // printf(" Error: cuDNN isn't found FWD algo for convolution.\n");
+        printf(" Error: cuDNN isn't found FWD algo for convolution.\n");
         getchar();
         exit(0);
     }
@@ -368,8 +367,7 @@ void cudnn_convolutional_setup(layer *l, int cudnn_preference, size_t workspace_
     }
 
     if (!found_conv_algorithm) {
-        fprintf(stderr, " Error:  cuDNN isn't found BWD-data algo for convolution.\n");
-        // printf(" Error: cuDNN isn't found BWD-data algo for convolution.\n");
+        printf(" Error: cuDNN isn't found BWD-data algo for convolution.\n");
         getchar();
         exit(0);
     }
@@ -406,8 +404,7 @@ void cudnn_convolutional_setup(layer *l, int cudnn_preference, size_t workspace_
     }
 
     if (!found_conv_algorithm) {
-        fprintf(stderr, " Error:  cuDNN isn't found BWD-filter algo for convolution.\n");
-        // printf(" Error: cuDNN isn't found BWD-filter algo for convolution.\n");
+        printf(" Error: cuDNN isn't found BWD-filter algo for convolution.\n");
         getchar();
         exit(0);
     }

@@ -26,7 +26,6 @@ ARCH= -gencode arch=compute_50,code=[sm_50,compute_50] \
       -gencode arch=compute_52,code=[sm_52,compute_52] \
 	    -gencode arch=compute_61,code=[sm_61,compute_61]
 
-
 OS := $(shell uname)
 
 # GeForce RTX 3070, 3080, 3090
@@ -83,7 +82,7 @@ NVCC=nvcc
 OPTS=-Ofast
 LDFLAGS= -lm -pthread
 COMMON= -Iinclude/ -I3rdparty/stb/include
-CFLAGS=-Wall -Wfatal-errors -Wno-unused-result -Wno-unknown-pragmas -fPIC
+CFLAGS=-Wall -Wfatal-errors -Wno-unused-result -Wno-unknown-pragmas -fPIC -rdynamic
 
 ifeq ($(DEBUG), 1)
 #OPTS= -O0 -g

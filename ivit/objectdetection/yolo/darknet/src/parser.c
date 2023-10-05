@@ -217,14 +217,12 @@ convolutional_layer parse_convolutional(list *options, size_params params)
     int stretch = option_find_int_quiet(options, "stretch", 0);
     int stretch_sway = option_find_int_quiet(options, "stretch_sway", 0);
     if ((sway + rotate + stretch + stretch_sway) > 1) {
-        fprintf(stderr," Error: should be used only 1 param: sway=1, rotate=1 or stretch=1 in the [convolutional] layer \n");
-        // printf(" Error: should be used only 1 param: sway=1, rotate=1 or stretch=1 in the [convolutional] layer \n");
+        printf(" Error: should be used only 1 param: sway=1, rotate=1 or stretch=1 in the [convolutional] layer \n");
         exit(0);
     }
     int deform = sway || rotate || stretch || stretch_sway;
     if (deform && size == 1) {
-        fprintf(stderr," Error: params (sway=1, rotate=1 or stretch=1) should be used only with size >=3 in the [convolutional] layer \n");
-        // printf(" Error: params (sway=1, rotate=1 or stretch=1) should be used only with size >=3 in the [convolutional] layer \n");
+        printf(" Error: params (sway=1, rotate=1 or stretch=1) should be used only with size >=3 in the [convolutional] layer \n");
         exit(0);
     }
 
@@ -519,7 +517,7 @@ layer parse_yolo(list *options, size_params params)
     l.random = option_find_float_quiet(options, "random", 0);
 
     l.track_history_size = option_find_int_quiet(options, "track_history_size", 5);
-    l.sim_thresh = option_find_int_quiet(options, "sim_thresh", 0.8);
+    l.sim_thresh = option_find_float_quiet(options, "sim_thresh", 0.8);
     l.dets_for_track = option_find_int_quiet(options, "dets_for_track", 1);
     l.dets_for_show = option_find_int_quiet(options, "dets_for_show", 1);
     l.track_ciou_norm = option_find_float_quiet(options, "track_ciou_norm", 0.01);
