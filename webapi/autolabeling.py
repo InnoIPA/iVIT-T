@@ -160,8 +160,24 @@ def load_model(uuid):
 @swag_from("{}/{}".format(YAML_PATH, "get_autolabel_parameter.yml"))
 def get_autolabel_parameter(uuid):
     
-    if not MICRO_SERVICE.__contains__(uuid):
-        return error_msg(400, {}, "project {} not load model yet.".format(uuid))
+    if not (uuid in MICRO_SERVICE.keys()):
+        prj_name = get_project_info_cmd("project_name","project","project_uuid='{}'".format(uuid))[0][0]
+        get_model_nums_command="select model_nums from project where project_uuid='{}';".format(uuid)
+        
+        model_num=execute_db(get_model_nums_command,False)[0][0]
+        iter="iteration"+str(model_num)
+        dir_iteration=""
+        try:
+            dir_iteration = chk.mapping_iteration(uuid, prj_name, iter, front=True)
+        except:
+            return error_msg(400, {}, str(dir_iteration), log=True)
+        MICRO_SERVICE.update({
+            uuid:{
+                "iteration":[iter,dir_iteration],
+                "threshold":0.7,
+            }
+
+        })
     info={
         "iteration":MICRO_SERVICE[uuid]['iteration'][0],
         "threshold":MICRO_SERVICE[uuid]['threshold']
