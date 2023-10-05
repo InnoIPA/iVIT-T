@@ -210,6 +210,13 @@ def modify_autolabel_parameter(uuid):
 
         })
     if not MICRO_SERVICE[uuid].__contains__("process"):
+        MICRO_SERVICE.update({
+            uuid:{
+                "iteration":[iter,dir_iteration],
+                "threshold":threshold,
+            }
+
+        })
         return success_msg(200, {} , "Success", "Setting iter: {} , threshold:{}.".format(MICRO_SERVICE[uuid]['iteration'][0]\
                                                                                                   ,MICRO_SERVICE[uuid]['threshold']))
     # _comunication_q=Queue(maxsize=5)
