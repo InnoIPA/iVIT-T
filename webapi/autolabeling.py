@@ -54,9 +54,16 @@ def _check_port(port:int):
 @swag_from("{}/{}".format(YAML_PATH, "load_model.yml"))
 def load_model(uuid):
     #init parameter
+    
     iter = request.get_json()['iteration']
     prj_name = get_project_info_cmd("project_name","project","project_uuid='{}'".format(uuid))[0][0]
     task_type = get_project_info_cmd("project_type","project","project_uuid='{}'".format(uuid))[0][0]
+    try:
+        iter=MICRO_SERVICE[uuid]["iteration"][0]
+    except:
+        get_model_nums_command="select model_nums from project where project_uuid='{}';".format(uuid)
+        model_num=execute_db(get_model_nums_command,False)[0][0]
+        iter="iteration"+str(model_num)
     try:
         threshold=MICRO_SERVICE[uuid]["threshold"]
     except:
@@ -147,7 +154,7 @@ def load_model(uuid):
         return error_msg(400, {}, "load model error! {}".format(e))
     
     
-    return success_msg(200, {} , "Success", "Success load model:[{}:{}]".format(prj_name, iter))
+    return success_msg(200, {"model":MICRO_SERVICE[uuid]['iteration'][0],"threshold":MICRO_SERVICE[uuid]['threshold']} , "Success", "Success load model:[{}:{}]".format(prj_name, iter))
 
 @app_auto_labeling.route('/<uuid>/autolabeling', methods=['GET'])
 @swag_from("{}/{}".format(YAML_PATH, "get_autolabel_parameter.yml"))
@@ -166,13 +173,29 @@ def get_autolabel_parameter(uuid):
 @app_auto_labeling.route('/<uuid>/autolabeling', methods=['PUT'])
 @swag_from("{}/{}".format(YAML_PATH, "modify_autolabel_parameter.yml"))
 def modify_autolabel_parameter(uuid):
-    if not MICRO_SERVICE.__contains__(uuid):
-        return error_msg(400, {}, "project {} not load model yet.".format(uuid))
+    
     #init parameter
     iter = request.get_json()['iteration']
     threshold = request.get_json()['threshold']
     prj_name = get_project_info_cmd("project_name","project","project_uuid='{}'".format(uuid))[0][0]
     task_type = get_project_info_cmd("project_type","project","project_uuid='{}'".format(uuid))[0][0]
+    try:
+        dir_iteration = chk.mapping_iteration(uuid, prj_name, iter, front=True)
+    except:
+        return error_msg(400, {}, "{} Not exist!".format(iter), log=True)
+    
+
+    if not (uuid in MICRO_SERVICE.keys()):
+        MICRO_SERVICE.update({
+            uuid:{
+                "iteration":[iter,dir_iteration],
+                "threshold":threshold,
+            }
+
+        })
+    if not MICRO_SERVICE[uuid].__contains__("process"):
+        return success_msg(200, {} , "Success", "Setting iter: {} , threshold:{}.".format(MICRO_SERVICE[uuid]['iteration'][0]\
+                                                                                                  ,MICRO_SERVICE[uuid]['threshold']))
     # _comunication_q=Queue(maxsize=5)
     get_load_model_status=False
     old_iter = MICRO_SERVICE[uuid]['iteration']
@@ -180,10 +203,7 @@ def modify_autolabel_parameter(uuid):
     #check this project have this iteration
 
 
-    try:
-        dir_iteration = chk.mapping_iteration(uuid, prj_name, iter, front=True)
-    except:
-        return error_msg(400, {}, "{} Not exist!".format(iter), log=True)
+    
     
     #if change iter will load new model 
     print(old_iter,iter," now",'\n')
