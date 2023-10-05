@@ -594,7 +594,8 @@ float find_sim(size_t i, size_t j, contrastive_params *contrast_p, int contrast_
         if (contrast_p[z].i == i && contrast_p[z].j == j) break;
     }
     if (z == contrast_p_size) {
-        printf(" Error: find_sim(): sim isn't found: i = %d, j = %d, z = %d \n", i, j, z);
+        fprintf(stderr, " Error:  find_sim(): sim isn't found: i = %d, j = %d, z = %d \n", i, j, z);
+        // printf(" Error: find_sim(): sim isn't found: i = %d, j = %d, z = %d \n", i, j, z);
         getchar();
     }
 
@@ -608,7 +609,8 @@ float find_P_constrastive(size_t i, size_t j, contrastive_params *contrast_p, in
         if (contrast_p[z].i == i && contrast_p[z].j == j) break;
     }
     if (z == contrast_p_size) {
-        printf(" Error: find_P_constrastive(): P isn't found: i = %d, j = %d, z = %d \n", i, j, z);
+        fprintf(stderr, " Error:  find_sim(): sim isn't found: i = %d, j = %d, z = %d \n", i, j, z);
+        // printf(" Error: find_P_constrastive(): P isn't found: i = %d, j = %d, z = %d \n", i, j, z);
         getchar();
     }
 

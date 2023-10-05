@@ -1,0 +1,5 @@
+classes = 2
+train = /workspace/objectDetection/yolo/darknet/data/train.txt
+valid = /workspace/objectDetection/yolo/darknet/data/val.txt
+names = /workspace/objectDetection/yolo/darknet/data/Training.names
+backup = ./project/memory_small/weights

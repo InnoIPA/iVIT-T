@@ -914,8 +914,11 @@ void fill_network_boxes(network *net, int w, int h, float thresh, float hier, in
             dets += count;
             if (prev_classes < 0) prev_classes = l.classes;
             else if (prev_classes != l.classes) {
-                printf(" Error: Different [yolo] layers have different number of classes = %d and %d - check your cfg-file! \n",
+                fprintf(stderr, " Error: Different [yolo] layers have different number of classes = %d and %d - check your cfg-file! \n",
                     prev_classes, l.classes);
+                // printf(" Error: Different [yolo] layers have different number of classes = %d and %d - check your cfg-file! \n",
+                //     prev_classes, l.classes);
+                
             }
         }
         if (l.type == GAUSSIAN_YOLO) {
@@ -945,8 +948,10 @@ void fill_network_boxes_batch(network *net, int w, int h, float thresh, float hi
             dets += count;
             if (prev_classes < 0) prev_classes = l.classes;
             else if (prev_classes != l.classes) {
-                printf(" Error: Different [yolo] layers have different number of classes = %d and %d - check your cfg-file! \n",
-                    prev_classes, l.classes);
+                fprintf(stderr, " Error: Different [yolo] layers have different number of classes = %d and %d - check your cfg-file! \n",
+                    prev_classes, l.classes);               
+                // printf(" Error: Different [yolo] layers have different number of classes = %d and %d - check your cfg-file! \n",
+                //     prev_classes, l.classes);
             }
         }
         if (l.type == REGION) {

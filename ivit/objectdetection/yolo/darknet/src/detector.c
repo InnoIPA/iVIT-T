@@ -53,7 +53,9 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
         int names_size = 0;
         char **names = get_labels_custom(name_list, &names_size);
         if (net_classes != names_size) {
-            printf("\n Error: in the file %s number of names %d that isn't equal to classes=%d in the file %s \n",
+            /*printf("\n Error: in the file %s number of names %d that isn't equal to classes=%d in the file %s \n",
+                name_list, names_size, net_classes, cfgfile);*/
+            fprintf(stderr, "Error: in the file %s number of names %d that isn't equal to classes=%d in the file %s \n",
                 name_list, names_size, net_classes, cfgfile);
             if (net_classes > names_size) getchar();
         }
@@ -364,7 +366,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
             iter_map = iteration;
             mean_average_precision = validate_detector_map(datacfg, cfgfile, weightfile, thresh, iou_thresh, 0, net.letter_box, &net_map);// &net_combined);
             printf("\n mean_average_precision (mAP@%0.2f) = %f \n", iou_thresh, mean_average_precision);
-            if (mean_average_precision >= best_map) {
+            if (mean_average_precision > best_map) {
                 best_map = mean_average_precision;
                 printf("New best mAP!\n");
                 char buff[256];
@@ -492,7 +494,7 @@ static void print_cocos(FILE *fp, char *image_path, detection *dets, int num_box
             if (dets[i].prob[j] > 0) {
                 char buff[1024];
                 sprintf(buff, "{\"image_id\":%d, \"category_id\":%d, \"bbox\":[%f, %f, %f, %f], \"score\":%f},\n", image_id, coco_ids[j], bx, by, bw, bh, dets[i].prob[j]);
-                fprintf(fp, "%s", buff);
+                fprintf(fp, buff);
                 //printf("%s", buff);
             }
         }
@@ -970,8 +972,10 @@ float validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, floa
         calculate_binary_weights(net);
     }
     if (net.layers[net.n - 1].classes != names_size) {
-        printf("\n Error: in the file %s number of names %d that isn't equal to classes=%d in the file %s \n",
+        fprintf(stderr, "\n Error: in the file %s number of names %d that isn't equal to classes=%d in the file %s \n",
             name_list, names_size, net.layers[net.n - 1].classes, cfgfile);
+        /*printf("\n Error: in the file %s number of names %d that isn't equal to classes=%d in the file %s \n",
+            name_list, names_size, net.layers[net.n - 1].classes, cfgfile);*/
         getchar();
     }
     srand(time(0));
@@ -1581,7 +1585,8 @@ void calc_anchors(char *datacfg, int num_of_clusters, int width, int height, int
         fclose(fwc);
     }
     else {
-        printf(" Error: file counters_per_class.txt can't be open \n");
+        // printf(" Error: file counters_per_class.txt can't be open \n");
+        fprintf(stderr, " Error: file counters_per_class.txt can't be open \n");
     }
 
     avg_iou = 100 * avg_iou / number_of_boxes;
@@ -1608,7 +1613,8 @@ void calc_anchors(char *datacfg, int num_of_clusters, int width, int height, int
         fclose(fw);
     }
     else {
-        printf(" Error: file anchors.txt can't be open \n");
+        // printf(" Error: file anchors.txt can't be open \n");
+        fprintf(stderr, " Error: file anchors.txt can't be open \n");
     }
 
     if (show) {
@@ -1642,7 +1648,9 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
     calculate_binary_weights(net);
     if (net.layers[net.n - 1].classes != names_size) {
         printf("\n Error: in the file %s number of names %d that isn't equal to classes=%d in the file %s \n",
-            name_list, names_size, net.layers[net.n - 1].classes, cfgfile);
+            name_list, names_size, net.layers[net.n - 1].classes, cfgfile);        
+        /*printf("\n Error: in the file %s number of names %d that isn't equal to classes=%d in the file %s \n",
+            name_list, names_size, net.layers[net.n - 1].classes, cfgfile);*/
         if (net.layers[net.n - 1].classes > names_size) getchar();
     }
     srand(2222222);
@@ -1812,8 +1820,10 @@ void draw_object(char *datacfg, char *cfgfile, char *weightfile, char *filename,
     //fuse_conv_batchnorm(net);
     //calculate_binary_weights(net);
     if (net.layers[net.n - 1].classes != names_size) {
-        printf("\n Error: in the file %s number of names %d that isn't equal to classes=%d in the file %s \n",
+        fprintf(stderr, "\n Error: in the file %s number of names %d that isn't equal to classes=%d in the file %s \n",
             name_list, names_size, net.layers[net.n - 1].classes, cfgfile);
+        /*printf("\n Error: in the file %s number of names %d that isn't equal to classes=%d in the file %s \n",
+            name_list, names_size, net.layers[net.n - 1].classes, cfgfile);*/
         if (net.layers[net.n - 1].classes > names_size) getchar();
     }
 

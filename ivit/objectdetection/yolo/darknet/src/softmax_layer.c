@@ -150,7 +150,8 @@ contrastive_layer make_contrastive_layer(int batch, int w, int h, int c, int cla
         l.embedding_size = l.inputs / (l.n*l.h*l.w);
         l.truths = yolo_layer->truths;
         if (l.embedding_size != yolo_layer->embedding_size) {
-            printf(" Error: [contrastive] embedding_size=%d isn't equal to [yolo] embedding_size=%d. They should use the same [convolutional] layer \n", l.embedding_size, yolo_layer->embedding_size);
+            fprintf(stderr," Error: [contrastive] embedding_size=%d isn't equal to [yolo] embedding_size=%d. They should use the same [convolutional] layer \n", l.embedding_size, yolo_layer->embedding_size);
+            //printf(" Error: [contrastive] embedding_size=%d isn't equal to [yolo] embedding_size=%d. They should use the same [convolutional] layer \n", l.embedding_size, yolo_layer->embedding_size);
             getchar();
             exit(0);
         }
