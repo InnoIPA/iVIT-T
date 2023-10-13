@@ -1,6 +1,7 @@
 # Release Notes
 ## Release 1.2
 ### New Features/Highlights
+- Improve user experience on label.
 - Added autolabeling.
 - Image format that supports tif.
 
