@@ -1,7 +1,7 @@
 {
   "USER": "innodiskorg",
-  "PROJECT": "ivit-t-webui",
-  "VERSION": "1.2",
+  "PROJECT": "ivit-t-website",
+  "VERSION": "v120",
   "WEB_PORT": 6538,
   "API_PORT": 6530
 }

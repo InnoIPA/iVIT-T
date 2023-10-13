@@ -51,6 +51,7 @@ GPU="all"
 PORT=""
 SERVER=false
 MOUNT_GPU="--gpus"
+WEBKEY=false
 SET_VERSION=""
 COMMAND="bash"
 WEB_API="./docker/run_web_api.sh"
@@ -150,6 +151,7 @@ MOUNT_GPU="${MOUNT_GPU} device=${GPU}"
 if [[ -n ${PORT} ]];then 
 	# COMMAND="python3 ${WEB_API} --host 0.0.0.0 --port ${port} --af ${framework}"
 	COMMAND="source ${WEB_API} -p ${PORT}"
+	WEBKEY=true
 fi
 
 # ---------------------------------------------------------
@@ -175,12 +177,22 @@ else
 	DLPRETRAINED="python3 pretrainedmodel/pretrained_download.py -all"
 	RUNCODE="-it"
 	BASHCODE="bash -c \"${DARKNET} && ${DLPRETRAINED} && ${COMMAND} \" "
-	# Running Database
-	echo -e "${YELLOW}"
-	echo "----- Running database -----"
-	echo -e "${NC}"
+	if [ "${WEBKEY}" = true ];then 
+        # Running webui
+        echo -e "${YELLOW}"
+        echo "----- Running WebUI -----"
+        echo -e "${NC}"
 
-	sudo ./webapi/pgdb/run_db.sh -p 6535 -s ivit_admin -d ivit -u ivit
+        sudo ./webui/run_web.sh -p ${PORT}
+        # Running Database
+        echo -e "${YELLOW}"
+		# Running Database
+		echo -e "${YELLOW}"
+		echo "----- Running database -----"
+		echo -e "${NC}"
+
+		sudo ./webapi/pgdb/run_db.sh -p 6535 -s ivit_admin -d ivit -u ivit
+	fi
 fi
 
 # ---------------------------------------------------------
