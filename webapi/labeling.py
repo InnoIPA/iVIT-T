@@ -131,6 +131,9 @@ def delete_class(uuid):
             shutil.rmtree(dir_path, ignore_errors=True)
         else:
             return error_msg(400, {}, "This class does not exist in the Project:[{}:{}]".format(prj_name, class_name), log=True) 
+    get_effect_img_nums_command = "select effect_img_nums from project where project_uuid='{}';".format(uuid)
+    effect_img_nums = execute_db(get_effect_img_nums_command,False)[0][0]
+    app.config["PROJECT_INFO"][uuid]["effect_img_nums"]=int(effect_img_nums)
     return success_msg(200, {}, "Success", "Delete class in Project:[{}:{}]".format(prj_name, class_name))
 
 @app_labeling.route('/<uuid>/rename_class', methods=['PUT'])
@@ -312,7 +315,7 @@ def update_bbox(uuid):
 
     if confirm:
         #change confirm status 
-        change_confirm_status_command = "update workspace set confirm='false' where project_uuid='{}'\
+        change_confirm_status_command = "update workspace set confirm='True' where project_uuid='{}'\
               and img_path='{}';".format(uuid,"/"+image_name)
         execute_db(change_confirm_status_command,True)
         
