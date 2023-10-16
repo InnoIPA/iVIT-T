@@ -236,6 +236,7 @@ if [ "${BACKRUN}" = false ];then
 
 	# docker stop ${CONTAINER_NAME}
 	# docker stop ${CONTAINER_NAME}-webui
+	docker stop ivit-t-website
 	docker stop ${CONTAINER_NAME}-postgres
 	# docker rm ${CONTAINER_NAME}-postgres
 fi
