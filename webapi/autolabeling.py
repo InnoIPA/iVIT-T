@@ -315,7 +315,10 @@ def autolabeling_infer(uuid):
     #parameter init
     if not MICRO_SERVICE.__contains__(uuid):
         return error_msg(400, {}, "project {} not load model yet.".format(uuid))
-    port=MICRO_SERVICE[uuid]["port"]
+    try:
+        port=MICRO_SERVICE[uuid]["port"]
+    except:
+        return error_msg(400, {}, "Do autolabeling error! No load Model!")
     auto_label_url = 'http://localhost:'+str(port)+'/upload_auto_label'
     payload ={}
     threshold=0.7
@@ -349,9 +352,10 @@ def autolabeling_infer(uuid):
     payload.update({'img_path':img_path})
 
     # payload2 = json.dumps(payload)
-
-    x = requests.post(auto_label_url,json=payload)
-
+    try: 
+        x = requests.post(auto_label_url,json=payload)
+    except:
+        return error_msg(400, {}, " File: {} , Do autolabeling error! ".format(img_name))
     if x.status_code == 200:
         # print("sucessfully fetched the data! data info = {} .".format(x.json()))
         
