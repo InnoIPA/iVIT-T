@@ -44,6 +44,12 @@ def upload(uuid):
             if file:
                 # Get file name
                 filename = filename_processing(file,False)
+
+                #check fileneme wether contain illegal_char
+                illegal_char=['+',' ','/','?','%','#','&','=']
+                for illegal in illegal_char:
+                    if illegal in filename:
+                        return error_msg(400, {}, "This filename is contain illegal char:[{}:{}]".format(filename, filename.split(".")[-1]), log=True)
                 # Save file
                 if type == "classification":
                     filename = add_class_filename(str(key), str(filename))
