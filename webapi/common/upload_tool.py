@@ -102,10 +102,11 @@ def same_name(dir_path:str, filename:str):
     return new_filename
 
 def save_file(file, dir_path:str, filename:str):
-    if os.path.isfile(dir_path+filename):
-        logging.warn("The file does exist:[{}/{}]".format(dir_path, filename))
-        return True, filename
+    
     if filename != "classes.txt":
+        if os.path.isfile(dir_path+filename):
+            logging.warn("The file does exist:[{}/{}]".format(dir_path, filename))
+            return True, filename
         filename = same_name(dir_path, filename)
         logging.warn("Change filename:[{}/{}]".format(dir_path, filename))
     # Same classes.txt problem
