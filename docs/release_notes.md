@@ -1,4 +1,13 @@
 # Release Notes
+## Release 1.2.1
+### Bug fix 
+- Auto labeling no work.
+- iVIT-T unable to shut down normally.
+- Image names can't contain special symbols.
+- Dataset in the wrong sort order.
+- Evaluate no work.
+- When finish upload trining data set,all class name are wrong.
+
 ## Release 1.2
 ### New Features/Highlights
 - Improve user experience on label.
