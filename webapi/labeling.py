@@ -269,23 +269,43 @@ def get_bbox(uuid):
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
         return error_msg(400, {}, "UUID:{} does not exist.".format(uuid), log=True)
     # Check key of front
-    if not "image_path" in request.get_json().keys():
-        return error_msg(400, {}, "KEY:image_path does not exist.", log=True)
+    if "image_path" in request.get_json().keys():
+        # return error_msg(400, {}, "KEY:image_path does not exist.", log=True)
     # Get project name
-    prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
-    # Get value of front 
-    image_path = request.get_json()['image_path']
-    img_path = "." + image_path
-    if exists(img_path):
-        bbox_info = yolo_txt_convert(uuid, img_path)
-        if "error" in bbox_info:
-            return error_msg(400, {}, bbox_info[1], log=True)
-        img_shape, box = bbox_info
-        return success_msg(200, {"img_shape":img_shape, "box_info":box}, "Success", 
-                                    "Get info of bbox:{}".format({"filename":os.path.split(image_path)[-1], "box_info":box, "img_shape":img_shape}))
-    else:
-        return error_msg(400, {}, "This image does not exist in the Project:[{}:{}]".format(prj_name, img_path), log=True)
+        prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
+        # Get value of front 
+        image_path = request.get_json()['image_path']
+        img_path = "." + image_path
 
+        if exists(img_path):
+            bbox_info = yolo_txt_convert(uuid, img_path)
+            if "error" in bbox_info:
+                return error_msg(400, {}, bbox_info[1], log=True)
+            img_shape, box = bbox_info
+            return success_msg(200, {"img_shape":img_shape, "box_info":box}, "Success", 
+                                        "Get info of bbox:{}".format({"filename":os.path.split(image_path)[-1], "box_info":box, "img_shape":img_shape}))
+        else:
+            return error_msg(400, {}, "This image does not exist in the Project:[{}:{}]".format(prj_name, img_path), log=True)
+    else:
+        try:
+            prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
+            project_path= os.path.join(".","project",prj_name,"workspace") 
+            _result={}
+            error_img=""
+            for file in os.listdir(project_path):
+                if file.split(".")[1]!="txt":
+                    error_img=file
+                    img_path=os.path.join(project_path,file)
+                    bbox_info = yolo_txt_convert(uuid, img_path)
+                    if "error" in bbox_info:
+                        return error_msg(400, {}, bbox_info[1], log=True)
+                    img_shape, box = bbox_info
+                    _result.update({file:{"img_shape":img_shape, "box_info":box}})
+            
+            return success_msg(200, _result, "Success", 
+                                        "Get all bbox info in project:{},project uuid:{}".format(prj_name,uuid))
+        except Exception as e:
+            return error_msg(400, {}, "This image label is error in the Project:[{}:{}]".format(prj_name, error_img), log=True)
 @app_labeling.route('/<uuid>/update_bbox', methods=['POST']) 
 @swag_from("{}/{}".format(YAML_PATH, "update_bbox.yml")) 
 def update_bbox(uuid):
