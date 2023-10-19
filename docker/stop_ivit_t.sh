@@ -6,4 +6,4 @@
 
 docker stop ivit-t
 docker stop ivit-t-postgres
-docker stop ivit-t-webui
+docker stop ivit-t-website
