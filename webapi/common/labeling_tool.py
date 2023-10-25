@@ -178,19 +178,23 @@ def save_bbox(img_path:str, box_info:list):
 
     max_class_id=len(text)
 
-    for val in box_info:
+    for id,val in enumerate(box_info):
         bbox = val["bbox"]
+
         try:
+            #if wrong is int(val["class_id"]) error example int(val["class_id"])==" "
             _test_class_id = int(val["class_id"])
         except:
+            box_info.pop(id)
             continue
         if _test_class_id>=max_class_id:
+            box_info.pop(id)
             continue
         # convert to yolo
         x, y, w, h = bbox2yolo(frame, bbox)
         write_txt(txt_path, "{} {:.6f} {:.6f} {:.6f} {:.6f}".format(val["class_id"], x, y, w, h))
         cls_idx.append(int(val["class_id"]))
-    return cls_idx
+    return cls_idx , box_info
 
 def obj_savebbox_db(filename:str, cls_idx:list, uuid:str):
     annotate = True
