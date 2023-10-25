@@ -158,13 +158,34 @@ def save_bbox(img_path:str, box_info:list):
     frame = cv2.imread(img_path)
 
     txt_path = os.path.splitext(img_path)[0] + ".txt"
+
     if exists(txt_path):
         # Remove orignal file
         os.remove(txt_path)
     # Create new file
+
+
+    # get all label
+    img_path_split=img_path.split('/')
+    img_path_split.pop()
+    path_to_workspace=os.path.join(*img_path_split)
+    classes_path=os.path.join(path_to_workspace,"classes.txt")
+    f = open(classes_path)
+    text = []
+    for line in f:
+        text.append(line)
+    f.close()
+
+    max_class_id=len(text)
+
     for val in box_info:
         bbox = val["bbox"]
-
+        try:
+            _test_class_id = int(val["class_id"])
+        except:
+            continue
+        if _test_class_id>=max_class_id:
+            continue
         # convert to yolo
         x, y, w, h = bbox2yolo(frame, bbox)
         write_txt(txt_path, "{} {:.6f} {:.6f} {:.6f} {:.6f}".format(val["class_id"], x, y, w, h))
