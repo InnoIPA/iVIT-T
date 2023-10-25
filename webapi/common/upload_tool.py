@@ -104,9 +104,9 @@ def same_name(dir_path:str, filename:str):
 def save_file(file, dir_path:str, filename:str):
     
     if filename != "classes.txt":
-        if os.path.isfile(dir_path+filename):
-            logging.warn("The file does exist:[{}/{}]".format(dir_path, filename))
-            return True, filename
+        # if os.path.isfile(dir_path+filename):
+        #     logging.warn("The file does exist:[{}/{}]".format(dir_path, filename))
+        #     return True, filename
         filename = same_name(dir_path, filename)
         logging.warn("Change filename:[{}/{}]".format(dir_path, filename))
     # Same classes.txt problem
@@ -121,15 +121,32 @@ def compare_classes(dir_path:str, uuid:str):
     if exists(os.path.join(dir_path, "classes.txt")) and exists(os.path.join(dir_path, "classes_temp.txt")):
         class_text = get_classes_list(os.path.join(dir_path, "classes.txt"))
         class_temp_text = get_classes_list(os.path.join(dir_path, "classes_temp.txt"))
-        if len(class_temp_text) >= len(class_text):
+        if len(class_temp_text) < len(class_text):
+            os.remove(os.path.join(dir_path, "classes.txt"))
+            os.rename(os.path.join(dir_path, "classes_temp.txt"), os.path.join(dir_path, "classes.txt"))
+            
+            for unknow_len in range(len(class_text)-len(class_temp_text)):
+                if unknow_len==0:
+                    _write="unknow"
+                else:
+                    _write="unknow"+str(unknow_len)
+                class_temp_text.append(_write)
+            f = open(os.path.join(dir_path, "classes.txt"), 'w')
+            for i in class_temp_text:
+                f.writelines(i+'\n')
+            f.close()
+            # print(class_temp_text)
+            # Update color id
+            error_db = add_color_id_db_collector(class_temp_text, uuid, "workspace", del_key=True)
+            if error_db:
+                return error_db
+        else:
             os.remove(os.path.join(dir_path, "classes.txt"))
             os.rename(os.path.join(dir_path, "classes_temp.txt"), os.path.join(dir_path, "classes.txt"))
             # Update color id
             error_db = add_color_id_db_collector(class_temp_text, uuid, "workspace", del_key=True)
             if error_db:
                 return error_db
-        else:
-            os.remove(os.path.join(dir_path, "classes_temp.txt"))
 
 class Upload_DB():
     def __init__(self, uuid:str, prj_name:str, type:str, label:str, dir_path:str, filename:str):

@@ -38,8 +38,16 @@ def add_class(uuid):
     type = app.config["PROJECT_INFO"][uuid]['type']
     # Get value of front
     class_name = request.get_json()['class_name']
+    #check fileneme wether contain illegal_char
+    illegal_char=['+',' ','/','?','%','#','&','=']
+    for illegal in illegal_char:
+        if illegal in class_name:
+            return error_msg(400, {}, "This class_name is contain illegal char:[{}:{}]".format(class_name,illegal ), log=True)
+
     # Regular expression
     class_name = regular_expression(class_name)
+
+    
     # Get color
     try:
         color_id = int(request.get_json()['color_id'])
@@ -344,7 +352,8 @@ def update_bbox(uuid):
     if exists(img_path):
         # Save in txt
         cls_idx = save_bbox(img_path, box_info)
-        
+        if len(cls_idx)==0:
+            return error_msg(400, {}, "wrong format of label!")  
         if len(box_info)!=0:
             sort_favorite_label(uuid,cls_idx[-1])
 

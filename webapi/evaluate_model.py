@@ -79,6 +79,9 @@ def evaluate(uuid):
         return error_msg(400, {}, "KEY:iteration does not exist.", log=True)
     if not "threshold" in request.get_json().keys():
         return error_msg(400, {}, "KEY:threshold does not exist.", log=True)    
+    
+    if app.config["TRAINING_TASK"].__contains__(uuid) and app.config["TRAINING_TASK"][uuid]['status']:
+        return error_msg(500, {}, "Project is training!", log=True)
     # Get project name
     prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
     # Get type
