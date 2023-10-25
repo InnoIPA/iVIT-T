@@ -125,10 +125,16 @@ def create_training_iter(uuid):
         shutil.rmtree('{}/{}/{}'.format(ROOT,prj_name, iter_name), ignore_errors=True)
         return error_msg(400, {}, "Class is not over 15 images:[{}]".format(msg), log=True)
     # -----------------------------------------Data-------------------------------------------
-    # Update mapping iteration
-    chk.update_mapping_name(prj_path, uuid)
-    # Split dataset
-    pdata = Prepare_data(uuid, prj_name, model_type, iter_name)
+    try:
+        # Update mapping iteration
+        chk.update_mapping_name(prj_path, uuid)
+        # Split dataset
+        pdata = Prepare_data(uuid, prj_name, model_type, iter_name)
+    except Exception as e:
+        del app.config["TRAINING_TASK"][uuid]
+        shutil.rmtree('{}/{}/{}'.format(ROOT,prj_name, iter_name), ignore_errors=True)
+        return error_msg(400, {}, "Prepare data error! {}".format(e), log=True)
+    
     # Append data to db
     error_db = pdata.append_database()
     if error_db:
