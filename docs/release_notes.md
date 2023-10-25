@@ -1,4 +1,12 @@
 # Release Notes
+## Release 1.2.2
+### Bug fix 
+- iVIT-T can’t do Train and evaluate at the same time.
+- Write annotation into txt must have class_id.
+- Class name can't contain illegal_char.
+- If create iteration error, we will delete the iteration.
+- Optimize upload.
+- Website optimization.
 ## Release 1.2.1
 ### Bug fix 
 - Auto labeling no work.
