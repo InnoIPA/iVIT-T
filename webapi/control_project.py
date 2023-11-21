@@ -225,8 +225,6 @@ def export():
         "process":export_process
                         }}) 
     
-    
-    
     return success_msg(200,{}, "Success")
 
 @app_cl_pj.route('/stop_export', methods=['POST']) 
