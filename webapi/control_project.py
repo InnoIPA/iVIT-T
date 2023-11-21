@@ -1,32 +1,29 @@
 from flask import Blueprint, request, jsonify
 from flasgger import swag_from
-import logging, os, shutil, copy , time ,json ,sys ,zipfile
+import logging, os, shutil, copy , time ,json ,sys ,zipfile , threading , hashlib,uuid
 from datetime import datetime
 from webapi import app
 from webapi import socketio
 from .common.utils import exists, success_msg, error_msg, read_json, regular_expression, special_words
-from .common.config import PLATFORM_CFG, ROOT, YAML_MAIN_PATH ,SOCKET_LISTENERS
+from .common.config import PLATFORM_CFG, ROOT, YAML_MAIN_PATH ,SOCKET_LISTENERS ,EXPORT_JOSN ,IMPORT_JOSN
 from .common.init_tool import get_project_info, fill_in_prjdict
 from .common.database import PJ_INFO_DB,INIT_DATA,execute_db,create_table_cmd, fill_in_db, delete_data_table_cmd, update_data_table_cmd ,insert_table_cmd,insert_data_from_json ,get_project_info_cmd
 from .common.inspection import Check, create_pj_dir, change_docs_prjname
 from .common.upload_tool import create_class_dir, filename_processing, save_file, Upload_DB, compare_classes, add_class_filename,remove_file
+from .common.export_project_tool import Export_Project,Import_Project,Process_listener ,send_Completeness
 from webapi.common import update_version_function
+from multiprocessing import Process,Queue
 chk = Check()
+export_listener = Process_listener(EXPORT_JOSN,1)
+export_listener.start()
+
+import_listener = Process_listener(IMPORT_JOSN,1)
+import_listener.start()
+
 app_cl_pj = Blueprint( 'control_project', __name__)
 # Define API Docs path and Blue Print
 YAML_PATH       = YAML_MAIN_PATH + "/control_project"
 
-def send_Completeness(step:int,total:int,uuid:str):
-    """
-    This function can use socket send Completeness.
-
-    Args:
-        step (int): step now.
-        total (int): total steps need to do.
-        uuid (str): project uuid.
-    """
-    _log = "{}%".format(str(int(round((1/4)*100, 0))))
-    socketio.emit(SOCKET_LISTENERS['expoet_log'], json.dumps(_log), namespace = '/{}/log'.format(uuid))
 
 @app_cl_pj.route('/init_project', methods=['GET']) 
 @swag_from("{}/{}".format(YAML_PATH, "init_project.yml"))
@@ -41,6 +38,7 @@ def init_project():
     if error_db:
         return error_msg(400, {}, str(error_db[1]))
     logging.info("Project:{}".format(app.config['UUID_LIST']))
+    
     return success_msg(200, app.config["PROJECT_INFO"], "Success")
 
 @app_cl_pj.route('/get_all_project', methods=['GET']) 
@@ -184,342 +182,199 @@ def autolabel_status_post(uuid):
     app.config["PROJECT_INFO"][uuid]["on_autolabeling"] = not app.config["PROJECT_INFO"][uuid]["on_autolabeling"]
     return success_msg(200, {}, "Success", "Change project:{},autolabeling status:{} ".format(uuid, app.config["PROJECT_INFO"][uuid]["on_autolabeling"]))
 
+# def cmd(uuid,package_iteration):
+#     p = Process(target=export_project, args=(uuid,package_iteration, ))
+#     p.start()
+
+def func(x): 
+    while True: 
+        for i in x:
+            print(i,'\n') 
+            time.sleep(1)
+
 @app_cl_pj.route('/export', methods=['POST']) 
 @swag_from("{}/{}".format(YAML_PATH, "export.yml"))
-def export_project():
+def export():
     
+    data={"data":{}}
+    send_Completeness(0,3,"Waiting",data,"export")
+    if not "uuid" in request.get_json().keys():
+        return error_msg(500, {}, "KEY:uuid does not exist.")
     uuid = request.get_json()['uuid']
-    package_iteration = request.get_json()['iteration']
-    Check_package_iteration =[]
-    error_inter=[]
+    change_workspace = request.get_json()['change_workspace']
+    send_Completeness(1,3,"Verifying",data,"export")
+    
+    # print("OUT: ", id(socketio))
+
     #-------------------------Step1: Check uuid is/isnot in app.config["PROJECT_INFO"]----------------------
     if not ( uuid in app.config["PROJECT_INFO"].keys()):
-        return error_msg(400, {}, "UUID:{} does not exist.".format(uuid))
-
-    #-------------------------Step2: get info from db---------------------------------
-
-    project_name = get_project_info_cmd("project_name","project","project_uuid = '{}'".format(uuid))[0][0]
-    project_table = get_project_info_cmd("*","project" ,"project_uuid = '{}'".format(uuid))
-    workspace_table = get_project_info_cmd("*","workspace" ,"project_uuid = '{}'".format(uuid))
-    # color_id_table = get_project_info_cmd("*","color_id" ,"project_uuid = '{}'".format(uuid))
-    # unlabeled_data_table = get_project_info_cmd("unlabeled_data" , uuid)
-    model_table  = []
-    color_id_table = []
-    iteration_table = {}
-
-    #get iteration_table
+        return error_msg(500, {}, "UUID:{} does not exist.".format(uuid))
     
-    _temp_color_result=get_project_info_cmd("*","color_id" ,"project_uuid = '{}' and iteration ='{}'".format(uuid,"workspace"))
-    if len(_temp_color_result)!=0:
-        color_id_table.append(_temp_color_result)
-
-    for id,iteration in enumerate(package_iteration):
-        front_iter="iteration"+str(iteration)
-        
-        back_iter=chk.mapping_iteration(uuid, project_name, front_iter, front=True)
-
-        if isinstance(back_iter,list):
-            error_inter.append(front_iter)
-            continue# example:['error', 'The itertaion does not exist in the Project:[dog_cat_classification:iteration21]'] 
-
+    if EXPORT_JOSN.__contains__(uuid):
+        return error_msg(500, {}, "UUID:{} do export now!".format(uuid))
+    package_iteration = request.get_json()['iteration']
+    # export_project(uuid,package_iteration)
+    communicate=Queue()
+    export_process = Export_Project(uuid,package_iteration,communicate ,change_workspace)
+    export_process.start()
+    # export_process.ss()
     
-        
-
-        _temp_model_result=get_project_info_cmd("*","model" ,"project_uuid = '{}' and iteration ='{}'".format(uuid,back_iter.split("iteration")[1]))
-        _temp_color_result=get_project_info_cmd("*","color_id" ,"project_uuid = '{}' and iteration ='{}'".format(uuid,back_iter))
-        if len(_temp_model_result)==0 or len(_temp_color_result)==0:
-            error_inter.append(front_iter)
-            continue #example:[]
-
-        Check_package_iteration.append(back_iter)
-
-        model_table.append(_temp_model_result)
-        color_id_table.append(_temp_color_result)
-        iteration_table.update({front_iter:get_project_info_cmd("*",front_iter ,"project_uuid = '{}'".format(uuid)) })
-
-    send_Completeness(1,4,uuid)
-    #-------------------------------Step3: packeged data from db---------------------------------------------
-    modify_app_config=app.config["PROJECT_INFO"][uuid].copy()   
-    modify_app_config["iteration"]=len(Check_package_iteration)
-    info = {
-        "project":project_table,
-        "workspace":workspace_table,
-        "color_id":color_id_table,
-        "model":model_table,
-        "iteration":iteration_table,
-        "config_project_info":modify_app_config,
-        "config_uuid":app.config["UUID_LIST"][uuid],
-        "iter_map":Check_package_iteration
-    }
+    EXPORT_JOSN.update({
+        uuid:{
+        "create_time":time.time(),
+        "process":export_process
+                        }}) 
     
-    #Step4: packeged info to json.
-    date_time = datetime.fromtimestamp(time.time())
-    str_date_time = date_time.strftime("%Y%m%d")
-    file_name_formatter = lambda name, ext: f"{project_name}_{str_date_time}.{ext}"
-    cfg_name = file_name_formatter(project_name, 'json')
-    zip_name = file_name_formatter(project_name, 'zip')
-    exp_dir = "./project/export"
-    if not os.path.exists(exp_dir):
-        os.mkdir(exp_dir)
-        os.chmod(exp_dir, 0o777)
-    cfg_path = os.path.join(exp_dir, cfg_name)
-    zip_path = os.path.join(exp_dir, zip_name)
-    zip_files = []
-        # Write a Configuration
-    with open(cfg_path, "w") as f:
-        json.dump(info, f, indent=4)
-    zip_files.append(cfg_path)
-
-    send_Completeness(2,4,uuid)
-
-    #find all file in project
-    Check_package_iteration.append("workspace")
-    root_path= "./project/"+project_name
-    zip_files.append(os.path.join(root_path,"cover.jpg"))
-    for iteration in os.listdir(root_path):
-        if not iteration in Check_package_iteration: 
-            # print("jump iter:",iteration,'\n','\n','\n')
-            continue
-        paths = os.path.join(root_path,iteration)
-        file_list = os.walk(paths)
-        for path , dir_lst ,file_lst in file_list:
-            for dir in dir_lst:
-                zip_files.append(os.path.join(path,dir))
-            for file_name in file_lst:
-                zip_files.append(os.path.join(path,file_name))
-
-    send_Completeness(3,4,uuid)
-    # paths = os.walk(r"./project/"+project_name)
-    # for path , dir_lst ,file_lst in paths:
-    #     for file_name in file_lst:
-    #         zip_files.append(os.path.join(path,file_name))
-    #Step4: Compress 
-    logging.info("Compress Project: {}".format(uuid))
-    with zipfile.ZipFile(zip_path, mode='w') as zf:
-        for _file in zip_files:
-            logging.debug('\t- Compress file: {}'.format(_file))
-            zf.write(_file)
-    os.chmod(zip_path, 0o777)
-        # Get Size
-    send_Completeness(4,4,uuid)
-    os.remove(cfg_path)
-    zip_size = sys.getsizeof(zip_path)
-    return_info = {
-        "uuid": uuid,
-        "project_name": project_name,
-        "cfg_name": cfg_name,
-        "zip_name": zip_name,
-        "zip_size": zip_size,
-        "error_packege":error_inter
-    }
     
-    return success_msg(200,return_info, "Success")
+    
+    return success_msg(200,"", "Success")
 
+@app_cl_pj.route('/stop_export', methods=['POST']) 
+@swag_from("{}/{}".format(YAML_PATH, "stop_export.yml"))
+def stop_export():
+    if not "uuid" in request.get_json().keys():
+        return error_msg(400, {}, " Export uuid not exist!")
+    uuid = request.get_json()['uuid']
+ 
+    try:
+        time.sleep(2)
+        EXPORT_JOSN[uuid]["process"].terminate()
+        EXPORT_JOSN[uuid]["process"].join() 
+        del EXPORT_JOSN[uuid]
+        return success_msg(200,{}, "Success")
+    except Exception as e :
+        return error_msg(400, {}, "Export project release error! {}".format(e))
      
+def project_rename_handle(project_name:str,sourse:str,destination:str):
+    """
+    For project import , When project rename , change project name.
+    EXAMPLE: sample -> sample(1)
+    Args:
+        project_name (str): project name.
+    Returns:
+        modify_project_name (str):Return project name after modify.
+    """
+    ori_project_name=project_name
+    project_name=project_name+"_1"
+    while(True):
+        destination_folder = os.path.join(destination,project_name) 
+        if not os.path.exists(destination_folder):
+            return ori_project_name,project_name , destination_folder , os.path.join(sourse,project_name)
+        project_name_iteration = int(project_name.split('_')[-1])
+        project_name_iteration=project_name_iteration+1
+        # project_name_no_iteration=""
+        # project_name_no_iteration=ori_project_name+str(project_name_iteration)
+        # for id,val in enumerate(project_name.split(')')):
+        #     if id!= len(project_name.split(')'))-1 and id!= len(project_name.split(')'))-2:
+        #         project_name_no_iteration=project_name_no_iteration+val+")"
+            
+                
+            
+        project_name=ori_project_name+"_"+str(project_name_iteration)
+        
+        
+    
+
 
 @app_cl_pj.route('/import', methods=['POST']) 
 @swag_from("{}/{}".format(YAML_PATH, "import.yml"))
-def import_project():
-    
+def import_pj():
+    data={"data":{}}
+    send_Completeness(0,3,"Waiting",data,"import")
+    import_uuid = str(uuid.uuid4())[:8]
     # parameter
-    status = True #work status 
-
-    #Step1: Check the file is not empty.
+    deal_file={}
+    order_id=0
+    rename=False
+    ori_project_name=""
+    #Step1: Get all upload zip file
+    
+    send_Completeness(1,3,"Verifying",data,"import")
     for key in request.files.keys():
         files = request.files.getlist(key)
-        if not files:
-            return error_msg(400, {}, "Upload files is empty", log=True)
-        
+
+        #step2 : create ./project/temp/ to deal upload zip file
         temp_dir = "./project/temp/"
         if not os.path.exists(temp_dir):
             os.mkdir(temp_dir)
-
-        #Step2: del all file
+        
+        #step3: save all upload zip file into ./project/temp/
         for file in files:
-
             # Get file name 
             # example filename:dog_cat_classification_20230821 ,filename_without_Extension : dog_cat_classification
             filename ,filename_without_Extension = filename_processing(file,True)
-
-            
             source_folder = os.path.join(temp_dir,filename_without_Extension)
-
             destination_folder = os.path.join("./project/",filename_without_Extension) 
 
-            # judge project whether exist or not
+            #step4 : if project is exist in ivit-t create project in ./project
             if not os.path.exists(destination_folder):
                 os.mkdir(destination_folder)
             else:
-                pass
-                # return error_msg(400, {}, "Project rename error!")
-            
+                rename=True
+                ori_project_name,filename_without_Extension,destination_folder,source_folder = project_rename_handle(filename_without_Extension,temp_dir,"./project/")
+                
+                os.mkdir(destination_folder)
+                
             if not os.path.exists(source_folder):
                 os.mkdir(source_folder)
-                # Save zip
-                status, filename = save_file(file, source_folder, filename)
-                # Remove file size is 0 , handle save error
-                if os.stat(os.path.join(source_folder,filename)).st_size == 0:
-                    os.remove(os.path.join(source_folder,filename))
-                    shutil.rmtree(temp_dir) 
-                    shutil.rmtree(destination_folder)
-                    return error_msg(400, {}, "The size of file is 0.:[{}]".format(filename), log=True)
-                if status:
-                #unzip file
-                    with zipfile.ZipFile(os.path.join(source_folder,filename), mode='r') as zf:
-                        zf.extractall(source_folder)
-                    
-            if status:                
-                #get project info from json .
-                json_filename=os.path.splitext(filename)[0]+".json"
-                json_path = os.path.join(source_folder,"project/export/",json_filename)
-                db_info = read_json(json_path)
-                iter_map = db_info['iter_map']
-                
-                #refact iter_map to dict
-                _temp_iter_map={}
-                for id,iter in enumerate(iter_map):
-                    _temp_iter_map.update({iter:id+1})
-
-                #change iteration name (sort)
-                root_path= os.path.join(source_folder,"project",filename_without_Extension)
-                folder_list = os.listdir(root_path)
-                folder_list.sort()
-                for iteration in folder_list:
-                    try:
-                        if iteration in iter_map:
-
-                            new_iteration="iteration"+str(_temp_iter_map[iteration]) 
-                            if db_info['config_project_info']['type'] == "object_detection":
-                                #modify iteration in Training.data
-                                _temp={}
-                                for id,line in enumerate(open(os.path.join(root_path,iteration,"Training.data"))):
-                                    line=line.splitlines()[0].split("/")
-                                    print(line)
-                                    _temp_item = ""
-                                    for idx,item in enumerate(line):
-                                        if idx==3:
-                                            item=new_iteration
-                                        _temp_item=_temp_item+item
-                                        
-                                        if idx != len(line)-1:
-                                            _temp_item=_temp_item+"/"
-                                    _temp.update({id:_temp_item})
-
-                                with open(os.path.join(root_path,iteration,"Training.data"), "w") as f:
-                                    for id,val in _temp.items():
-                                        f.write(val+"\n")
-                                root_path_json= os.path.join(root_path,iteration,"yolo"+".json")
-                            else:
-                                root_path_json= os.path.join(root_path,iteration,str(db_info['config_project_info']['type'])+".json")
-
-                            model_json=read_json(root_path_json)
-
-                            #change model json(model_path...) in iteration
-                            train_dataset_path_item=model_json['train_config']['train_dataset_path'].split('/') 
-                            new_train_dataset_path = os.path.join(train_dataset_path_item[0],train_dataset_path_item[1],train_dataset_path_item[2],\
-                                                                    new_iteration,train_dataset_path_item[4],train_dataset_path_item[5])
-                            model_json['train_config'].update({'train_dataset_path':new_train_dataset_path})
-                            # example:['.', 'project', 'dog_cat_classification', 'iteration1', 'dataset', 'train']
-
-                            val_dataset_path_item=model_json['train_config']['val_dataset_path'].split('/') 
-                            new_val_dataset =os.path.join(val_dataset_path_item[0],val_dataset_path_item[1],val_dataset_path_item[2],\
-                                                                    new_iteration,val_dataset_path_item[4],val_dataset_path_item[5])
-                            model_json['train_config'].update({'val_dataset_path':new_val_dataset})
-
-                            test_dataset_path_item=model_json['train_config']['test_dataset_path'].split('/') 
-                            new_test_dataset_path =os.path.join(test_dataset_path_item[0],test_dataset_path_item[1],test_dataset_path_item[2],\
-                                                                    new_iteration,test_dataset_path_item[4],test_dataset_path_item[5])
-                            model_json['train_config'].update({'test_dataset_path':new_test_dataset_path})
-
-                            label_path_item=model_json['train_config']['label_path'].split('/') 
-                            new_label_path =os.path.join(label_path_item[0],label_path_item[1],label_path_item[2],\
-                                                                    new_iteration,label_path_item[4],label_path_item[5])
-                            model_json['train_config'].update({'label_path':new_label_path})
-
-                            save_model_path_item=model_json['train_config']['save_model_path'].split('/') 
-                            new_save_model_path =os.path.join(save_model_path_item[0],save_model_path_item[1],save_model_path_item[2],\
-                                                                    new_iteration,save_model_path_item[4])
-                            model_json['train_config'].update({'save_model_path':new_save_model_path})
-
-                            if model_json['eval_config']['eval_dir_path']!="":
-                                eval_dir_path_item=model_json['eval_config']['eval_dir_path'].split('/') 
-                                new_eval_dir_path=os.path.join(eval_dir_path_item[0],eval_dir_path_item[1],eval_dir_path_item[2],\
-                                                                    new_iteration,eval_dir_path_item[4],eval_dir_path_item[5])
-                                model_json['eval_config'].update({'eval_dir_path':new_eval_dir_path})
-
-                            with open(root_path_json, "w") as jsonFile:
-                                json.dump(model_json, jsonFile)
-                            os.chmod(root_path_json, 0o777)
-                            os.rename(os.path.join(root_path,iteration),os.path.join(root_path,new_iteration))
-                    except Exception as e:
-                        logging.error("Change iteration name in file error: {}".format(e))
-                        os.remove(os.path.join(source_folder,filename))
-                        shutil.rmtree(temp_dir) 
-                        shutil.rmtree(destination_folder)
-                        return error_msg(400, {}, "Change iteration name in file error!")
-                
-                #insert to database .
-                project=db_info['project']
-                uuid = project[0][0]
-                status = insert_data_from_json("project",project,_temp_iter_map)
+            #step5 : Save zip
+                status, filename = save_file(file, temp_dir, filename)
+                deal_file.update({order_id:{
+                                    "filename":filename,
+                                    "filename_without_Extension":filename_without_Extension,
+                                    "ori_project_name":ori_project_name,
+                                    "source_folder":source_folder,
+                                    "destination_folder":destination_folder,
+                                    "temp_dir":"./project/temp/",
+                                    "rename":rename
+                }})
+                order_id=order_id+1
     
-                if status:
-                    os.remove(os.path.join(source_folder,filename))
-                    shutil.rmtree(temp_dir) 
-                    shutil.rmtree(destination_folder)
-                    delete_data_table_cmd("project","project_uuid='"+uuid+"'")
-                    return error_msg(400, {}, "Insert to DB(project) error!")
-                
-                workspace=db_info['workspace']
-                status = insert_data_from_json("workspace",workspace,_temp_iter_map)
-                if status:
-                    os.remove(os.path.join(source_folder,filename))
-                    shutil.rmtree(temp_dir) 
-                    shutil.rmtree(destination_folder) 
-                    delete_data_table_cmd("project","project_uuid='"+uuid+"'")
-                    return error_msg(400, {}, "Insert to DB(workspace) error!")
-                
-                color_id=db_info['color_id']
-                status = insert_data_from_json("color_id",color_id,_temp_iter_map)
-                if status:
-                    os.remove(os.path.join(source_folder,filename))
-                    shutil.rmtree(temp_dir) 
-                    shutil.rmtree(destination_folder)   
-                    delete_data_table_cmd("project","project_uuid='"+uuid+"'")
-                    return error_msg(400, {}, "Insert to DB(color_id) error!")
-                
-                model=db_info['model']
-                status = insert_data_from_json("model",model,_temp_iter_map)
-                if status:
-                    os.remove(os.path.join(source_folder,filename))
-                    shutil.rmtree(temp_dir) 
-                    shutil.rmtree(destination_folder)
-                    delete_data_table_cmd("project","project_uuid='"+uuid+"'")
-                    return error_msg(400, {}, "Insert to DB(model) error!")
-                
-                iteration=db_info['iteration']
-                for id , val in iteration.items():
-                    command = create_table_cmd("iteration"+str(_temp_iter_map[id]), INIT_DATA["iteration"])
-                    error_db = execute_db(command, True)
-                
-                    logging.warn("Created a table in the database:[{}]".format("iteration"+str(_temp_iter_map[id])))
+    # print(deal_file)
+    # print(rename)
+    # print(ss)
+    # return error_msg(400, {}, "Project rename error!")
+    communicate=Queue()
+    import_process = Import_Project(import_uuid,deal_file,communicate)
+    # Start thread
+    # import_process.ss()
+    import_process.start()
+    IMPORT_JOSN.update({
+        import_uuid:{
+        "create_time":time.time(),
+        "process":import_process
+                        }})      
 
-                    status = insert_data_from_json("iteration"+str(_temp_iter_map[id]),val,_temp_iter_map)
-                    if status:
-                        os.remove(os.path.join(source_folder,filename))
-                        shutil.rmtree(temp_dir) 
-                        shutil.rmtree(destination_folder)
-                        delete_data_table_cmd("project","project_uuid='"+uuid+"'")
-                        return error_msg(400, {}, "Insert to DB({}) error!".format(id))
-                    
+    return success_msg(200,{"import_uuid":import_uuid}, "Success")
 
-                #move project from /temp ro /project
-                remove_file(os.path.join(source_folder,"project",filename_without_Extension),destination_folder)
+@app_cl_pj.route('/stop_import', methods=['POST']) 
+@swag_from("{}/{}".format(YAML_PATH, "stop_import.yml"))
+def stop_import():
+    if not "import_uuid" in request.get_json().keys():
+        return error_msg(400, {}, " import_uuid not exist!")
+    import_uuid = request.get_json()['import_uuid']
+    try:
+        # IMPORT_JOSN[import_uuid]["thread"].setFlag(False) 
+        time.sleep(2)
+        IMPORT_JOSN[uuid]["process"].terminate()
+        IMPORT_JOSN[uuid]["process"].join() 
+        del IMPORT_JOSN[import_uuid]
+        return success_msg(200,{}, "Success")
+    except:
+        return error_msg(400, {}, "Import project release error!!")
 
+@app_cl_pj.route('/get_export_process', methods=['GET']) 
+@swag_from("{}/{}".format(YAML_PATH, "get_export_process.yml"))
+def get_export_process():
+    _temp=[]
+    for uuid , val in EXPORT_JOSN.items():
+        _temp.append(uuid)
+    return success_msg(200,{"process":_temp}, "Success")
 
-                update_version_function()
-
-            shutil.rmtree(temp_dir) 
-                
-
-    return success_msg(200,{}, "Success")
+@app_cl_pj.route('/get_import_process', methods=['GET']) 
+@swag_from("{}/{}".format(YAML_PATH, "get_import_process.yml"))
+def get_import_process():
+    _temp=[]
+    for uuid , val in IMPORT_JOSN.items():
+        _temp.append(uuid)
+    return success_msg(200,{"process":_temp}, "Success")
