@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify,send_from_directory
 from flasgger import swag_from
 import logging, os, shutil, copy , time ,json ,sys ,zipfile , threading , hashlib,uuid
 from datetime import datetime
@@ -376,3 +376,8 @@ def get_import_process():
     for uuid , val in IMPORT_JOSN.items():
         _temp.append(uuid)
     return success_msg(200,{"process":_temp}, "Success")
+
+@app_cl_pj.route('/download/<filename>', methods=['GET'])
+# @swag_from("{}/{}".format(YAML_PATH, "download.yml"))
+def download_file(filename):
+    return send_from_directory(directory='/workspace/project/export/', path=filename, as_attachment=True)
