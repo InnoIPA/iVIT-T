@@ -426,7 +426,10 @@ def favorite_label(uuid):
     prj_name = get_project_info_cmd("project_name","project","project_uuid='{}'".format(uuid))[0][0]
     class_txt=os.path.join("./project",prj_name,"workspace","classes.txt")
     color_info_db = get_all_color_info_db(uuid,"workspace")
-    class_name = get_classes_list(class_txt)
+    if os.path.isfile(class_txt):
+        class_name = get_classes_list(class_txt)
+    else:
+        return error_msg(400, {}, "This project {} , not label yet!".format(uuid))
     try:
         favorite_label = Get_info_cmd("favorite_label","project","project_uuid='{}'".format(uuid))[0][0]
     except Exception as e:
@@ -438,16 +441,17 @@ def favorite_label(uuid):
         favorite_label=[]
     _temp_json={}
     #refact
-    for idx in range(len(favorite_label)):
-        label_id=favorite_label[len(favorite_label)-(idx+1)]
+    for idx,val in enumerate(favorite_label):
+        
+        # print("val:{} , favorite_label:{} \n".format(val,favorite_label))
         # print("class_name:{} \n".format(class_name))
         # print("color_info_db:{} \n".format(color_info_db))
-        # print(label_id)
+        
         _temp_json.update({
             (idx+1):{
-                "class_id":label_id,
-                "class_name":class_name[label_id],
-                "class_color":color_info_db[label_id][2]
+                "class_id":val,
+                "class_name":class_name[val],
+                "class_color":color_info_db[val][2]
             }
 
         })
