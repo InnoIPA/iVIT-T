@@ -351,8 +351,9 @@ def update_bbox(uuid):
     img_path = ROOT + '/' + prj_name + "/workspace/" + image_name
     if exists(img_path):
         # Save in txt
-        cls_idx,box_info = save_bbox(img_path, box_info)
-        
+        cls_idx = save_bbox(img_path, box_info)
+        if len(cls_idx)==0:
+            return error_msg(400, {}, "wrong format of label!")  
         if len(box_info)!=0:
             sort_favorite_label(uuid,cls_idx[-1])
 
