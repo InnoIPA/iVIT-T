@@ -386,6 +386,17 @@ def del_class_db(uuid:str, type:str, prj_name:str, orignal_cls:list, class_name:
         
     if idx in favorite_label:
         favorite_label.remove(idx)
+        _temp_favorite_label = copy.deepcopy(favorite_label)
+        # print("pre",_temp_favorite_label,'\n')
+        for i in range(len(favorite_label)-1,-1,-1):
+            
+            for id,val in enumerate(favorite_label):
+                if val==max(_temp_favorite_label):
+                    favorite_label[id]=i
+                    _temp_favorite_label.remove(max(_temp_favorite_label))
+                    break
+            # print("last",_temp_favorite_label)
+            
         #insert db
         values = "favorite_label='{}'".format(favorite_label)
         select = "project_uuid='{}'".format(uuid)
