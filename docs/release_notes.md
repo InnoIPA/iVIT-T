@@ -1,4 +1,11 @@
 # Release Notes
+## Release 1.3
+### New Features/Highlights
+- Import project.
+- Export project.
+- Training scheduler
+### Bug fix 
+- favorite label sort.
 ## Release 1.2.2
 ### Bug fix 
 - iVIT-T can’t do Train and evaluate at the same time.
