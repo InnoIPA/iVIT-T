@@ -1,6 +1,6 @@
 tags:
   - Export prject
-summary: Export prject
+summary: Stop export
 description: Export prject
 
 parameters:
@@ -13,12 +13,6 @@ parameters:
         "uuid":
           type: str
           example: 5bdd2807-8e8f-4e3d-8e10-6f71d80c17e3
-        "change_workspace":
-          type: int
-          example: 0
-        "iteration":
-          type: list
-          example: []
 
 responses:
   '200':

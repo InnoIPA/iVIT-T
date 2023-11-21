@@ -1,7 +1,7 @@
 tags:
-  - Export prject
-summary: Export prject
-description: Export prject
+  - Import project
+summary: Stop import
+description: Import project
 
 parameters:
   - in: body
@@ -10,15 +10,9 @@ parameters:
     schema:
       type: object
       properties:
-        "uuid":
+        "import_uuid":
           type: str
-          example: 5bdd2807-8e8f-4e3d-8e10-6f71d80c17e3
-        "change_workspace":
-          type: int
-          example: 0
-        "iteration":
-          type: list
-          example: []
+          example: e5872354
 
 responses:
   '200':
