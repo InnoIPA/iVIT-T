@@ -227,7 +227,7 @@ def export():
     
     
     
-    return success_msg(200,"", "Success")
+    return success_msg(200,{}, "Success")
 
 @app_cl_pj.route('/stop_export', methods=['POST']) 
 @swag_from("{}/{}".format(YAML_PATH, "stop_export.yml"))
