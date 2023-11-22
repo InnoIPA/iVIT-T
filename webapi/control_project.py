@@ -195,12 +195,14 @@ def func(x):
 @app_cl_pj.route('/export', methods=['POST']) 
 @swag_from("{}/{}".format(YAML_PATH, "export.yml"))
 def export():
-    
-    data={"data":{}}
-    send_Completeness(0,3,"Waiting",data,"export")
     if not "uuid" in request.get_json().keys():
         return error_msg(500, {}, "KEY:uuid does not exist.")
     uuid = request.get_json()['uuid']
+    prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
+    data={"data":{"project_name":prj_name}}
+    send_Completeness(0,3,"Waiting",data,"export")
+    
+    
     change_workspace = request.get_json()['change_workspace']
     send_Completeness(1,3,"Verifying",data,"export")
     

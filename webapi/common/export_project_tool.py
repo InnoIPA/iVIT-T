@@ -121,11 +121,11 @@ class Export_Project(Process):
     # def ss(self):
         #
         try:
-            
+            prj_name = app.config["PROJECT_INFO"][self.uuid]["project_name"]
             Check_package_iteration =[]
             error_inter=[]
             self.status="Packaging"
-            self.communication.put([self.step,self.total,self.status,{"data":{}},"export"])
+            self.communication.put([self.step,self.total,self.status,{"data":{"project_name":prj_name}},"export"])
             # send_Completeness(self.step,self.total,self.status,{"data":{}},"export")
             #-------------------------Step2: get info from db---------------------------------
 
