@@ -49,11 +49,17 @@ def filename_processing(file:str,is_import:bool):
              if use in upload will retrun file name with Filename Extension.
     """
     # Get file name
-    filename = file.filename
-    #filename = secure_filename(file.filename) 
-    # Check folder file
-    if "/" in file.filename:
-        filename = file.filename.split("/")[1]
+    try:
+        filename = file.filename
+        #filename = secure_filename(file.filename) 
+        # Check folder file
+        if "/" in file.filename:
+            filename = file.filename.split("/")[1]
+    except:
+        filename = file
+        # Check folder file
+        if "/" in file:
+            filename = file.split("/")[1]
     # Exclude over 2 word(".") rename filename
     split = filename.split(".")
     if len(split)>2:
@@ -70,11 +76,12 @@ def filename_processing(file:str,is_import:bool):
         filename_without_Extension=""
         for idx , name_piece in enumerate(filename.split(".")[0].split("_")):
             filename_without_Extension=filename_without_Extension+name_piece
-            if idx==len(filename.split(".")[0].split("_"))-2:
+            if len(filename.split(".")[0].split("_"))<=1 or idx==len(filename.split(".")[0].split("_"))-2:
                 return filename , filename_without_Extension
             filename_without_Extension=filename_without_Extension+"_"
-         
-    return filename
+        return filename , filename_without_Extension
+    else:     
+        return filename
 
 def add_class_filename(class_key:str, filename:str):
     if class_key != "Unlabeled":

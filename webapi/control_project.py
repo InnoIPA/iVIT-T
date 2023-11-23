@@ -285,7 +285,7 @@ def import_pj():
     # parameter
     deal_file={}
     order_id=0
-    rename=False
+    # rename=False
     ori_project_name=""
     #Step1: Get all upload zip file
     
@@ -303,17 +303,19 @@ def import_pj():
             # Get file name 
             # example filename:dog_cat_classification_20230821 ,filename_without_Extension : dog_cat_classification
             filename ,filename_without_Extension = filename_processing(file,True)
+            
+            
             source_folder = os.path.join(temp_dir,filename_without_Extension)
-            destination_folder = os.path.join("./project/",filename_without_Extension) 
+            # destination_folder = os.path.join("./project/",filename_without_Extension) 
 
-            #step4 : if project is exist in ivit-t create project in ./project
-            if not os.path.exists(destination_folder):
-                os.mkdir(destination_folder)
-            else:
-                rename=True
-                ori_project_name,filename_without_Extension,destination_folder,source_folder = project_rename_handle(filename_without_Extension,temp_dir,"./project/")
+            # #step4 : if project is exist in ivit-t create project in ./project
+            # if not os.path.exists(destination_folder):
+            #     os.mkdir(destination_folder)
+            # else:
+            #     rename=True
+            #     ori_project_name,filename_without_Extension,destination_folder,source_folder = project_rename_handle(filename_without_Extension,temp_dir,"./project/")
                 
-                os.mkdir(destination_folder)
+            #     os.mkdir(destination_folder)
                 
             if not os.path.exists(source_folder):
                 os.mkdir(source_folder)
@@ -324,9 +326,9 @@ def import_pj():
                                     "filename_without_Extension":filename_without_Extension,
                                     "ori_project_name":ori_project_name,
                                     "source_folder":source_folder,
-                                    "destination_folder":destination_folder,
+                                    # "destination_folder":destination_folder,
                                     "temp_dir":"./project/temp/",
-                                    "rename":rename
+                                    "rename":False
                 }})
                 order_id=order_id+1
     
