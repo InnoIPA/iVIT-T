@@ -268,9 +268,9 @@ class Export_Project(Process):
                                     project_uuid='{}' and filename = '{}';".format(back_iter,self.uuid,file_name)
                                 _create_time = execute_db(command, False)[0][0]
                                 if project_type=="classification":
-                                    workspace_table.append([self.uuid,path.split('/')[-1]+"/"+file_name,_img_serial,file_name,high,wid,True,_cls_idx,_create_time,False])
+                                    workspace_table.append([self.uuid,path.split('/')[-1]+"/"+file_name,_img_serial,file_name,high,wid,True,_cls_idx,False,_create_time])
                                 elif project_type=="object_detection":
-                                    workspace_table.append([self.uuid,"/"+file_name,_img_serial,file_name,high,wid,True,_cls_idx,_create_time,False])
+                                    workspace_table.append([self.uuid,"/"+file_name,_img_serial,file_name,high,wid,True,_cls_idx,False,_create_time])
                                 
                                 # else:
                                 #     workspace_table.append(file_exist_workspace[0])
