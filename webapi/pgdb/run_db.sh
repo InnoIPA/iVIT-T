@@ -106,7 +106,7 @@ echo -e "${NC}"
 if [ -d "./project/fruit_object_detection" ]; then
 	echo "----- The samples of directory does exists -----"
 else
-	FILEID="1rOvf-RoeJVZ8zvgFEAO_nbGrKvW57R1y"
+	FILEID="1k6M-e6zQ6X1Rbzz40Z_0RZYIH5bJOeTa"
 	STORREFILE="samples"
 	wget --load-cookies /tmp/cookies.txt \
 		"https://docs.google.com/uc?export=download&confirm=$(wget \
