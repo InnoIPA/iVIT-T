@@ -251,3 +251,102 @@ def prj_training_status():
 @swag_from("{}/{}".format(YAML_PATH, "socket_listen_list.yml"))
 def socket_listen_list():
     return success_msg(200, SOCKET_LISTENERS, "Success", "Get socket_listen_list")
+
+@app_train.route('/training_schedule', methods=['POST']) 
+@swag_from("{}/{}".format(YAML_PATH, "add_task.yml"))
+def add_task():
+    train_parameter = request.get_json()["training_parameter"]
+    # Check key of front
+    msg = chk.front_param_key(list(train_parameter.keys()), list(app.config['TRAINING_CONFIG']["front_train"].keys()))
+    if msg:
+        return error_msg(400, {}, "KEY:{} does not exist.".format(msg), log=True)
+    # Check value in key of front
+    msg = chk.front_param_isnull(train_parameter)
+    if msg:
+        return error_msg(400, {}, "KEY:{} is not filled in or the type is wrong.".format(msg), log=True)
+
+    add_task_info = app.config["SCHEDULE"].add_task(request.get_json())
+
+    if isinstance(add_task_info,str) and ("error" in add_task_info):
+        return error_msg(400, {}, "Add task error! error msg:{}.".format(add_task_info), log=True)
+    
+    return success_msg(200,{"task_uuid":add_task_info}, "Success", "Add task suuccess. task_uuid={}".format(add_task_info))
+
+
+@app_train.route('/training_schedule', methods=['PUT']) 
+@swag_from("{}/{}".format(YAML_PATH, "modify_task_list.yml"))
+def modify_task_list():
+    try:    
+        task_sort = request.get_json()["task_sort"]
+    except:
+        return error_msg(400, {}, "Key:task_sort error.", log=True)
+    
+    if (not task_sort) or (not isinstance(task_sort,list)): 
+        return error_msg(400, {}, "Modify task list error! please check task_sort.", log=True)
+    
+    task_list_info = app.config["SCHEDULE"].modify_task_list(task_sort)
+    if isinstance(task_list_info,str) and ("error" in task_list_info):
+        return error_msg(400, {}, "Modify task list error! error msg:{}.".format(task_list_info), log=True)
+    return success_msg(200, {"task_list":task_list_info}, "Success", "Get task list:{}".format(str(task_list_info)))
+
+@app_train.route('/training_schedule', methods=['GET']) 
+@swag_from("{}/{}".format(YAML_PATH, "get_task.yml"))
+def get_task():
+    sort = app.config["SCHEDULE"].task_sort
+    if not sort:
+        return error_msg(400, {}, "No task in schedule.", log=True)
+    get_task_info = app.config["SCHEDULE"]._get_task_sort_detail(sort)
+    
+    return success_msg(200, {"task_list":get_task_info}, "Success", "Get task sort success! result:{}".format(get_task_info))
+
+@app_train.route('/training_schedule', methods=['DELETE']) 
+@swag_from("{}/{}".format(YAML_PATH, "delete_task.yml"))
+def delete_task():
+    try:    
+        task_uuid = request.get_json()["task_uuid"]
+    except:
+        return error_msg(400, {}, "Key:task_uuid error!.", log=True)
+    
+    delete_task_info = app.config["SCHEDULE"].delete_task(task_uuid)
+
+    if isinstance(delete_task_info,str) and ("error" in delete_task_info):
+        return error_msg(400, {}, "Delete task error! error msg:{}.".format(delete_task_info), log=True)
+    
+    return success_msg(200, {}, "Success", "Delete task:{} success!".format(delete_task_info))
+
+@app_train.route('/stop_task', methods=['POST']) 
+@swag_from("{}/{}".format(YAML_PATH, "stop_task.yml"))
+def stop_task():
+    try:    
+        task_uuid = request.get_json()["task_uuid"]
+    except:
+        return error_msg(400, {}, "Key:task_uuid error!.", log=True)
+    
+    stop_task_info = app.config["SCHEDULE"].stop_task(task_uuid)
+    if isinstance(stop_task_info,str) and ("error" in stop_task_info):
+        return error_msg(400, {}, "Stop task error! error msg:{}.".format(stop_task_info), log=True)
+
+    return success_msg(200, {}, "Success", "Stop task:{} success!".format(stop_task_info))
+
+@app_train.route('/history', methods=['DELETE']) 
+@swag_from("{}/{}".format(YAML_PATH, "delete_history.yml"))
+def delete_history():
+    try:    
+        task_uuid = request.get_json()["task_uuid"]
+    except:
+        return error_msg(400, {}, "Key:task_uuid error!.", log=True)
+    
+    delete_history_info = app.config["SCHEDULE"]._delete_history(task_uuid)
+    if isinstance(delete_history_info,str) and ("error" in delete_history_info):
+        return error_msg(400, {}, "Delete history error! error msg:{}.".format(delete_history_info), log=True)
+    
+    return success_msg(200, {}, "Success", "Delete_history:{} success!".format(delete_history_info))
+
+@app_train.route('/history', methods=['GET']) 
+@swag_from("{}/{}".format(YAML_PATH, "get_history.yml"))
+def get_history():
+    history_info = app.config["SCHEDULE"]._get_all_history(True)
+    if isinstance(history_info,str) and ("error" in history_info):
+        return error_msg(400, {}, "Delete history error! error msg:{}.".format(history_info), log=True)
+    
+    return success_msg(200, {"history_list":history_info}, "Success", "Get history list success! result:{}".format(history_info))
