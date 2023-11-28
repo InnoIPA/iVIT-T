@@ -1,0 +1,24 @@
+tags:
+  - Schedule
+summary: Get history list.(Can’t get message from socket.io)
+description: Get history list.(Can’t get message from socket.io)
+
+responses:
+  '200':
+    schema:
+      type: string
+      description: Successful operation
+      example: 
+              {
+                  "history_list":[{
+                      "c1d474a6e4394617b3c6d070656b5f52": {
+                            "project_uuid": "79354572-4c56-4e27-9023-e81022744117", 
+                            "project_name": "fruit_object_detection", 
+                            "total_step": 2000}}, 
+                    {
+                      "e26e184a63c9462e88b183e1805a91e8": {
+                            "project_uuid": "79354572-4c56-4e27-9023-e81022744117", 
+                            "project_name": "fruit_object_detection", 
+                            "total_step": 2000}
+                  }]
+              }

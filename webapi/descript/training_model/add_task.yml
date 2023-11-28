@@ -1,0 +1,52 @@
+tags:
+  - Schedule
+summary: Add task.
+description: Add task.
+
+parameters:
+
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "training_method":
+          type: string
+          example: Quick Training
+        "model":
+          type: string
+          example: resnet_18
+        "batch_size":
+          type: int
+          example: 8
+        "step":
+          type: int
+          example: 30
+        "input_shape":
+          type: array
+          example: [320,320,3]
+
+responses:
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example: 
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{
+                          "task_uuid":"eb698d32-94a0-42c6-81d0-f12117dba625",
+                        }
+              }
+  '400':
+    schema:
+      type: arrray
+      description: Error message
+      example:
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

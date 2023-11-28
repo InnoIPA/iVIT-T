@@ -1,0 +1,37 @@
+tags:
+  - Schedule
+summary: Stop task.
+description: Stop task.
+
+parameters:
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "task_uuid":
+          type: str
+          example: "eb698d32-94a0-42c6-81d0-f12117dba625"
+
+responses:
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example: 
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{}
+              }
+  '400':
+    schema:
+      type: object
+      description: Error message
+      example:
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }

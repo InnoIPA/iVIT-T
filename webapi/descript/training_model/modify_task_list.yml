@@ -1,0 +1,38 @@
+tags:
+  - Schedule
+summary: Modify task list.
+description: Modify task list.
+
+parameters:
+  - in: body
+    name: data
+    required: true
+    schema:
+      type: object
+      properties:
+        "task_sort":
+          type: list
+          example: []
+
+responses:
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example: 
+              {
+                "status": 200,
+                "message":"Success",
+                "data":{"task_list":['eb698d32-94a0-42c6-81d0-f12117dba625','5542ad06-1f01-4580-84b4-deb5de539a37','e0d0bc8e-3b41-4460-ab41-5a9ab981a319']
+                }
+              }
+  '400':
+    schema:
+      type: object
+      description: Error message
+      example:
+              {
+                "status": 400,
+                "message":"{{error_log}}",
+                "data":{}
+              }
