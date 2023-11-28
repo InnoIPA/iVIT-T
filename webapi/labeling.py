@@ -135,6 +135,13 @@ def delete_class(uuid):
     # Classification required remove class folder
     if type == "classification":
         dir_path = main_path+"/"+class_name
+
+        #move img to workspace
+        for filename in os.listdir(dir_path):
+            source_path = os.path.join(dir_path, filename)
+            destination_path = os.path.join(main_path, filename)
+            shutil.move(source_path, destination_path)
+            
         if os.path.isdir(dir_path):
             shutil.rmtree(dir_path, ignore_errors=True)
         else:
