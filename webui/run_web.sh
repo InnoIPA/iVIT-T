@@ -36,7 +36,11 @@ NC='\033[0m';
 PORT=""
 COMMAND="bash"
 WORKSPACE="/etc/nginx/html"
-CONF="./webui/web_version.json"
+FILE=$(realpath "$0")
+ROOT=$(dirname "${FILE}")
+P_PATH=$(dirname "${ROOT}")
+
+CONF="${P_PATH}/webui/web_version.json"
 
 # ---------------------------------------------------------
 # help
@@ -109,7 +113,7 @@ echo -e "${NC}"
 # Run container
 DOCKER_CMD="docker run \
             --name ${CONTAINER_NAME} \
-            --rm -dt \
+            --rm -d \
             --net=host --ipc=host \
             -e API_PORT=${PORT} \
 			-e WEB_PORT=${WEB_PORT} \

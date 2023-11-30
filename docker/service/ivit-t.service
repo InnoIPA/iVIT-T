@@ -1,0 +1,11 @@
+[Unit]
+Description=Start iVIT-T Web Service
+
+[Service]
+Type=simple
+User=root
+ExecStart=/home/jay/jay/ivit-t-dev__confidential/docker/run.sh -p 6530 -i
+ExecStop=/home/jay/jay/ivit-t-dev__confidential/docker/stop_ivit_t.sh
+
+[Install]
+WantedBy=graphical.target 

@@ -54,22 +54,15 @@ MOUNT_GPU="--gpus"
 WEBKEY=false
 SET_VERSION=""
 COMMAND="bash"
-WEB_API="./docker/run_web_api.sh"
 WORKSPACE="/workspace"
-CONF="./docs/version.json"
 BACKRUN=false
 FILE=$(realpath "$0")
 ROOT=$(dirname "${FILE}")
-chmod 777 ${ROOT}/disclaimer.sh && ${ROOT}/disclaimer.sh
+P_PATH=$(dirname "${ROOT}")
+CONF="${P_PATH}/docs/version.json"
+WEB_API="./docker/run_web_api.sh"
+INSTALL=false
 
-
-if [ $? -eq 1 ];then
-
-    exit 0
-
-fi
-# ---------------------------------------------------------
-# help
 function help(){
 	echo "-----------------------------------------------------------------------"
 	echo "Run the iVIT-T environment."
@@ -79,11 +72,13 @@ function help(){
 	echo "g		select the target gpu."
 	echo "p		run container with Web API, setup the web api port number."
 	echo "s		Server mode for non vision user"
+	echo "i     install mode"
     echo "m		Print information with magic"
 	echo "h		help."
 	echo "-----------------------------------------------------------------------"
 }
-while getopts "g:p:sbmh" option; do
+
+while getopts "g:p:sbimh" option; do
 	case $option in
 		g )
 			GPU=$OPTARG
@@ -96,6 +91,9 @@ while getopts "g:p:sbmh" option; do
 			;;
 		b )
 			BACKRUN=true
+			;;
+		i )
+			INSTALL=true
 			;;
         m )
 			MAGIC=true
@@ -114,7 +112,18 @@ while getopts "g:p:sbmh" option; do
 			;;
 	esac
 done
+RUNCODE="-i"
+if [ "${INSTALL}" = false ];then
+	chmod 777 ${ROOT}/disclaimer.sh && ${ROOT}/disclaimer.sh
+	if [ $? -eq 1 ];then
 
+		exit 0
+
+	fi
+	RUNCODE="-it"
+fi
+---------------------------------------------------------
+help
 # ---------------------------------------------------------
 # Install jq
 echo -e "${YELLOW}"
@@ -159,7 +168,7 @@ MOUNT_GPU="${MOUNT_GPU} device=${GPU}"
 # If port is available, run the WEB API
 if [[ -n ${PORT} ]];then 
 	# COMMAND="python3 ${WEB_API} --host 0.0.0.0 --port ${port} --af ${framework}"
-	COMMAND="source ${WEB_API} -p ${PORT}"
+	COMMAND="python3 /workspace/app.py -port ${PORT}"
 	WEBKEY=true
 fi
 
@@ -184,15 +193,15 @@ if [ "${BACKRUN}" = true ];then
 else
 	DARKNET="chmod +x ./ivit/objectdetection/yolo/darknet/darknetrun.sh && ./ivit/objectdetection/yolo/darknet/darknetrun.sh"
 	DLPRETRAINED="python3 pretrainedmodel/pretrained_download.py -all"
-	RUNCODE="-it"
-	BASHCODE="bash -c \"${DARKNET} && ${DLPRETRAINED} && ${COMMAND} \" "
+	
+	BASHCODE="bash -c \"${DARKNET} && ${DLPRETRAINED} && ${COMMAND}\""
 	if [ "${WEBKEY}" = true ];then 
         # Running webui
         echo -e "${YELLOW}"
         echo "----- Running WebUI -----"
         echo -e "${NC}"
 
-        sudo ./webui/run_web.sh -p ${PORT}
+        sudo ${P_PATH}/webui/run_web.sh -p ${PORT}
         # Running Database
         echo -e "${YELLOW}"
 		# Running Database
@@ -200,7 +209,7 @@ else
 		echo "----- Running database -----"
 		echo -e "${NC}"
 
-		sudo ./webapi/pgdb/run_db.sh -p 6535 -s ivit_admin -d ivit -u ivit
+		sudo ${P_PATH}/webapi/pgdb/run_db.sh -p 6535 -s ivit_admin -d ivit -u ivit
 	fi
 fi
 
@@ -214,7 +223,7 @@ ${MOUNT_GPU} \
 -v /dev:/dev \
 --net=host --ipc=host \
 -w ${WORKSPACE} \
--v `pwd`:${WORKSPACE} \
+-v ${P_PATH}:${WORKSPACE} \
 -v /etc/localtime:/etc/localtime:ro \
 -v /var/run/docker.sock:/var/run/docker.sock \
 ${SET_VERSION} \

@@ -32,13 +32,17 @@ NC='\033[0m';
 PORT="6532"
 COMMAND="bash"
 WORKSPACE="/workspace"
-CONF="./webapi/pgdb/pgdb.json"
+FILE=$(realpath "$0")
+ROOT=$(dirname "${FILE}")
+P_PATH=$(dirname "${ROOT}")
+W_PATH=$(dirname "${P_PATH}")
+CONF="${W_PATH}/webapi/pgdb/pgdb.json"
 DBNAME="postgres"
 USER="postgres"
 PASSWORD="admin"
 CONTAINER_NAME="ivit-t-postgres"
 DEFAULT_DBFOLDER="/var/lib/postgresql/data"
-OUTSIDE_DBFOLDER="/webapi/pgdb"
+OUTSIDE_DBFOLDER="${W_PATH}/webapi/pgdb"
 DOCKER_IMAGE="postgres"
 TAG_VER="15"
 
@@ -92,10 +96,10 @@ done
 
 # ---------------------------------------------------------
 # Writing in pgdb.json
-sed -i  's/\("PORT":"\).*/\1'"$PORT"'",/g'   ./webapi/pgdb/pgdb.json
-sed -i  's/\("DBNAME":"\).*/\1'"$DBNAME"'",/g'   ./webapi/pgdb/pgdb.json
-sed -i  's/\("USER":"\).*/\1'"$USER"'",/g'   ./webapi/pgdb/pgdb.json
-sed -i  's/\("PASSWORD":"\).*/\1'"$PASSWORD"'"/g'   ./webapi/pgdb/pgdb.json
+sed -i  's/\("PORT":"\).*/\1'"$PORT"'",/g'   ${W_PATH}/webapi/pgdb/pgdb.json
+sed -i  's/\("DBNAME":"\).*/\1'"$DBNAME"'",/g'   ${W_PATH}/webapi/pgdb/pgdb.json
+sed -i  's/\("USER":"\).*/\1'"$USER"'",/g'   ${W_PATH}/webapi/pgdb/pgdb.json
+sed -i  's/\("PASSWORD":"\).*/\1'"$PASSWORD"'"/g'   ${W_PATH}/webapi/pgdb/pgdb.json
 
 # ---------------------------------------------------------
 # Download samples
@@ -116,8 +120,8 @@ else
 		-O "$STORREFILE" && rm -rf /tmp/cookies.txt
 	unzip $STORREFILE
 	rm $STORREFILE
-	mv fruit_object_detection ./project
-	mv dog_cat_classification ./project
+	mv fruit_object_detection ${W_PATH}/project
+	mv dog_cat_classification ${W_PATH}/project
 fi
 
 # ---------------------------------------------------------
@@ -137,7 +141,7 @@ if [ $? -eq 0 ] ;then
 else
 # ---------------------------------------------------------
 	# Run container
-	DOCKER_CMD="docker run -dt --rm \
+	DOCKER_CMD="docker run -d --rm \
 	--name ${CONTAINER_NAME} \
 	-p ${PORT}:5432 \
 	-v `pwd`${OUTSIDE_DBFOLDER}:${DEFAULT_DBFOLDER} \
