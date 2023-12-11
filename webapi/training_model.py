@@ -294,7 +294,7 @@ def modify_task_list():
 def get_task():
     sort = app.config["SCHEDULE"].task_sort
     if not sort:
-        return error_msg(400, {}, "No task in schedule.", log=True)
+        return success_msg(200, {}, "Success", "No task in schedule.")
     get_task_info = app.config["SCHEDULE"]._get_task_sort_detail(sort)
     
     return success_msg(200, {"task_list":get_task_info}, "Success", "Get task sort success! result:{}".format(get_task_info))
