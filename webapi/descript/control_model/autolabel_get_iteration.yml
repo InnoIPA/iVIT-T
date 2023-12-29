@@ -1,0 +1,28 @@
+tags:
+  - control_model
+summary: Get folder of iteration
+description: Get folder of iteration
+
+parameters:
+  - in: path
+    name: uuid
+    required: true
+    schema:
+      type: string
+
+responses:
+  '200':
+    schema:
+      type: object
+      description: Successful operation
+      example:
+              {
+                "status":200,
+                "massage":"Success",
+                "data":{
+                          "folder_name": 
+                          ["iteration1",
+                          "iteration2",
+                          ]
+                        }
+              }

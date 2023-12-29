@@ -11,6 +11,58 @@ app_cl_model = Blueprint( 'control_model', __name__)
 # Define API Docs path and Blue Print
 YAML_PATH       = YAML_MAIN_PATH + "/control_model"
 
+@app_cl_model.route('/<uuid>/autolabel_get_iteration', methods=['GET']) 
+@swag_from("{}/{}".format(YAML_PATH, "autolabel_get_iteration.yml"))
+def autolabel_get_iteration(uuid):
+    # Check uuid is/isnot in app.config["PROJECT_INFO"]
+    if not ( uuid in app.config["PROJECT_INFO"].keys()):
+        return error_msg(400, {}, "UUID:{} does not exist.".format(uuid), log=True)
+    # Get project name
+    prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
+    type= app.config["PROJECT_INFO"][uuid]["type"]
+    prj_path = ROOT + "/" + prj_name
+    chk.update_mapping_name(prj_path, uuid)
+    folder_name = list(app.config["MAPPING_ITERATION"][uuid].keys())
+        
+    _temp_folder_name=[]
+    #get mAP and class info
+    if type=="object_detection":
+
+        for iter in folder_name:
+            
+            if app.config["SCHEDULE"].get_status(uuid,iter):
+                continue
+            _mAP=0
+            _class_num=0
+            #get mAP
+            iter_path = ROOT + "/" + prj_name + "/" +iter
+            if os.path.isdir(iter_path):
+                metrics_path = iter_path + "/weights/metrics.json"
+                if exists(metrics_path):
+                    metrics = read_json(metrics_path)
+                    _mAP = metrics["mAP"]
+         
+                else:
+                    return error_msg(400, {}, "This metrics.json does not exist in iteration of the Project:[{}:{}]".format(prj_name, iter))
+            
+            else:
+                return error_msg(400, {}, "This iteration does not exist in the Project:[{}:{}]".format(prj_name, iter))
+
+            #get class_num
+            class_path = ROOT + "/" + prj_name + "/" +iter+"/dataset/classes.txt"
+            with open(class_path,'r') as fp:
+                all_lines = fp.readlines()
+                _class_num = len(all_lines)
+            _temp_json_info={}
+            front_iter=app.config["MAPPING_ITERATION"][uuid][iter]
+            _temp_json_info.update({front_iter:{"mAP":_mAP,"class":_class_num}})
+            _temp_folder_name.append(_temp_json_info)
+  
+        return success_msg(200, {"folder_name":_temp_folder_name}, "Success", "Get iteration list:[{}:{}]".format(prj_name, _temp_folder_name))
+    
+    return success_msg(200, {"folder_name":folder_name}, "Success", "Get iteration list:[{}:{}]".format(prj_name, folder_name))
+
+
 @app_cl_model.route('/<uuid>/get_iteration', methods=['GET']) 
 @swag_from("{}/{}".format(YAML_PATH, "get_iteration.yml"))
 def get_iteration(uuid):
@@ -22,7 +74,8 @@ def get_iteration(uuid):
     type= app.config["PROJECT_INFO"][uuid]["type"]
     prj_path = ROOT + "/" + prj_name
     chk.update_mapping_name(prj_path, uuid)
-    folder_name = list(app.config["MAPPING_ITERATION"][uuid].values())
+    folder_name = list(app.config["MAPPING_ITERATION"][uuid].keys())
+        
     _temp_folder_name=[]
     #get mAP and class info
     if type=="object_detection":
@@ -50,7 +103,8 @@ def get_iteration(uuid):
                 all_lines = fp.readlines()
                 _class_num = len(all_lines)
             _temp_json_info={}
-            _temp_json_info.update({iter:{"mAP":_mAP,"class":_class_num}})
+            front_iter=app.config["MAPPING_ITERATION"][uuid][iter]
+            _temp_json_info.update({front_iter:{"mAP":_mAP,"class":_class_num}})
             _temp_folder_name.append(_temp_json_info)
   
         return success_msg(200, {"folder_name":_temp_folder_name}, "Success", "Get iteration list:[{}:{}]".format(prj_name, _temp_folder_name))
@@ -222,6 +276,7 @@ def check_best_model(uuid):
     # Check key of front
     if not "iteration" in request.get_json().keys():
         return error_msg(400, {}, "KEY:iteration does not exist.", log=True)
+    
     # Get project name
     prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
     # Get type
@@ -230,8 +285,14 @@ def check_best_model(uuid):
     front_iteration = request.get_json()['iteration']
     # Mapping iteration
     dir_iteration = chk.mapping_iteration(uuid, prj_name, front_iteration, front=True)
+    
     if "error" in dir_iteration:
         return error_msg(400, {}, str(dir_iteration[1]), log=True)
+    
+    #check wether on training or not.
+    if app.config["SCHEDULE"].get_status(uuid,dir_iteration):
+        return error_msg(400, {}, "The iteration of the Project:[{}:{}] is on training".format(prj_name, front_iteration), log=True)
+    
     iter_path = ROOT + "/" + prj_name + "/" + dir_iteration
     if type == "object_detection":
         model = "yolo"
