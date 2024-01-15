@@ -18,6 +18,15 @@ def build_argparser():
     args.add_argument('-port', '--port', required=True, help = "Input port number")
     return parser
 
+def box_web_url(ip,port):
+    web_url = '|    WEBSITE --> http://{}:{}    |'.format(ip, port)
+    leng = len(web_url)
+    logging.info('-'*leng)
+    logging.info('|'+' '*(leng-2)+'|')
+    logging.info(web_url)
+    logging.info('|'+' '*(leng-2)+'|')
+    logging.info('-'*leng)
+    
 def main(args):
     # Create initial table in db
     logging.info("Initial database...")
@@ -49,9 +58,9 @@ def main(args):
     logging.info('Update HOST to {}'.format(host_ip))
 
     # Register iCAP
-    # logging.info("Initial iCAP register...")
-    # init_for_icap()
-    # register_mqtt_event()    
+    logging.info("Initial iCAP register...")
+    init_for_icap()
+    register_mqtt_event()    
     
     # Setting version.json
     config = read_json(VERSION_PATH)
@@ -66,6 +75,7 @@ def main(args):
     test_schedule.start()
  
     logging.info("Running webapi server...")
+    box_web_url("127.0.0.1",6538)
     socketio.run(app, host = "0.0.0.0", port=args.port, debug=False)
 
 if __name__ == '__main__':
