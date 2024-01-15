@@ -58,7 +58,7 @@ function help(){
 while getopts "p:mh" option; do
     case $option in
         p )
-            platform=$OPTARG
+            platform="$OPTARG"
             ;;
         m )
             magic=true
@@ -122,7 +122,7 @@ echo -e "${NC}"
 
 # sudo rm -r ./webapi/pgdb/pgdata
 sudo ./webapi/pgdb/run_db.sh -p 6535 -s ivit_admin -d ivit -u ivit
-
+sudo docker stop ivit-t-postgres
 # --------------------------------------------------------
 # Pull convert images
 echo -e "${YELLOW}"
@@ -133,6 +133,7 @@ echo -e "${NC}"
 
 for i in ${arr_index[@]}
 do
+    echo ${arr_index[@]}
     if [[ ${i} == *"0"* ]]; then
         echo -e "${GREEN}"
         echo "----- Pull image of nvidia -----"
@@ -149,7 +150,8 @@ do
         BASE_NAME="intel-convert"
         TAG_VER="latest"
         IMAGE_NAME="${USER}/${BASE_NAME}:${TAG_VER}"
-        docker pull IMAGE_NAME
+        docker pull ${IMAGE_NAME}
+
     fi
     if [[ ${i} == *"2"* ]]; then
         echo -e "${RED}"
