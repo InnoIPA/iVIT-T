@@ -144,7 +144,7 @@ else
 	DOCKER_CMD="docker run -d --rm \
 	--name ${CONTAINER_NAME} \
 	-p ${PORT}:5432 \
-	-v `pwd`${OUTSIDE_DBFOLDER}:${DEFAULT_DBFOLDER} \
+	-v ${OUTSIDE_DBFOLDER}:${DEFAULT_DBFOLDER} \
 	-e PGDATA=/var/lib/postgresql/data/pgdata \
 	-e POSTGRES_USER=${USER} \
 	-e POSTGRES_PASSWORD=${PASSWORD} \
