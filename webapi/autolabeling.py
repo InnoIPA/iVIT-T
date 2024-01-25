@@ -306,6 +306,11 @@ def modify_autolabel_parameter(uuid):
     change_confirm_status_command = "update workspace set confirm='false' where project_uuid='{}';".format(uuid)
     execute_db(change_confirm_status_command,True)
 
+    #clean unlabeled_data
+    prj_name = app.config["PROJECT_INFO"][uuid]["project_name"]
+    error_db = delete_data_table_cmd("unlabeled_data", "project_uuid=\'{}\'".format(uuid))
+    if error_db:
+        return error_msg(400, {}, str(error_db[1]))
     return success_msg(200, {} , "Success", "Change iter: {} to {} , threshold: {} to {}.".format(old_iter[0],MICRO_SERVICE[uuid]['iteration'][0]\
                                                                                                   ,old_thres,MICRO_SERVICE[uuid]['threshold']))
 
