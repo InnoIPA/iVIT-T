@@ -7,7 +7,12 @@ OPENMP=0
 LIBSO=1
 ZED_CAMERA=0
 ZED_CAMERA_v2_8=0
+computes=
 
+ifeq ($(computes), )
+  computes= $(shell python gpu_cc.py)
+  $(info computes: $(computes))
+endif
 # set GPU=1 and CUDNN=1 to speedup on GPU
 # set CUDNN_HALF=1 to further speedup 3 x times (Mixed-precision on Tensor Cores) GPU: Volta, Xavier, Turing and higher
 # set AVX=1 and OPENMP=1 to speedup on CPU (if error occurs then set AVX=0)
@@ -22,9 +27,7 @@ DEBUG=0
 #       -gencode arch=compute_52,code=[sm_52,compute_52] \
 # 	    -gencode arch=compute_61,code=[sm_61,compute_61]
 
-ARCH= -gencode arch=compute_50,code=[sm_50,compute_50] \
-      -gencode arch=compute_52,code=[sm_52,compute_52] \
-	    -gencode arch=compute_61,code=[sm_61,compute_61]
+ARCH= $(foreach compute, $(computes),-gencode arch=compute_$(compute),code=[sm_$(compute),compute_$(compute)])
 
 OS := $(shell uname)
 
@@ -141,7 +144,7 @@ endif
 ifeq ($(CUDNN_HALF), 1)
 COMMON+= -DCUDNN_HALF
 CFLAGS+= -DCUDNN_HALF
-ARCH+= -gencode arch=compute_70,code=[sm_70,compute_70]
+# ARCH+= -gencode arch=compute_70,code=[sm_70,compute_70]
 endif
 
 ifeq ($(ZED_CAMERA), 1)
