@@ -66,12 +66,14 @@ while true; do
     else
         # wait for user response agree or not.
         read response
-        if [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]
+        # if [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]
+        if [[ $response =~ ^([Y])$ ]]
         then
 
             STATUS="true"
             break
-        elif [[ $response =~ ^([nN][oO]|[nN])$ ]]
+        # elif [[ $response =~ ^([nN][oO]|[nN])$ ]]    
+        elif [[ $response =~ ^([N])$ ]]
         then
             STATUS="false"
             exit 1
@@ -79,7 +81,7 @@ while true; do
 
         else
             echo -e -n "${RED}"
-            echo -n "Are you agree? [y/N] "
+            echo -n "Are you agree? [Y/N] "
             echo -e -n "${NC}"
         fi
 
