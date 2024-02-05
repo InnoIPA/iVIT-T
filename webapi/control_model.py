@@ -43,7 +43,7 @@ def autolabel_get_iteration(uuid):
                     _mAP = metrics["mAP"]
          
                 else:
-                    return error_msg(400, {}, "This metrics.json does not exist in iteration of the Project:[{}:{}]".format(prj_name, iter))
+                    continue
             
             else:
                 return error_msg(400, {}, "This iteration does not exist in the Project:[{}:{}]".format(prj_name, iter))
