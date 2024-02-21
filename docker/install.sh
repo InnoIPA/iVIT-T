@@ -15,9 +15,19 @@ if [[ -z ${PORT} || ${PORT} = "-h" || ${PORT} = "--help" ]]; then
 	echo ""
 	echo "Usage:  install.sh [PORT]."
 	echo ""
-	echo "	- PORT: What port that you want to use? default is 6530."
+	echo "	PORT: What port that you want to use? default is 6530."
 	exit
 fi
+
+if ! grep '^[[:digit:]]*$' <<< "$PORT" ;then 
+	echo "ERROR USAGE..."
+	echo ""
+	echo "Usage:  install.sh [PORT]."
+	echo ""
+	echo "	PORT: What port that you want to use? default is 6530."
+	exit
+fi
+
 
 # Helper
 function update_service_file() {

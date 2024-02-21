@@ -112,6 +112,16 @@ while getopts "g:p:sbimh" option; do
 			;;
 	esac
 done
+
+if ! grep '^[[:digit:]]*$' <<< "$PORT" ;then 
+	echo "ERROR USAGE..."
+	echo ""
+	echo "Please correct the port number."
+	echo ""
+	echo "	PORT: What port that you want to use? default is 6530."
+	exit
+fi
+
 RUNCODE="-i"
 if [ "${INSTALL}" = false ];then
 	chmod 777 ${ROOT}/disclaimer.sh && ${ROOT}/disclaimer.sh
