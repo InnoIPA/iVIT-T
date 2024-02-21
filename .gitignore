@@ -33,3 +33,4 @@ hailo_sw_suite_docker_run.sh
 *.png
 !docs/*.png
 !*/docs/*.png
+*.log*

@@ -1,4 +1,12 @@
 # Release Notes
+## Release 1.3.1
+### Bug fix 
+- When run at the error port number , stop the service and provide the usage tip.
+- When finished training , doesn't show metrics.
+- Once we do evaluate , we can't export the model.
+- If the project exist broken iteration , we can't export the project.
+- If the project exist broken iteration , we can't do autolabeling.
+
 ## Release 1.3
 ### New Features/Highlights
 - Import project.
