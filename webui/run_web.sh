@@ -102,8 +102,12 @@ CONTAINER_NAME="${BASE_NAME}"
 
 mv ${CONF} ./temp.json
 # Writing json platform
-jq -r '.API_PORT |= '${PORT}'' ./temp.json > ${CONF}
+# jq -r '.API_PORT |= '${PORT}'' ./temp.json > ${CONF}
+jq --arg port "${PORT}" '.API_PORT = $port' ./temp.json > ${CONF}
 rm ./temp.json
+
+# set -e
+# exit 1
 
 echo -e "${GREEN}"
 echo "----- UI version number:${TAG_VER} -----"
