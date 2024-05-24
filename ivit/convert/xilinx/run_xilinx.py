@@ -13,7 +13,7 @@ def running_xilinx(config:str):
     SPLIT_ACTION = False
     command = "{} c".format( os.path.join(MAIN_PATH, "xilinx/Vitis-AI/vitis-ai-start.sh") )
     cmd(command, SPLIT_ACTION)
-    command = "docker exec -it {} \
+    command = "docker exec -i {} \
                 bash -c 'source /opt/vitis_ai/conda/bin/activate vitis-ai-tensorflow && \
                 pip install colorlog && \
                 python3 {} -c {}'".format(CONTAINER_NAME, os.path.join(MAIN_PATH, "xilinx/convert_xilinx.py"), config)

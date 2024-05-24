@@ -14,7 +14,7 @@ def running_hailo(config:str):
     SPLIT_ACTION = False
     command = os.path.join(MAIN_PATH, "hailo/hailo_sw_suite_docker_run.sh")
     cmd(command, SPLIT_ACTION)
-    command = "docker exec -it {} \
+    command = "docker exec -i {} \
                 bash -c 'pip install colorlog keras_preprocessing keras_applications && \
                 chmod 777 -R /local/workspace/hailo_virtualenv/bin/ && \
                 source /local/workspace/hailo_virtualenv/bin/activate && \

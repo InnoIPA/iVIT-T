@@ -19,7 +19,7 @@ def running_intel(config:str):
     SPLIT_ACTION = False
     command = os.path.join(MAIN_PATH, "intel/run.sh")
     cmd(command, SPLIT_ACTION)
-    command = "docker exec -it {} \
+    command = "docker exec -i {} \
                 bash -c 'python3 {} -c {}' ".format(CONTAINER_NAME, os.path.join(MAIN_PATH, "intel/convert_intel.py"), config)
     cmd(command, SPLIT_ACTION)
     command = "docker stop {}".format(CONTAINER_NAME)
