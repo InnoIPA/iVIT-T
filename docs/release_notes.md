@@ -1,4 +1,9 @@
 # Release Notes
+## Release 1.3.2
+### Bug fix
+- Release zombie process after training.
+- When we install iVIT-T, can't convert model.
+
 ## Release 1.3.1
 ### Bug fix 
 - When run at the error port number , stop the service and provide the usage tip.
@@ -7,6 +12,7 @@
 - If the project exist broken iteration , we can't export the project.
 - If the project exist broken iteration , we can't do autolabeling.
 
+# Release Notes
 ## Release 1.3
 ### New Features/Highlights
 - Import project.
@@ -14,6 +20,7 @@
 - Training scheduler
 ### Bug fix 
 - favorite label sort.
+
 ## Release 1.2.2
 ### Bug fix 
 - iVIT-T can’t do Train and evaluate at the same time.
@@ -22,6 +29,7 @@
 - If create iteration error, we will delete the iteration.
 - Optimize upload.
 - Website optimization.
+
 ## Release 1.2.1
 ### Bug fix 
 - Auto labeling no work.
